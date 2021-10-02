@@ -1,1 +1,50 @@
 provider "github" {}
+
+data "github_user" "arikkfir" {
+  username = "arikkfir"
+}
+
+module "github-config-repository" {
+  source = "./modules/github-repository"
+  name = ".github"
+  description = "GitHub configuration repository."
+  default_branch = "main"
+  visibility = "public"
+  has_issues = true
+  has_projects = false
+  has_wiki = false
+  allow_merge_commit = true
+  allow_squash_merge = true
+  allow_rebase_merge = true
+  delete_branch_on_merge = true
+  has_downloads = false
+  topics = [
+    "github",
+    "infrastructure",
+    "iac",
+  ]
+}
+
+module "github-infrastructure-repository" {
+  source = "./modules/github-repository"
+  name = "infrastructure"
+  description = "Infrastructure-as-Code for my infrastructure."
+  default_branch = "main"
+  visibility = "public"
+  has_issues = true
+  has_projects = false
+  has_wiki = false
+  allow_merge_commit = true
+  allow_squash_merge = true
+  allow_rebase_merge = true
+  delete_branch_on_merge = true
+  has_downloads = false
+  topics = [
+    "fluxcd",
+    "infrastructure",
+    "iac",
+    "kubernetes",
+    "kustomize",
+    "terraform",
+  ]
+}
