@@ -1,0 +1,44 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: traefik-dashboard
+spec:
+  secretName: traefik-dashboard-tls
+  issuerRef:
+    kind: ClusterIssuer
+    name: google-clouddns
+  dnsNames:
+    - traefik.kfirs.com
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dashboard-http
+spec:
+  entryPoints:
+    - web
+  routes:
+    - kind: Rule
+      match: HostRegexp(`traefik.kfirs.com`)
+      middlewares:
+        - name: redirect-to-https
+          namespace: traefik
+      services:
+        - kind: TraefikService
+          name: api@internal
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dashboard-https
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: HostRegexp(`traefik.kfirs.com`)
+      services:
+        - kind: TraefikService
+          name: api@internal
+  tls:
+    secretName: traefik-dashboard-tls

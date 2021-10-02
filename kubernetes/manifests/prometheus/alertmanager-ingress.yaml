@@ -1,0 +1,60 @@
+apiVersion: dns.cnrm.cloud.google.com/v1beta1
+kind: DNSRecordSet
+metadata:
+  name: alertmanager-kfirs-com
+spec:
+  name: alertmanager.kfirs.com.
+  type: "CNAME"
+  ttl: 300
+  managedZoneRef:
+    namespace: kfirs-com
+    name: kfirs-com
+  rrdatas:
+    - traefik.kfirs.com.
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: alertmanager-kfirs-com
+spec:
+  secretName: alertmanager-kfirs-com-tls
+  issuerRef:
+    kind: ClusterIssuer
+    name: google-clouddns
+  dnsNames:
+    - alertmanager.kfirs.com
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: alertmanager-kfirs-com-http
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: HostRegexp(`alertmanager.kfirs.com`)
+      kind: Rule
+      middlewares:
+        - name: redirect-to-https
+          namespace: traefik
+      services:
+        - kind: Service
+          name: prometheus-alertmanager
+          port: 80
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: alertmanager-kfirs-com-https
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: HostRegexp(`alertmanager.kfirs.com`)
+      kind: Rule
+      services:
+        - kind: Service
+          name: prometheus-alertmanager
+          port: 80
+  tls:
+    secretName: alertmanager-kfirs-com-tls

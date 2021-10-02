@@ -1,0 +1,45 @@
+name: Deploy
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/fluxcd.yml
+      - kubernetes/**
+  workflow_dispatch:
+concurrency:
+  cancel-in-progress: false
+  group: fluxcd
+defaults:
+  run:
+    shell: bash -exu {0}
+env:
+  GCP_ZONE: europe-west3-a
+jobs:
+  fluxcd:
+    runs-on: [self-hosted]
+    container: gcr.io/google.com/cloudsdktool/cloud-sdk:356.0.0-slim
+    steps:
+      - name: Setup dependencies
+        run: |-
+          apt install -y kubectl
+          curl -sL "https://github.com/fluxcd/flux2/releases/download/v0.17.2/flux_0.17.2_linux_amd64.tar.gz" | tar xzf - -C /usr/local/bin
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Apply
+        run: |-
+          gcloud container clusters get-credentials --zone=${GCP_ZONE} production
+          flux bootstrap github --author-email=arik+flux@kfirs.com \
+            --author-name=FluxCD \
+            --branch=${GITHUB_REF#refs/heads/} \
+            --commit-message-appendix="[skip ci]" \
+            --interval=10m0s \
+            --namespace=flux-system \
+            --owner=arikkfir \
+            --path=kubernetes/cluster \
+            --personal \
+            --reconcile \
+            --repository=${GITHUB_REPOSITORY#arikkfir/} \
+            --timeout=15m
+        env:
+          GITHUB_TOKEN: ${{ secrets.RUNNER_TOKEN }}
+        working-directory: ./kubernetes

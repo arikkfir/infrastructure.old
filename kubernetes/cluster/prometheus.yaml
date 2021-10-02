@@ -1,0 +1,18 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta1
+kind: Kustomization
+metadata:
+  name: prometheus
+spec:
+  dependsOn:
+    - name: cert-manager-issuer
+    - name: cnrm-system
+    - name: kfirs-com
+    - name: traefik
+  interval: 5m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  path: ./kubernetes/manifests/prometheus
+  prune: true
+  validation: client

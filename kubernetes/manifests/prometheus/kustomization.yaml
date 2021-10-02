@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: prometheus
+resources:
+  - namespace.yaml
+  - helm-kube-state-metrics-repository.yaml
+  - helm-prometheus-community-repository.yaml
+  - helm-prometheus-release.yaml
+  - prometheus-ingress.yaml
+  - alertmanager-ingress.yaml
+configMapGenerator:
+  - name: prometheus
+    files:
+      - prometheus-values.yaml
+configurations:
+  - kustomizeconfig.yaml

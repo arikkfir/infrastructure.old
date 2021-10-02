@@ -1,0 +1,59 @@
+alertmanager:
+  enabled: true
+  persistentVolume:
+    enabled: true
+  resources:
+    limits:
+      cpu: 10m
+      memory: 32Mi
+    requests:
+      cpu: 10m
+      memory: 32Mi
+
+configmapReload:
+  prometheus:
+    enabled: false
+  alertmanager:
+    enabled: false
+
+kubeStateMetrics:
+  enabled: true
+
+kube-state-metrics:
+  enabled: true
+
+nodeExporter:
+  enabled: true
+  resources:
+    limits:
+      cpu: 200m
+      memory: 50Mi
+    requests:
+      cpu: 100m
+      memory: 30Mi
+
+server:
+  enabled: true
+  name: server
+  persistentVolume:
+    enabled: true
+  resources:
+    limits:
+      cpu: 1
+      memory: 1.5Gi
+    requests:
+      cpu: 1
+      memory: 1.5Gi
+  retention: 7d
+
+pushgateway:
+  enabled: true
+  resources:
+    limits:
+      cpu: 10m
+      memory: 32Mi
+    requests:
+       cpu: 10m
+       memory: 32Mi
+  persistentVolume:
+    enabled: true

@@ -1,0 +1,46 @@
+name: Sync GKE Ingress IP Address
+on:
+  schedule:
+    - cron: '0 * * * *'
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/sync-load-balancer-ip.yml
+  workflow_dispatch:
+concurrency:
+  cancel-in-progress: false
+  group: sync
+defaults:
+  run:
+    shell: bash -exu {0}
+env:
+  GCP_REGION: europe-west3
+  GCP_ZONE: europe-west3-a
+jobs:
+  sync:
+    runs-on: [self-hosted]
+    container: gcr.io/google.com/cloudsdktool/cloud-sdk:356.0.0-slim
+    steps:
+      - name: Setup dependencies
+        run: |-
+          apt install -y jq kubectl
+          curl -sSL -o /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.7.1/yq_linux_amd64 && chmod +x /usr/local/bin/yq
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Obtain load balancer IP address
+        run: |-
+          gcloud container clusters get-credentials --zone=${GCP_ZONE} production
+          kubectl wait -n traefik --for=condition=Ready ComputeAddress/traefik-ingress --timeout=5m
+          kubectl get -n traefik ComputeAddress/traefik-ingress -ojson | jq -r '.spec.address' > /tmp/ip-address
+      - name: Sync IP address in source code
+        run: |-
+          yq eval -i ".service.spec.loadBalancerIP=\"$(cat /tmp/ip-address)\"" kubernetes/manifests/traefik/traefik-values.yaml
+          yq eval -i ".service.loadBalancerSourceRanges=[\"217.132.0.0/16\"]" kubernetes/manifests/traefik/traefik-values.yaml
+          yq eval -i ".spec.rrdatas=[\"$(cat /tmp/ip-address)\"]" kubernetes/manifests/traefik/gcp-load-balancer-dns.yaml
+          yq eval -i ".spec.location=${GCP_REGION}" kubernetes/manifests/traefik/gcp-reserved-ip-address.yaml
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v7
+        with:
+          add: kubernetes
+          default_author: github_actions
+          message: 'Sync GKE ingress IP address'

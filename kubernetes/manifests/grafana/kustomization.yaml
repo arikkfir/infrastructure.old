@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: grafana
+resources:
+  - namespace.yaml
+  - gcp-service-account.yaml
+  - helm-grafana-community.yaml
+  - helm-grafana-release.yaml
+  - grafana-ingress.yaml
+  - grafana-secret.yaml
+configMapGenerator:
+  - name: grafana
+    files:
+      - grafana-values.yaml
+configurations:
+  - kustomizeconfig.yaml

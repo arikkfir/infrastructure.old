@@ -1,0 +1,122 @@
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+serviceAccount:
+  name: grafana
+  annotations:
+    iam.gke.io/gcp-service-account: grafana@arikkfir.iam.gserviceaccount.com
+
+persistence:
+  type: pvc
+  enabled: true
+  storageClassName: premium-rwo
+
+deploymentStrategy:
+  type: Recreate
+
+admin:
+  existingSecret: grafana
+  userKey: admin-username
+  passwordKey: admin-password
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+    - name: Production Prometheus
+      type: prometheus
+      url: http://prometheus-server.prometheus
+      access: proxy
+      isDefault: true
+    - name: Google Cloud Monitoring
+      type: stackdriver
+      access: proxy
+      jsonData:
+        authenticationType: gce
+
+## ref: http://docs.grafana.org/administration/provisioning/#alert-notification-channels
+#notifiers: {}
+#  notifiers.yaml:
+#    notifiers:
+#    - name: email-notifier
+#      type: email
+#      uid: email1
+#      # either:
+#      org_id: 1
+#      # or
+#      org_name: Main Org.
+#      is_default: true
+#      settings:
+#        addresses: an_email_address@example.com
+#    delete_notifiers:
+
+## ref: http://docs.grafana.org/administration/provisioning/#dashboards
+## `path` must be /var/lib/grafana/dashboards/<provider_name>
+#dashboardProviders: {}
+#  dashboardproviders.yaml:
+#    apiVersion: 1
+#    providers:
+#    - name: 'default'
+#      orgId: 1
+#      folder: ''
+#      type: file
+#      disableDeletion: false
+#      editable: true
+#      options:
+#        path: /var/lib/grafana/dashboards/default
+
+## ref: https://grafana.com/dashboards
+#dashboards: {}
+  # default:
+  #   some-dashboard:
+  #     json: |
+  #       $RAW_JSON
+  #   custom-dashboard:
+  #     file: dashboards/custom-dashboard.json
+  #   prometheus-stats:
+  #     gnetId: 2
+  #     revision: 2
+  #     datasource: Prometheus
+  #   local-dashboard:
+  #     url: https://example.com/repository/test.json
+  #     token: ''
+  #   local-dashboard-base64:
+  #     url: https://example.com/repository/test-b64.json
+  #     token: ''
+#     b64content: true
+
+## Reference to external ConfigMap per provider. Use provider name as key and ConfigMap name as value.
+## A provider dashboards must be defined either by external ConfigMaps or in values.yaml, not in both.
+## ConfigMap data example:
+##
+## data:
+##   example-dashboard.json: |
+##     RAW_JSON
+##
+#dashboardsConfigMaps: {}
+
+## ref: http://docs.grafana.org/installation/configuration/
+grafana.ini:
+  server:
+    root_url: "https://grafana.kfirs.com"
+  auth.google:
+    enabled: true
+    client_id: "$__file{/etc/secrets/auth-google-oauth-client-id}"
+    client_secret: "$__file{/etc/secrets/auth-google-oauth-client-secret}"
+    scopes: "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email"
+    auth_url: "https://accounts.google.com/o/oauth2/auth"
+    token_url: "https://accounts.google.com/o/oauth2/token"
+    allowed_domains: "kfirs.com kfirfamily.com"
+    allow_sign_up: true # this is only allowing signup from the allowed domains
+
+extraSecretMounts:
+  - name: grafana-secret
+    secretName: grafana
+    defaultMode: 0440
+    mountPath: /etc/secrets
+    readOnly: true

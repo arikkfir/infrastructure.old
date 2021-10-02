@@ -1,0 +1,14 @@
+########################################################################################################################
+# WARNING: this file is managed by the "sync-load-balancer.yml" GitHub Actions workflow!
+#
+# MANUAL EDITS TO SOME OF THE FIELDS HERE WILL BE OVERRIDDEN!
+########################################################################################################################
+apiVersion: compute.cnrm.cloud.google.com/v1beta1
+kind: ComputeAddress
+metadata:
+  name: traefik-ingress
+spec:
+  addressType: EXTERNAL
+  description: GKE Ingress
+  ipVersion: IPV4
+  location: europe-west3 # TODO: this should be derived from workflow env
