@@ -1,9 +1,9 @@
-name: Deploy
+name: Apply FluxCD
 on:
   push:
     branches: [main]
     paths:
-      - .github/workflows/fluxcd.yml
+      - .github/workflows/apply-fluxcd.yml
       - kubernetes/**
   workflow_dispatch:
 concurrency:
@@ -18,6 +18,7 @@ jobs:
   fluxcd:
     runs-on: [self-hosted]
     container: gcr.io/google.com/cloudsdktool/cloud-sdk:356.0.0-slim
+    timeout-minutes: 60
     steps:
       - name: Setup dependencies
         run: |-
