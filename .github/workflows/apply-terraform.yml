@@ -1,9 +1,9 @@
-name: Terraform
+name: Apply Terraform
 on:
   push:
     branches: [main]
     paths:
-      - .github/workflows/terraform.yml
+      - .github/workflows/apply-terraform.yml
       - terraform/**
   workflow_dispatch:
 concurrency:
@@ -20,6 +20,7 @@ jobs:
   terraform:
     runs-on: [self-hosted]
     container: gcr.io/google.com/cloudsdktool/cloud-sdk:356.0.0-slim
+    timeout-minutes: 60
     steps:
       - name: Setup dependencies
         run: apt install -y unzip
