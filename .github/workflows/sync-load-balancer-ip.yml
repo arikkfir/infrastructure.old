@@ -37,7 +37,7 @@ jobs:
           yq eval -i ".service.spec.loadBalancerIP=\"$(cat /tmp/ip-address)\"" kubernetes/manifests/traefik/traefik-values.yaml
           yq eval -i ".service.loadBalancerSourceRanges=[\"217.132.0.0/16\"]" kubernetes/manifests/traefik/traefik-values.yaml
           yq eval -i ".spec.rrdatas=[\"$(cat /tmp/ip-address)\"]" kubernetes/manifests/traefik/gcp-load-balancer-dns.yaml
-          yq eval -i ".spec.location=${GCP_REGION}" kubernetes/manifests/traefik/gcp-reserved-ip-address.yaml
+          yq eval -i ".spec.location=\"${GCP_REGION}\"" kubernetes/manifests/traefik/gcp-reserved-ip-address.yaml
       - name: Commit changes
         uses: EndBug/add-and-commit@v7
         with:
