@@ -3,5 +3,5 @@ kind: Kustomization
 namespace: default
 resources:
   - slack-secret.yaml
-  - provider.yaml
+  - providers.yaml
   - alert.yaml
