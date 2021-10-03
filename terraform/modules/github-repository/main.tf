@@ -45,6 +45,7 @@ resource "github_branch_protection" "default" {
   enforce_admins = false
   required_status_checks {
     strict = true
+    contexts = var.requires_status_checks
   }
   allows_deletions = false
   allows_force_pushes = false

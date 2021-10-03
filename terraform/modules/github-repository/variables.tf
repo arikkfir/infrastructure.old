@@ -65,3 +65,8 @@ variable "topics" {
   description = "List of topics for the repository."
   default = []
 }
+variable "requires_status_checks" {
+  type = list(string)
+  description = "List of status checks to require before merging to main branch."
+  default = []
+}
