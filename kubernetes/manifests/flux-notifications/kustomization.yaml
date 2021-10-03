@@ -4,4 +4,4 @@ namespace: default
 resources:
   - slack-secret.yaml
   - providers.yaml
-  - alert.yaml
+  - alerts.yaml
