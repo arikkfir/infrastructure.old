@@ -5,3 +5,4 @@ resources:
   - slack-secret.yaml
   - providers.yaml
   - alerts.yaml
+  - github-runner-pat-secret.yaml

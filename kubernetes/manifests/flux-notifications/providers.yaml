@@ -7,3 +7,13 @@ spec:
   channel: monitoring
   secretRef:
     name: fluxcd-slack
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta1
+kind: Provider
+metadata:
+  name: github
+spec:
+  type: github
+  address: https://github.com/arikkfir/infrastructure
+  secretRef:
+    name: github-runner-pat
