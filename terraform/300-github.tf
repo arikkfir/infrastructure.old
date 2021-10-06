@@ -10,9 +10,6 @@ module "github-config-repository" {
   description = "GitHub configuration repository."
   default_branch = "main"
   visibility = "public"
-  allow_merge_commit = true
-  allow_squash_merge = true
-  allow_rebase_merge = true
   delete_branch_on_merge = true
   has_downloads = false
   topics = [
@@ -28,9 +25,6 @@ module "github-infrastructure-repository" {
   description = "Infrastructure-as-Code for my infrastructure."
   default_branch = "main"
   visibility = "public"
-  allow_merge_commit = true
-  allow_squash_merge = true
-  allow_rebase_merge = true
   delete_branch_on_merge = true
   has_downloads = false
   topics = [
@@ -49,9 +43,6 @@ module "github-cloudflare-operator-repository" {
   description = "Kubernetes operator for Cloudflare resources."
   default_branch = "main"
   visibility = "public"
-  allow_merge_commit = true
-  allow_squash_merge = true
-  allow_rebase_merge = true
   delete_branch_on_merge = true
   has_downloads = false
   topics = [
@@ -72,9 +63,6 @@ module "github-syncer-repository" {
   description = "Synchronizes properties between Kubernetes resources"
   default_branch = "main"
   visibility = "public"
-  allow_merge_commit = true
-  allow_squash_merge = true
-  allow_rebase_merge = true
   delete_branch_on_merge = true
   has_downloads = false
   requires_status_checks = [
