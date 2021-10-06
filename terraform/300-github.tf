@@ -32,3 +32,11 @@ module "github-syncer-repository" {
   requires_status_checks = ["build"]
   topics                 = ["go", "kubernetes", "devops", "operator", "k8s"]
 }
+
+module "github-msvc-repository" {
+  source         = "./modules/github-repository"
+  name           = "msvc"
+  default_branch = "master"
+  description    = "Micro services framework for Golang"
+  topics         = []
+}
