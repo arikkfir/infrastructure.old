@@ -48,3 +48,29 @@ module "github-infrastructure-repository" {
     "terraform",
   ]
 }
+
+module "github-cloudflare-operator-repository" {
+  source = "./modules/github-repository"
+  name = "cloudflare-operator"
+  description = "Kubernetes operator for Cloudflare resources."
+  default_branch = "main"
+  visibility = "public"
+  has_issues = true
+  has_projects = false
+  has_wiki = false
+  allow_merge_commit = true
+  allow_squash_merge = true
+  allow_rebase_merge = true
+  delete_branch_on_merge = true
+  has_downloads = false
+  topics = [
+    "go",
+    "dns",
+    "kubernetes",
+    "devops",
+    "cloudflare",
+    "operator",
+    "k8s",
+    "cloudflare-operator",
+  ]
+}
