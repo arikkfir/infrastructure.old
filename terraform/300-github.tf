@@ -74,3 +74,29 @@ module "github-cloudflare-operator-repository" {
     "cloudflare-operator",
   ]
 }
+
+module "github-syncer-repository" {
+  source = "./modules/github-repository"
+  name = "syncer"
+  description = "Synchronizes properties between Kubernetes resources"
+  default_branch = "main"
+  visibility = "public"
+  has_issues = true
+  has_projects = false
+  has_wiki = false
+  allow_merge_commit = true
+  allow_squash_merge = true
+  allow_rebase_merge = true
+  delete_branch_on_merge = true
+  has_downloads = false
+  requires_status_checks = [
+    "build"
+  ]
+  topics = [
+    "go",
+    "kubernetes",
+    "devops",
+    "operator",
+    "k8s",
+  ]
+}
