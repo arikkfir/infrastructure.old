@@ -40,3 +40,11 @@ module "github-msvc-repository" {
   description    = "Micro services framework for Golang"
   topics         = []
 }
+
+module "github-unbotify-engineering-hometask-repository" {
+  source         = "./modules/github-repository"
+  name           = "unbotify-engineering-hometask"
+  default_branch = "master"
+  description    = ""
+  topics         = []
+}
