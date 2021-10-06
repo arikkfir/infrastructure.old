@@ -8,10 +8,6 @@ module "github-config-repository" {
   source = "./modules/github-repository"
   name = ".github"
   description = "GitHub configuration repository."
-  default_branch = "main"
-  visibility = "public"
-  delete_branch_on_merge = true
-  has_downloads = false
   topics = [
     "github",
     "infrastructure",
@@ -23,10 +19,6 @@ module "github-infrastructure-repository" {
   source = "./modules/github-repository"
   name = "infrastructure"
   description = "Infrastructure-as-Code for my infrastructure."
-  default_branch = "main"
-  visibility = "public"
-  delete_branch_on_merge = true
-  has_downloads = false
   topics = [
     "fluxcd",
     "infrastructure",
@@ -41,10 +33,6 @@ module "github-cloudflare-operator-repository" {
   source = "./modules/github-repository"
   name = "cloudflare-operator"
   description = "Kubernetes operator for Cloudflare resources."
-  default_branch = "main"
-  visibility = "public"
-  delete_branch_on_merge = true
-  has_downloads = false
   topics = [
     "go",
     "dns",
@@ -61,10 +49,6 @@ module "github-syncer-repository" {
   source = "./modules/github-repository"
   name = "syncer"
   description = "Synchronizes properties between Kubernetes resources"
-  default_branch = "main"
-  visibility = "public"
-  delete_branch_on_merge = true
-  has_downloads = false
   requires_status_checks = [
     "build"
   ]
