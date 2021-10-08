@@ -5,46 +5,52 @@ data "github_user" "arikkfir" {
 }
 
 module "github-config-repository" {
-  source      = "./modules/github-repository"
-  name        = ".github"
-  description = "GitHub configuration repository."
-  topics      = ["github", "infrastructure", "iac"]
+  source             = "./modules/github-repository"
+  name               = ".github"
+  description        = "GitHub configuration repository."
+  protected_branches = ["main"]
+  topics             = ["github", "infrastructure", "iac"]
 }
 
 module "github-infrastructure-repository" {
-  source      = "./modules/github-repository"
-  name        = "infrastructure"
-  description = "Infrastructure-as-Code for my infrastructure."
-  topics      = ["fluxcd", "infrastructure", "iac", "kubernetes", "kustomize", "terraform"]
+  source             = "./modules/github-repository"
+  name               = "infrastructure"
+  description        = "Infrastructure-as-Code for my infrastructure."
+  protected_branches = ["main"]
+  topics             = ["fluxcd", "infrastructure", "iac", "kubernetes", "kustomize", "terraform"]
 }
 
 module "github-cloudflare-operator-repository" {
-  source      = "./modules/github-repository"
-  name        = "cloudflare-operator"
-  description = "Kubernetes operator for Cloudflare resources."
-  topics      = ["go", "dns", "kubernetes", "devops", "cloudflare", "operator", "k8s", "cloudflare-operator"]
+  source             = "./modules/github-repository"
+  name               = "cloudflare-operator"
+  description        = "Kubernetes operator for Cloudflare resources."
+  protected_branches = ["main"]
+  topics             = ["go", "dns", "kubernetes", "devops", "cloudflare", "operator", "k8s", "cloudflare-operator"]
 }
 
 module "github-syncer-repository" {
   source                 = "./modules/github-repository"
   name                   = "syncer"
   description            = "Synchronizes properties between Kubernetes resources"
+  protected_branches     = ["main"]
   requires_status_checks = ["build"]
   topics                 = ["go", "kubernetes", "devops", "operator", "k8s"]
 }
 
 module "github-msvc-repository" {
-  source         = "./modules/github-repository"
-  name           = "msvc"
-  default_branch = "master"
-  description    = "Micro services framework for Golang"
-  topics         = []
+  source             = "./modules/github-repository"
+  name               = "msvc"
+  description        = "Micro services framework for Golang"
+  default_branch     = "master"
+  protected_branches = ["master"]
+  topics             = []
 }
 
 module "github-unbotify-engineering-hometask-repository" {
-  source         = "./modules/github-repository"
-  name           = "unbotify-engineering-hometask"
-  default_branch = "master"
-  description    = ""
-  topics         = []
+  source             = "./modules/github-repository"
+  name               = "unbotify-engineering-hometask"
+  description        = ""
+  default_branch     = "master"
+  protected_branches = ["master"]
+  topics             = []
 }
