@@ -8,6 +8,7 @@ terraform {
 }
 
 resource "github_repository" "repo" {
+  provider = github
   name = var.name
   description = var.description
   visibility = var.visibility
@@ -29,6 +30,7 @@ resource "github_repository" "repo" {
 }
 
 resource "github_branch" "default" {
+  provider = github
   repository = github_repository.repo.name
   branch = var.default_branch
   lifecycle {
@@ -37,11 +39,13 @@ resource "github_branch" "default" {
 }
 
 resource "github_branch_default" "default" {
+  provider = github
   repository = github_repository.repo.name
   branch = github_branch.default.branch
 }
 
 resource "github_branch_protection" "default" {
+  provider = github
   for_each = var.protected_branches
   repository_id = github_repository.repo.name
   pattern = each.value

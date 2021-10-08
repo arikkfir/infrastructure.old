@@ -1,10 +1,17 @@
-provider "github" {}
+provider "github" {
+  alias = "arikkfir"
+  owner = "arikkfir"
+}
 
 data "github_user" "arikkfir" {
+  provider = github.arikkfir
   username = "arikkfir"
 }
 
 module "github-config-repository" {
+  providers          = {
+    github = github.arikkfir
+  }
   source             = "./modules/github-repository"
   name               = ".github"
   description        = "GitHub configuration repository."
@@ -13,6 +20,9 @@ module "github-config-repository" {
 }
 
 module "github-infrastructure-repository" {
+  providers          = {
+    github = github.arikkfir
+  }
   source             = "./modules/github-repository"
   name               = "infrastructure"
   description        = "Infrastructure-as-Code for my infrastructure."
@@ -21,6 +31,9 @@ module "github-infrastructure-repository" {
 }
 
 module "github-cloudflare-operator-repository" {
+  providers          = {
+    github = github.arikkfir
+  }
   source             = "./modules/github-repository"
   name               = "cloudflare-operator"
   description        = "Kubernetes operator for Cloudflare resources."
@@ -29,6 +42,9 @@ module "github-cloudflare-operator-repository" {
 }
 
 module "github-syncer-repository" {
+  providers          = {
+    github = github.arikkfir
+  }
   source                 = "./modules/github-repository"
   name                   = "syncer"
   description            = "Synchronizes properties between Kubernetes resources"
@@ -38,6 +54,9 @@ module "github-syncer-repository" {
 }
 
 module "github-msvc-repository" {
+  providers          = {
+    github = github.arikkfir
+  }
   source             = "./modules/github-repository"
   name               = "msvc"
   description        = "Micro services framework for Golang"
@@ -47,6 +66,9 @@ module "github-msvc-repository" {
 }
 
 module "github-unbotify-engineering-hometask-repository" {
+  providers          = {
+    github = github.arikkfir
+  }
   source             = "./modules/github-repository"
   name               = "unbotify-engineering-hometask"
   description        = ""
@@ -56,6 +78,9 @@ module "github-unbotify-engineering-hometask-repository" {
 }
 
 module "github-deployster-repository" {
+  providers          = {
+    github = github.arikkfir
+  }
   source             = "./modules/github-repository"
   name               = "deployster"
   description        = "An opinionated declarative deployment tool, extensible to virtually any deployment topology."
@@ -66,6 +91,9 @@ module "github-deployster-repository" {
 }
 
 module "github-develobot-repository" {
+  providers          = {
+    github = github.arikkfir
+  }
   source             = "./modules/github-repository"
   name               = "develobot"
   description        = "An opinionated DevOps bot intended to simplify development & collaboration in modern-day development teams."
@@ -77,6 +105,9 @@ module "github-develobot-repository" {
 }
 
 module "github-develobot-console-repository" {
+  providers          = {
+    github = github.arikkfir
+  }
   source             = "./modules/github-repository"
   name               = "develobot-console"
   description        = "Web console for Develobot."
@@ -87,6 +118,9 @@ module "github-develobot-console-repository" {
 }
 
 module "github-mosaic-repository" {
+  providers          = {
+    github = github.arikkfir
+  }
   source             = "./modules/github-repository"
   name               = "mosaic"
   description        = "An end-to-end web framework based on modularity and consistency."
@@ -97,6 +131,9 @@ module "github-mosaic-repository" {
 }
 
 module "github-Apache-Felix-IntelliJ-Plugin-repository" {
+  providers          = {
+    github = github.arikkfir
+  }
   source             = "./modules/github-repository"
   name               = "Apache-Felix-IntelliJ-Plugin"
   description        = "An IntelliJ plugin to integrate Apache Felix"
