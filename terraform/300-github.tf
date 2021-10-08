@@ -64,3 +64,45 @@ module "github-deployster-repository" {
   archived           = true
   topics             = []
 }
+
+module "github-develobot-repository" {
+  source             = "./modules/github-repository"
+  name               = "develobot"
+  description        = "An opinionated DevOps bot intended to simplify development & collaboration in modern-day development teams."
+  default_branch     = "master"
+  homepage_url       = "https://github.com/apps/develobot"
+  protected_branches = []
+  archived           = true
+  topics             = []
+}
+
+module "github-develobot-console-repository" {
+  source             = "./modules/github-repository"
+  name               = "develobot-console"
+  description        = "Web console for Develobot."
+  default_branch     = "master"
+  protected_branches = []
+  archived           = true
+  topics             = []
+}
+
+module "github-mosaic-repository" {
+  source             = "./modules/github-repository"
+  name               = "mosaic"
+  description        = "An end-to-end web framework based on modularity and consistency."
+  default_branch     = "master"
+  protected_branches = []
+  archived           = true
+  topics             = []
+}
+
+module "github-Apache-Felix-IntelliJ-Plugin-repository" {
+  source             = "./modules/github-repository"
+  name               = "Apache-Felix-IntelliJ-Plugin"
+  description        = "An IntelliJ plugin to integrate Apache Felix"
+  default_branch     = "master"
+  homepage_url       = "http://plugins.intellij.net/plugin/?idea&id=5910"
+  protected_branches = ["master"]
+  archived           = false
+  topics             = []
+}
