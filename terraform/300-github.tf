@@ -54,3 +54,13 @@ module "github-unbotify-engineering-hometask-repository" {
   protected_branches = ["master"]
   topics             = []
 }
+
+module "github-deployster-repository" {
+  source             = "./modules/github-repository"
+  name               = "deployster"
+  description        = "An opinionated declarative deployment tool, extensible to virtually any deployment topology."
+  default_branch     = "master"
+  protected_branches = []
+  archived           = true
+  topics             = []
+}
