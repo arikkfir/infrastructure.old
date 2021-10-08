@@ -11,6 +11,11 @@ variable "default_branch" {
   description = "The default branch to set for the repository."
   default = "main"
 }
+variable "homepage_url" {
+  type = string
+  description = "The homepage URL."
+  default = ""
+}
 variable "protected_branches" {
   type = set(string)
   description = "List of branch names to protect."

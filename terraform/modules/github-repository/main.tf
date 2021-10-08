@@ -12,6 +12,7 @@ resource "github_repository" "repo" {
   description = var.description
   visibility = var.visibility
   archived = var.archived
+  homepage_url = var.homepage_url
   has_issues = var.has_issues
   has_projects = var.has_projects
   has_wiki = var.has_wiki
