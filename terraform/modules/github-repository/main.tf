@@ -41,8 +41,9 @@ resource "github_branch_default" "default" {
 }
 
 resource "github_branch_protection" "default" {
+  for_each = var.protected_branches
   repository_id = github_repository.repo.name
-  pattern = var.default_branch
+  pattern = each.value
   enforce_admins = false
   required_status_checks {
     strict = true
