@@ -20,6 +20,11 @@ variable "visibility" {
     error_message = "Invalid visibility - must be 'public' or 'private'."
   }
 }
+variable "archived" {
+  type = bool
+  description = "Whether this repository is archived."
+  default = false
+}
 variable "has_issues" {
   type = bool
   description = "Whether to enable issues for the repository."
