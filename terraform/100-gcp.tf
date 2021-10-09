@@ -50,6 +50,7 @@ resource "google_project_service" "apis" {
     "servicenetworking.googleapis.com",
     "sqladmin.googleapis.com",
     "stackdriver.googleapis.com",
+    "vpcaccess.googleapis.com",
   ])
   project = google_project.project.project_id
   service = each.key
