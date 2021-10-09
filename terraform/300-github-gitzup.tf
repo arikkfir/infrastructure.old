@@ -16,7 +16,7 @@ module "github-gitzup-commons-repository" {
   name               = "commons"
   description        = "Shared resources between Gitzup modules."
   default_branch     = "master"
-  protected_branches = []
+  protected_branches = ["master"]
   topics             = []
 }
 
@@ -28,7 +28,7 @@ module "github-gitzup-agent-repository" {
   name               = "agent"
   description        = "Gitzup agent, in charge of running Gitzup builds."
   default_branch     = "master"
-  protected_branches = []
+  protected_branches = ["master"]
   topics             = []
 }
 
@@ -52,7 +52,7 @@ module "github-gitzup-server-repository" {
   name               = "server"
   description        = "Gitzup server."
   default_branch     = "master"
-  protected_branches = []
+  protected_branches = ["master"]
   topics             = []
 }
 
@@ -64,7 +64,7 @@ module "github-gitzup-dashboard-repository" {
   name               = "dashboard"
   description        = "Gitzup user dashboard."
   default_branch     = "master"
-  protected_branches = []
+  protected_branches = ["master"]
   topics             = []
 }
 
@@ -76,7 +76,7 @@ module "github-gitzup-clustero-repository" {
   name               = "clustero"
   description        = "Cluster management software"
   default_branch     = "master"
-  protected_branches = []
+  protected_branches = ["master"]
   topics             = []
 }
 
@@ -102,6 +102,6 @@ module "github-gitzup-develobot-repository" {
   name               = "develobot"
   description        = "Development bot that's aimed to please!"
   default_branch     = "master"
-  protected_branches = []
+  protected_branches = ["master"]
   topics             = []
 }
