@@ -8,7 +8,7 @@ data "github_user" "arikkfir" {
   username = "arikkfir"
 }
 
-module "github-config-repository" {
+module "github-arikkfir-config-repository" {
   providers          = {
     github = github.arikkfir
   }
@@ -19,7 +19,7 @@ module "github-config-repository" {
   topics             = ["github", "infrastructure", "iac"]
 }
 
-module "github-infrastructure-repository" {
+module "github-arikkfir-infrastructure-repository" {
   providers          = {
     github = github.arikkfir
   }
@@ -30,7 +30,7 @@ module "github-infrastructure-repository" {
   topics             = ["fluxcd", "infrastructure", "iac", "kubernetes", "kustomize", "terraform"]
 }
 
-module "github-cloudflare-operator-repository" {
+module "github-arikkfir-cloudflare-operator-repository" {
   providers          = {
     github = github.arikkfir
   }
@@ -41,7 +41,7 @@ module "github-cloudflare-operator-repository" {
   topics             = ["go", "dns", "kubernetes", "devops", "cloudflare", "operator", "k8s", "cloudflare-operator"]
 }
 
-module "github-syncer-repository" {
+module "github-arikkfir-syncer-repository" {
   providers          = {
     github = github.arikkfir
   }
@@ -53,7 +53,7 @@ module "github-syncer-repository" {
   topics                 = ["go", "kubernetes", "devops", "operator", "k8s"]
 }
 
-module "github-msvc-repository" {
+module "github-arikkfir-msvc-repository" {
   providers          = {
     github = github.arikkfir
   }
@@ -65,7 +65,7 @@ module "github-msvc-repository" {
   topics             = []
 }
 
-module "github-unbotify-engineering-hometask-repository" {
+module "github-arikkfir-unbotify-engineering-hometask-repository" {
   providers          = {
     github = github.arikkfir
   }
@@ -77,7 +77,7 @@ module "github-unbotify-engineering-hometask-repository" {
   topics             = []
 }
 
-module "github-deployster-repository" {
+module "github-arikkfir-deployster-repository" {
   providers          = {
     github = github.arikkfir
   }
@@ -90,7 +90,7 @@ module "github-deployster-repository" {
   topics             = []
 }
 
-module "github-develobot-repository" {
+module "github-arikkfir-develobot-repository" {
   providers          = {
     github = github.arikkfir
   }
@@ -104,7 +104,7 @@ module "github-develobot-repository" {
   topics             = []
 }
 
-module "github-develobot-console-repository" {
+module "github-arikkfir-develobot-console-repository" {
   providers          = {
     github = github.arikkfir
   }
@@ -117,7 +117,7 @@ module "github-develobot-console-repository" {
   topics             = []
 }
 
-module "github-mosaic-repository" {
+module "github-arikkfir-mosaic-repository" {
   providers          = {
     github = github.arikkfir
   }
@@ -130,7 +130,7 @@ module "github-mosaic-repository" {
   topics             = []
 }
 
-module "github-Apache-Felix-IntelliJ-Plugin-repository" {
+module "github-arikkfir-Apache-Felix-IntelliJ-Plugin-repository" {
   providers          = {
     github = github.arikkfir
   }

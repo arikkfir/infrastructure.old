@@ -8,7 +8,7 @@ data "github_organization" "kfirz" {
   name     = "kfirz"
 }
 
-module "github-gitzup-repository" {
+module "github-kfirz-gitzup-repository" {
   providers          = {
     github = github.kfirz
   }
