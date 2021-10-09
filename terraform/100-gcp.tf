@@ -46,6 +46,7 @@ resource "google_project_service" "apis" {
     "container.googleapis.com",
     "dns.googleapis.com",
     "monitoring.googleapis.com",
+    "networkmanagement.googleapis.com",
     "redis.googleapis.com",
     "servicenetworking.googleapis.com",
     "sqladmin.googleapis.com",
