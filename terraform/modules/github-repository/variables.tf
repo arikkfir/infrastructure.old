@@ -6,11 +6,6 @@ variable "description" {
   type = string
   description = "Repository description."
 }
-variable "default_branch" {
-  type = string
-  description = "The default branch to set for the repository."
-  default = "main"
-}
 variable "homepage_url" {
   type = string
   description = "The homepage URL."

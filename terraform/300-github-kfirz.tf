@@ -15,7 +15,6 @@ module "github-kfirz-gitzup-repository" {
   source             = "./modules/github-repository"
   name               = "gitzup"
   description        = "An opinionated DevOps platform."
-  default_branch     = "master"
   protected_branches = ["master"]
   topics             = ["devops", "deployment", "deployer", "deployments", "devops-tools"]
 }

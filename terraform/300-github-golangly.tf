@@ -15,7 +15,6 @@ module "github-golangly-errors-repository" {
   source             = "./modules/github-repository"
   name               = "errors"
   description        = "Better errors"
-  default_branch     = "master"
   protected_branches = ["master"]
   topics             = ["go", "golang", "errors", "error-handling"]
 }
@@ -27,7 +26,6 @@ module "github-golangly-webutil-repository" {
   source             = "./modules/github-repository"
   name               = "webutil"
   description        = "Web related utilities."
-  default_branch     = "master"
   protected_branches = ["master"]
   topics             = []
 }
@@ -39,7 +37,6 @@ module "github-golangly-log-repository" {
   source             = "./modules/github-repository"
   name               = "log"
   description        = "Go logging done right (well, you know...)"
-  default_branch     = "master"
   protected_branches = ["master"]
   topics             = ["go", "golang", "log", "logging"]
 }

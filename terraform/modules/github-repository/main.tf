@@ -12,6 +12,7 @@ resource "github_repository" "repo" {
   name = var.name
   description = var.description
   visibility = var.visibility
+  auto_init = true
   archived = var.archived
   homepage_url = var.homepage_url
   has_issues = var.has_issues
@@ -25,26 +26,12 @@ resource "github_repository" "repo" {
   archive_on_destroy = true
   topics = var.topics
   lifecycle {
-    prevent_destroy = true
+    prevent_destroy = false
   }
-}
-
-resource "github_branch" "default" {
-  provider = github
-  repository = github_repository.repo.name
-  branch = var.default_branch
-  lifecycle {
-    prevent_destroy = true
-  }
-}
-
-resource "github_branch_default" "default" {
-  provider = github
-  repository = github_repository.repo.name
-  branch = github_branch.default.branch
 }
 
 resource "github_branch_protection" "default" {
+  depends_on = [github_repository.repo]
   provider = github
   for_each = var.protected_branches
   repository_id = github_repository.repo.name
@@ -56,4 +43,7 @@ resource "github_branch_protection" "default" {
   }
   allows_deletions = false
   allows_force_pushes = false
+  lifecycle {
+    prevent_destroy = false
+  }
 }

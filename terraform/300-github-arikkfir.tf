@@ -15,7 +15,6 @@ module "github-arikkfir-Apache-Felix-IntelliJ-Plugin-repository" {
   source             = "./modules/github-repository"
   name               = "Apache-Felix-IntelliJ-Plugin"
   description        = "An IntelliJ plugin to integrate Apache Felix"
-  default_branch     = "master"
   homepage_url       = "http://plugins.intellij.net/plugin/?idea&id=5910"
   protected_branches = ["master"]
   archived           = false
@@ -51,8 +50,7 @@ module "github-arikkfir-deployster-repository" {
   source             = "./modules/github-repository"
   name               = "deployster"
   description        = "An opinionated declarative deployment tool, extensible to virtually any deployment topology."
-  default_branch     = "master"
-  protected_branches = []
+  protected_branches = ["master"]
   archived           = true
   topics             = []
 }
@@ -64,9 +62,8 @@ module "github-arikkfir-develobot-repository" {
   source             = "./modules/github-repository"
   name               = "develobot"
   description        = "An opinionated DevOps bot intended to simplify development & collaboration in modern-day development teams."
-  default_branch     = "master"
   homepage_url       = "https://github.com/apps/develobot"
-  protected_branches = []
+  protected_branches = ["master"]
   archived           = true
   topics             = []
 }
@@ -78,10 +75,20 @@ module "github-arikkfir-develobot-console-repository" {
   source             = "./modules/github-repository"
   name               = "develobot-console"
   description        = "Web console for Develobot."
-  default_branch     = "master"
-  protected_branches = []
+  protected_branches = ["master"]
   archived           = true
   topics             = []
+}
+
+module "github-arikkfir-github-webhook-repository" {
+  providers          = {
+    github = github.arikkfir
+  }
+  source             = "./modules/github-repository"
+  name               = "github-webhook"
+  description        = "GitHub Webhooks Cloud Function"
+  protected_branches = ["main"]
+  topics             = ["github", "webhook", "gcp", "cloud-function"]
 }
 
 module "github-arikkfir-infrastructure-repository" {
@@ -102,8 +109,7 @@ module "github-arikkfir-mosaic-repository" {
   source             = "./modules/github-repository"
   name               = "mosaic"
   description        = "An end-to-end web framework based on modularity and consistency."
-  default_branch     = "master"
-  protected_branches = []
+  protected_branches = ["master"]
   archived           = true
   topics             = []
 }
@@ -115,7 +121,6 @@ module "github-arikkfir-msvc-repository" {
   source             = "./modules/github-repository"
   name               = "msvc"
   description        = "Micro services framework for Golang"
-  default_branch     = "master"
   protected_branches = ["master"]
   topics             = []
 }
@@ -139,7 +144,6 @@ module "github-arikkfir-unbotify-engineering-hometask-repository" {
   source             = "./modules/github-repository"
   name               = "unbotify-engineering-hometask"
   description        = ""
-  default_branch     = "master"
   protected_branches = ["master"]
   topics             = []
 }
