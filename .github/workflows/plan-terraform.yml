@@ -1,4 +1,4 @@
-name: Apply Terraform
+name: Plan Terraform
 on:
   push:
     branches-ignore: [main]
