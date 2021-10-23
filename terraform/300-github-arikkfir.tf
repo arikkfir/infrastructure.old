@@ -80,17 +80,6 @@ module "github-arikkfir-develobot-console-repository" {
   topics             = []
 }
 
-module "github-arikkfir-github-webhook-repository" {
-  providers          = {
-    github = github.arikkfir
-  }
-  source             = "./modules/github-repository"
-  name               = "github-webhook"
-  description        = "GitHub Webhooks Cloud Function"
-  protected_branches = ["main"]
-  topics             = ["github", "webhook", "gcp", "cloud-function"]
-}
-
 module "github-arikkfir-infrastructure-repository" {
   providers          = {
     github = github.arikkfir
