@@ -1,0 +1,44 @@
+name: Apply Terraform
+on:
+  push:
+    branches-ignore: [main]
+    paths:
+      - .github/workflows/plan-terraform.yml
+      - terraform/**
+  workflow_dispatch:
+concurrency:
+  cancel-in-progress: false
+  group: terraform
+defaults:
+  run:
+    shell: bash -exu {0}
+env:
+  GCP_PROJECT: arikkfir
+  GCP_REGION: europe-west3
+  GCP_ZONE: europe-west3-a
+jobs:
+  terraform:
+    runs-on: [self-hosted]
+    container: gcr.io/google.com/cloudsdktool/cloud-sdk:356.0.0-slim
+    timeout-minutes: 60
+    steps:
+      - name: Setup dependencies
+        run: apt install -y unzip
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.4
+          terraform_wrapper: false
+      - name: Plan
+        run: |-
+          terraform init -input=false
+          terraform validate
+          terraform plan -input=false -lock-timeout=180s
+        env:
+          GITHUB_TOKEN: ${{ secrets.RUNNER_TOKEN }}
+          TF_VAR_gcp_project: ${{ env.GCP_PROJECT }}
+          TF_VAR_gcp_region: ${{ env.GCP_REGION }}
+          TF_VAR_gcp_zone: ${{ env.GCP_ZONE }}
+        working-directory: ./terraform
