@@ -37,6 +37,7 @@ jobs:
           #terraform apply -input=false -lock-timeout=180s -auto-approve
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
+          GOOGLE_APPLICATION_CREDENTIALS: ../gcloud_google_credentials
           TF_VAR_gcp_project: ${{ secrets.GCP_PROJECT_ID }}
           TF_VAR_gcp_region: ${{ env.GCP_REGION }}
           TF_VAR_gcp_zone: ${{ env.GCP_ZONE }}
