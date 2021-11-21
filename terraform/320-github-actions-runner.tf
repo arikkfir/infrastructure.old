@@ -114,7 +114,7 @@ resource "google_compute_instance_group_manager" "github-actions-runners" {
   zone = var.gcp_zone
   description = "GitHub Actions runners."
   project = google_project.project.name
-  target_size = 1
+  target_size = 0
 
   # TODO: consider health check for the GitHub runners
   //  auto_healing_policies {
