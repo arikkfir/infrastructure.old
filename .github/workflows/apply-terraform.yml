@@ -13,32 +13,34 @@ defaults:
   run:
     shell: bash -exu {0}
 env:
-  GCP_PROJECT: arikkfir
   GCP_REGION: europe-west3
   GCP_ZONE: europe-west3-a
 jobs:
   terraform:
-    runs-on: [self-hosted]
-    container: gcr.io/google.com/cloudsdktool/cloud-sdk:356.0.0-slim
+    runs-on: ubuntu-20.04
     timeout-minutes: 60
     steps:
-      - name: Setup dependencies
-        run: apt install -y unzip
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v1
+      - uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+          credentials_file_path: gcloud_google_credentials
+      - uses: actions/checkout@v2
+      - uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 1.0.4
           terraform_wrapper: false
-      - name: Apply
-        run: |-
-          terraform init -input=false
-          terraform validate
-          terraform apply -input=false -lock-timeout=180s -auto-approve
-        env:
-          GITHUB_TOKEN: ${{ secrets.RUNNER_TOKEN }}
-          TF_VAR_gcp_project: ${{ env.GCP_PROJECT }}
-          TF_VAR_gcp_region: ${{ env.GCP_REGION }}
-          TF_VAR_gcp_zone: ${{ env.GCP_ZONE }}
-        working-directory: ./terraform
+      # - name: Setup dependencies
+      #   run: apt install -y unzip
+      # - name: Apply
+      #   run: |-
+      #     terraform init -input=false
+      #     terraform validate
+      #     terraform apply -input=false -lock-timeout=180s -auto-approve
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.RUNNER_TOKEN }}
+      #     TF_VAR_gcp_project: ${{ env.GCP_PROJECT }}
+      #     TF_VAR_gcp_region: ${{ env.GCP_REGION }}
+      #     TF_VAR_gcp_zone: ${{ env.GCP_ZONE }}
+      #   working-directory: ./terraform
