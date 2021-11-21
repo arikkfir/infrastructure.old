@@ -32,8 +32,13 @@ jobs:
           terraform_version: 1.0.4
           terraform_wrapper: false
       - run: |-
-          terraform init -input=false
-          terraform validate
+          echo "================"
+          ls -la
+          echo "================"
+          ls -la ..
+          echo "================"
+          #terraform init -input=false
+          #terraform validate
           #terraform apply -input=false -lock-timeout=180s -auto-approve
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
