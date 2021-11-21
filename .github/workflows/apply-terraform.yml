@@ -20,25 +20,20 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 60
     steps:
+      - uses: actions/checkout@v2
       - uses: google-github-actions/setup-gcloud@master
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.GCP_SA_KEY }}
           export_default_credentials: true
           credentials_file_path: gcloud_google_credentials
-      - uses: actions/checkout@v2
       - uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 1.0.4
           terraform_wrapper: false
       - run: |-
-          echo "================"
-          ls -la
-          echo "================"
-          ls -la ..
-          echo "================"
-          #terraform init -input=false
-          #terraform validate
+          terraform init -input=false
+          terraform validate
           #terraform apply -input=false -lock-timeout=180s -auto-approve
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
