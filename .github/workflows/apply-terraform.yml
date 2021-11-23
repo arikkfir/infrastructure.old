@@ -11,7 +11,7 @@ concurrency:
   group: terraform
 defaults:
   run:
-    shell: bash -exu {0}
+    shell: bash -eu {0}
 env:
   GCP_REGION: europe-west3
   GCP_ZONE: europe-west3-a

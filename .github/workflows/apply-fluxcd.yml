@@ -11,24 +11,25 @@ concurrency:
   group: fluxcd
 defaults:
   run:
-    shell: bash -exu {0}
+    shell: bash -eu {0}
 env:
+  GCP_REGION: europe-west3
   GCP_ZONE: europe-west3-a
 jobs:
   fluxcd:
-    runs-on: [self-hosted]
-    container: gcr.io/google.com/cloudsdktool/cloud-sdk:356.0.0-slim
+    runs-on: ubuntu-20.04
     timeout-minutes: 60
     steps:
-      - name: Setup dependencies
-        run: |-
-          apt install -y kubectl
-          curl -sL "https://github.com/fluxcd/flux2/releases/download/v0.17.2/flux_0.17.2_linux_amd64.tar.gz" | tar xzf - -C /usr/local/bin
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Apply
-        run: |-
-          gcloud container clusters get-credentials --zone=${GCP_ZONE} production
+      - uses: actions/checkout@v2
+      - uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+          credentials_file_path: gcloud_google_credentials
+      - run: gcloud container clusters get-credentials --zone=${GCP_ZONE} production
+      - run: curl -sL "https://github.com/fluxcd/flux2/releases/download/v0.17.2/flux_0.17.2_linux_amd64.tar.gz" | tar xzf - -C /usr/local/bin
+      - run: |-
           flux bootstrap github --author-email=arik+flux@kfirs.com \
             --author-name=FluxCD \
             --branch=${GITHUB_REF#refs/heads/} \
@@ -42,5 +43,4 @@ jobs:
             --repository=${GITHUB_REPOSITORY#arikkfir/} \
             --timeout=15m
         env:
-          GITHUB_TOKEN: ${{ secrets.RUNNER_TOKEN }}
-        working-directory: ./kubernetes
+          GITHUB_TOKEN: ${{ secrets.PAT }}
