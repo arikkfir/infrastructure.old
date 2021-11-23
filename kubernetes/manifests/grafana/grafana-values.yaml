@@ -1,10 +1,10 @@
 resources:
   limits:
-    cpu: 500m
-    memory: 512Mi
+    cpu: 100m
+    memory: 128Mi
   requests:
-    cpu: 500m
-    memory: 512Mi
+    cpu: 200m
+    memory: 256Mi
 
 serviceAccount:
   name: grafana
