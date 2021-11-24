@@ -24,7 +24,7 @@ service:
   enabled: true
   type: LoadBalancer
   spec:
-    loadBalancerIP: 34.107.47.99
+    loadBalancerIP: 34.141.22.31
     externalTrafficPolicy: Local
   loadBalancerSourceRanges: [217.132.0.0/16]
 ingressRoute:
