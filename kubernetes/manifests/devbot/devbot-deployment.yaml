@@ -60,7 +60,7 @@ spec:
         - --http-address=:8080
         - --log-caller-info
         - --http-log-response-body
-        image: europe-docker.pkg.dev/arikkfir/public/devbot/api:202a8fb@sha256:4809713dae99ab73ab29495b8bdce1ada5cd7197b5eaba38421b972c4b02b769
+        image: europe-docker.pkg.dev/arikkfir/public/devbot/api:2c1ecc2@sha256:fcb94d0ccfaaeb4fb2eb3064b3571cfbd167e2dc44766b89d95d4d7414fadf42
         name: api
         ports:
         - containerPort: 8080
@@ -105,7 +105,7 @@ spec:
       - env:
         - name: PORT
           value: "80"
-        image: europe-docker.pkg.dev/arikkfir/public/devbot/portal:202a8fb@sha256:e531325e50f933f7233afb39caaefdd0d91d6e202e9c0b92f3cf555991c10619
+        image: europe-docker.pkg.dev/arikkfir/public/devbot/portal:2c1ecc2@sha256:321a8f6489c958cc7c99efa53572ec32153326b85fada2420ef69954dfc69279
         name: portal
         ports:
         - containerPort: 80
