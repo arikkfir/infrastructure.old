@@ -12,7 +12,7 @@ patches:
   patch: |-
     - op: replace
       path: /spec/template/spec/containers/0/resources/limits/cpu
-      value: 100m
+      value: 300m
     - op: replace
       path: /spec/template/spec/containers/0/resources/limits/memory
       value: 128Mi
@@ -24,7 +24,7 @@ patches:
   patch: |-
     - op: replace
       path: /spec/template/spec/containers/0/resources/limits/cpu
-      value: 100m
+      value: 300m
     - op: replace
       path: /spec/template/spec/containers/0/resources/limits/memory
       value: 128Mi
@@ -36,7 +36,7 @@ patches:
   patch: |-
     - op: replace
       path: /spec/template/spec/containers/0/resources/limits/cpu
-      value: 100m
+      value: 300m
     - op: replace
       path: /spec/template/spec/containers/0/resources/limits/memory
       value: 128Mi
@@ -48,7 +48,7 @@ patches:
   patch: |-
     - op: replace
       path: /spec/template/spec/containers/0/resources/limits/cpu
-      value: 100m
+      value: 3˝00m
     - op: replace
       path: /spec/template/spec/containers/0/resources/limits/memory
       value: 128Mi
