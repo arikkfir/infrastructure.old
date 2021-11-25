@@ -48,7 +48,7 @@ patches:
   patch: |-
     - op: replace
       path: /spec/template/spec/containers/0/resources/limits/cpu
-      value: 3˝00m
+      value: 300m
     - op: replace
       path: /spec/template/spec/containers/0/resources/limits/memory
       value: 128Mi
