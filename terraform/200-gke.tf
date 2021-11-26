@@ -63,34 +63,19 @@ resource "google_service_account_iam_member" "config_connector_workload_identity
 }
 
 resource "google_container_cluster" "production" {
+  provider = google-beta
   depends_on = [
     google_compute_subnetwork.gke_subnet
   ]
 
-  project = google_project.project.project_id
-  provider = google-beta
   name = "production"
+  description = "Production cluster."
   location = var.gcp_zone
+  project = google_project.project.project_id
 
-  # Get upgrades faster
   release_channel {
     channel = "RAPID"
   }
-
-  # These two settings together are required as they are, to use standalone node-pool resources
-  # DO NOT CHANGE.
-  initial_node_count = 1
-  remove_default_node_pool = true
-
-  # Security
-  authenticator_groups_config {
-    security_group = "gke-security-groups@kfirfamily.com"
-  }
-  workload_identity_config {
-    identity_namespace = "${google_project.project.project_id}.svc.id.goog"
-  }
-
-  # Addons
   addons_config {
     horizontal_pod_autoscaling {
       disabled = false
@@ -121,13 +106,50 @@ resource "google_container_cluster" "production" {
     }
   }
 
+  # Scaling
+  enable_autopilot = false
+  initial_node_count = 1  # this and "remove_default_node_pool" must be set as they are, since we're using custom node pools
+  remove_default_node_pool = true # this and "initial_node_count" must be set as they are, since we're using custom node pools
+  cluster_autoscaling {
+    enabled = false
+  }
+
+  # Security
+  authenticator_groups_config {
+    security_group = "gke-security-groups@kfirfamily.com"
+  }
+  workload_identity_config {
+    workload_pool = "${google_project.project.project_id}.svc.id.goog"
+  }
+
   # Networking
   network = google_compute_network.gke.self_link
-  subnetwork = google_compute_subnetwork.gke_subnet.self_link
   networking_mode = "VPC_NATIVE"
+  enable_intranode_visibility = true
+  subnetwork = google_compute_subnetwork.gke_subnet.self_link
   ip_allocation_policy {
     cluster_secondary_range_name = "gke-production-pods"
     services_secondary_range_name = "gke-production-services"
+  }
+
+  # Operations
+  logging_service = "logging.googleapis.com/kubernetes"
+  logging_config {
+    enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
+  }
+  maintenance_policy {
+    recurring_window {
+      start_time = "2021-12-01T04:00:00+2"
+      end_time = "2021-12-01T08:00:00+2"
+      recurrence = "FREQ=WEEKLY"
+    }
+  }
+  monitoring_service = "monitoring.googleapis.com/kubernetes"
+  monitoring_config {
+    enable_components = [ "SYSTEM_COMPONENTS", "WORKLOADS" ]
+  }
+  cluster_telemetry {
+    type = "ENABLED"
   }
 }
 
