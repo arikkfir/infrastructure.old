@@ -142,8 +142,8 @@ resource "google_container_cluster" "production" {
   }
   maintenance_policy {
     recurring_window {
-      start_time = "2021-12-01T04:00:00+2"
-      end_time = "2021-12-01T08:00:00+2"
+      start_time = "2021-12-01T02:00:00Z"
+      end_time = "2021-12-01T06:00:00Z"
       recurrence = "FREQ=WEEKLY"
     }
   }
