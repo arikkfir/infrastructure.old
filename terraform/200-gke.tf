@@ -107,7 +107,6 @@ resource "google_container_cluster" "production" {
   }
 
   # Scaling
-  enable_autopilot = false
   initial_node_count = 1  # this and "remove_default_node_pool" must be set as they are, since we're using custom node pools
   remove_default_node_pool = true # this and "initial_node_count" must be set as they are, since we're using custom node pools
   cluster_autoscaling {
@@ -137,19 +136,16 @@ resource "google_container_cluster" "production" {
   logging_config {
     enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
   }
+  monitoring_service = "monitoring.googleapis.com/kubernetes"
+  monitoring_config {
+    enable_components = [ "SYSTEM_COMPONENTS", "WORKLOADS" ]
+  }
   maintenance_policy {
     recurring_window {
       start_time = "2021-12-01T04:00:00+2"
       end_time = "2021-12-01T08:00:00+2"
       recurrence = "FREQ=WEEKLY"
     }
-  }
-  monitoring_service = "monitoring.googleapis.com/kubernetes"
-  monitoring_config {
-    enable_components = [ "SYSTEM_COMPONENTS", "WORKLOADS" ]
-  }
-  cluster_telemetry {
-    type = "ENABLED"
   }
 }
 
