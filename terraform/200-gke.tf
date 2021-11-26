@@ -6,6 +6,7 @@ resource "google_compute_network" "gke" {
   name = "gke"
   description = "GKE VPC"
   auto_create_subnetworks = false
+  delete_default_routes_on_create = true
 }
 
 resource "google_compute_subnetwork" "gke_subnet" {
@@ -91,8 +92,29 @@ resource "google_container_cluster" "production" {
 
   # Addons
   addons_config {
+    horizontal_pod_autoscaling {
+      disabled = false
+    }
     http_load_balancing {
       disabled = true
+    }
+    network_policy_config {
+      disabled = true
+    }
+    cloudrun_config {
+      disabled = true
+    }
+    istio_config {
+      disabled = true
+    }
+    dns_cache_config {
+      enabled = false
+    }
+    gce_persistent_disk_csi_driver_config {
+      enabled = false
+    }
+    kalm_config {
+      enabled = false
     }
     config_connector_config {
       enabled = true
@@ -109,15 +131,14 @@ resource "google_container_cluster" "production" {
   }
 }
 
-resource "google_container_node_pool" "n2-standard-2" {
+resource "google_container_node_pool" "core-n2-standard-2" {
   project = google_container_cluster.production.project
   cluster = google_container_cluster.production.name
-  name = "n2-standard-2"
+  name = "core-n2-standard-2"
   location = var.gcp_zone
-  initial_node_count = 1
   autoscaling {
     min_node_count = 0
-    max_node_count = 8
+    max_node_count = 3
   }
   management {
     auto_repair = true
@@ -125,9 +146,8 @@ resource "google_container_node_pool" "n2-standard-2" {
   }
   node_config {
     machine_type = "n2-standard-2"
-    preemptible = true
+    preemptible = false
     disk_size_gb = 100
-    disk_type = "pd-standard"
     service_account = google_service_account.kubernetes.email
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
@@ -135,32 +155,33 @@ resource "google_container_node_pool" "n2-standard-2" {
     workload_metadata_config {
       node_metadata = "GKE_METADATA_SERVER"
     }
+    labels = {
+      "role" = "core"
+    }
   }
   upgrade_settings {
-    max_surge = 1
+    max_surge = 3
     max_unavailable = 0
   }
 }
 
-resource "google_container_node_pool" "n2-standard-4" {
+resource "google_container_node_pool" "work-n2-custom-4-4096-pe" {
   project = google_container_cluster.production.project
   cluster = google_container_cluster.production.name
-  name = "n2-standard-4"
+  name = "work-n2-custom-4-4096-pe"
   location = var.gcp_zone
-  initial_node_count = 1
   autoscaling {
     min_node_count = 0
-    max_node_count = 8
+    max_node_count = 3
   }
   management {
     auto_repair = true
     auto_upgrade = true
   }
   node_config {
-    machine_type = "n2-standard-4"
+    machine_type = "n2-custom-4-4096-pe"
     preemptible = true
     disk_size_gb = 100
-    disk_type = "pd-standard"
     service_account = google_service_account.kubernetes.email
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
@@ -168,9 +189,17 @@ resource "google_container_node_pool" "n2-standard-4" {
     workload_metadata_config {
       node_metadata = "GKE_METADATA_SERVER"
     }
+    labels = {
+      "role" = "work"
+    }
+    taint = [ {
+      effect = "NO_EXECUTE"
+      key = "role"
+      value = "work"
+    } ]
   }
   upgrade_settings {
-    max_surge = 1
+    max_surge = 3
     max_unavailable = 0
   }
 }
