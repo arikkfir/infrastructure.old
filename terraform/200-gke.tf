@@ -171,7 +171,7 @@ resource "google_container_node_pool" "core-n2-standard-2" {
       "https://www.googleapis.com/auth/cloud-platform"
     ]
     workload_metadata_config {
-      mode = "GKE_METADATA_SERVER"
+      mode = "GKE_METADATA"
     }
     labels = {
       "role" = "core"
@@ -205,7 +205,7 @@ resource "google_container_node_pool" "work-n2-custom-4-4096-pe" {
       "https://www.googleapis.com/auth/cloud-platform"
     ]
     workload_metadata_config {
-      mode = "GKE_METADATA_SERVER"
+      mode = "GKE_METADATA"
     }
     labels = {
       "role" = "work"
