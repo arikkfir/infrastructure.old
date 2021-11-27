@@ -132,11 +132,9 @@ resource "google_container_cluster" "production" {
   }
 
   # Operations
-  logging_service = "logging.googleapis.com/kubernetes"
   logging_config {
     enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
   }
-  monitoring_service = "monitoring.googleapis.com/kubernetes"
   monitoring_config {
     enable_components = [ "SYSTEM_COMPONENTS", "WORKLOADS" ]
   }
