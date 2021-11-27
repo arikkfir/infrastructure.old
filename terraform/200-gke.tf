@@ -188,7 +188,7 @@ resource "google_container_node_pool" "work-n2-custom-4-4096-pe" {
     auto_upgrade = true
   }
   node_config {
-    machine_type = "n2-custom-4-4096-pe"
+    machine_type = "n2-custom-4-4096"
     preemptible = true
     disk_size_gb = 100
     service_account = google_service_account.kubernetes.email
