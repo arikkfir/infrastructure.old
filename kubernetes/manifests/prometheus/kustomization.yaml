@@ -3,9 +3,8 @@ kind: Kustomization
 namespace: prometheus
 resources:
   - namespace.yaml
-  - helm-kube-state-metrics-repository.yaml
-  - helm-prometheus-community-repository.yaml
-  - helm-prometheus-release.yaml
+  - helm-repositories.yaml
+  - helm-releases.yaml
   - prometheus-ingress.yaml
   - alertmanager-ingress.yaml
 configMapGenerator:

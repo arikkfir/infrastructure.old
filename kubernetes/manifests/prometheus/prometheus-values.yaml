@@ -1,7 +1,33 @@
+serviceAccounts:
+  alertmanager:
+    annotations:
+      iam.gke.io/gcp-service-account: prometheus@arikkfir.iam.gserviceaccount.com
+  nodeExporter:
+    annotations:
+      iam.gke.io/gcp-service-account: prometheus@arikkfir.iam.gserviceaccount.com
+  pushgateway:
+    annotations:
+      iam.gke.io/gcp-service-account: prometheus@arikkfir.iam.gserviceaccount.com
+  server:
+    annotations:
+      iam.gke.io/gcp-service-account: prometheus@arikkfir.iam.gserviceaccount.com
+
 alertmanager:
   enabled: true
+  baseURL: "https://alertmanager.kfirs.com"
+  tolerations:
+  - key: kfirs.com/workload-nodes
+    operator: Exists
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kfirs.com/workload-nodes
+            operator: Exists
   persistentVolume:
     enabled: true
+    size: 2Gi
   resources:
     limits:
       cpu: 10m
@@ -24,6 +50,9 @@ kube-state-metrics:
 
 nodeExporter:
   enabled: true
+  tolerations:
+  - key: kfirs.com/workload-nodes
+    operator: Exists
   resources:
     limits:
       cpu: 200m
@@ -34,20 +63,50 @@ nodeExporter:
 
 server:
   enabled: true
-  name: server
+  baseURL: "https://prometheus.kfirs.com"
+  extraFlags:
+    - web.enable-lifecycle
+    - web.enable-admin-api
+    - storage.tsdb.wal-compression
+  global:
+    scrape_interval: 1m     # How frequently to scrape targets by default
+    scrape_timeout: 10s     # How long until a scrape request times out
+    evaluation_interval: 1m # How frequently to evaluate rules
+  tolerations:
+  - key: kfirs.com/workload-nodes
+    operator: Exists
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kfirs.com/workload-nodes
+            operator: Exists
   persistentVolume:
     enabled: true
+    size: 8Gi
+  alertmanagers: []
   resources:
     limits:
-      cpu: 1
-      memory: 1.5Gi
+      cpu: 500m
+      memory: 500Mi
     requests:
-      cpu: 1
-      memory: 1.5Gi
+      cpu: 500m
+      memory: 500Mi
   retention: 7d
 
 pushgateway:
   enabled: true
+  tolerations:
+  - key: kfirs.com/workload-nodes
+    operator: Exists
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kfirs.com/workload-nodes
+            operator: Exists
   resources:
     limits:
       cpu: 10m
@@ -57,3 +116,4 @@ pushgateway:
        memory: 32Mi
   persistentVolume:
     enabled: true
+    size: 2Gi

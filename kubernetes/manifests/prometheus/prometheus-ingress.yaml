@@ -1,7 +1,7 @@
 apiVersion: dns.cnrm.cloud.google.com/v1beta1
 kind: DNSRecordSet
 metadata:
-  name: prometheus-kfirs-com
+  name: prometheus-kfirs-com-cname
 spec:
   name: prometheus.kfirs.com.
   type: "CNAME"
