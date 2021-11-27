@@ -3,4 +3,3 @@ kind: Kustomization
 namespace: kube-system
 resources:
   - https://raw.githubusercontent.com/GoogleCloudPlatform/secrets-store-csi-driver-provider-gcp/main/deploy/provider-gcp-plugin.yaml
-  - gcp-service-account.yaml
