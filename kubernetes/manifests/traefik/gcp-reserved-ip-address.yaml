@@ -11,4 +11,4 @@ spec:
   addressType: EXTERNAL
   description: GKE Ingress
   ipVersion: IPV4
-  location: europe-west3 # TODO: this should be derived from workflow env
+  location: europe-west3

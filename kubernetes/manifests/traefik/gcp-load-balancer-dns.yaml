@@ -3,7 +3,7 @@ kind: DNSRecordSet
 metadata:
   annotations:
     cnrm.cloud.google.com/deletion-policy: abandon
-  name: a-traefik-kfirs-com
+  name: traefik-kfirs-com-a
 spec:
   name: traefik.kfirs.com.
   type: "A"
