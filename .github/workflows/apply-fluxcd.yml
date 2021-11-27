@@ -28,19 +28,20 @@ jobs:
           export_default_credentials: true
           credentials_file_path: gcloud_google_credentials
       - run: gcloud container clusters get-credentials --zone=${GCP_ZONE} production
-      - run: curl -sL "https://github.com/fluxcd/flux2/releases/download/v0.17.2/flux_0.17.2_linux_amd64.tar.gz" | tar xzf - -C /usr/local/bin
-      - run: |-
-          flux bootstrap github --author-email=arik+flux@kfirs.com \
-            --author-name=FluxCD \
-            --branch=${GITHUB_REF#refs/heads/} \
-            --commit-message-appendix="[skip ci]" \
-            --interval=10m0s \
-            --namespace=flux-system \
-            --owner=arikkfir \
-            --path=kubernetes/cluster \
-            --personal \
-            --reconcile \
-            --repository=${GITHUB_REPOSITORY#arikkfir/} \
-            --timeout=15m
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
+      # - run: curl -sL "https://github.com/fluxcd/flux2/releases/download/v0.17.2/flux_0.17.2_linux_amd64.tar.gz" | tar xzf - -C /usr/local/bin
+      - run: curl -s https://fluxcd.io/install.sh | bash
+      # - run: |-
+      #     flux bootstrap github --author-email=arik+flux@kfirs.com \
+      #       --author-name=FluxCD \
+      #       --branch=${GITHUB_REF#refs/heads/} \
+      #       --commit-message-appendix="[skip ci]" \
+      #       --interval=5m0s \
+      #       --namespace=flux-system \
+      #       --owner=arikkfir \
+      #       --path=kubernetes/cluster \
+      #       --personal \
+      #       --reconcile \
+      #       --repository=${GITHUB_REPOSITORY#arikkfir/} \
+      #       --timeout=15m
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.PAT }}
