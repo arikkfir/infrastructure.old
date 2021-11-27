@@ -111,6 +111,7 @@ resource "google_container_cluster" "production" {
   remove_default_node_pool = true # this and "initial_node_count" must be set as they are, since we're using custom node pools
   cluster_autoscaling {
     enabled = false
+    autoscaling_profile = "OPTIMIZE_UTILIZATION"
   }
 
   # Security
@@ -140,10 +141,10 @@ resource "google_container_cluster" "production" {
   }
 }
 
-resource "google_container_node_pool" "core-n2-standard-2" {
+resource "google_container_node_pool" "core-n2-custom-3-4096-pre" {
   project = google_container_cluster.production.project
   cluster = google_container_cluster.production.name
-  name = "core-n2-standard-2"
+  name = "core-n2-custom-3-4096-pre"
   location = var.gcp_zone
   autoscaling {
     min_node_count = 0
@@ -154,7 +155,7 @@ resource "google_container_node_pool" "core-n2-standard-2" {
     auto_upgrade = true
   }
   node_config {
-    machine_type = "n2-standard-2"
+    machine_type = "n2-custom-3-4096"
     preemptible = false
     disk_size_gb = 100
     service_account = google_service_account.kubernetes.email
@@ -174,10 +175,10 @@ resource "google_container_node_pool" "core-n2-standard-2" {
   }
 }
 
-resource "google_container_node_pool" "work-n2-custom-4-4096-pe" {
+resource "google_container_node_pool" "work-n2-custom-4-4096-pre" {
   project = google_container_cluster.production.project
   cluster = google_container_cluster.production.name
-  name = "work-n2-custom-4-4096-pe"
+  name = "work-n2-custom-4-4096-pre"
   location = var.gcp_zone
   autoscaling {
     min_node_count = 0
