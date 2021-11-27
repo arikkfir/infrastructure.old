@@ -3,6 +3,6 @@ kind: Kustomization
 namespace: cert-manager
 resources:
   - namespace.yaml
-  - helm-jetstack-repository.yaml
-  - helm-cert-manager-release.yaml
+  - helm-repositories.yaml
+  - helm-releases.yaml
   - gcp-service-account.yaml
