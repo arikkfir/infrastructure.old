@@ -5,8 +5,8 @@ resources:
   - namespace.yaml
   - gcp-reserved-ip-address.yaml
   - gcp-load-balancer-dns.yaml
-  - helm-traefik-repository.yaml
-  - helm-traefik-release.yaml
+  - helm-repositories.yaml
+  - helm-releases.yaml
 configMapGenerator:
   - name: traefik
     files:
