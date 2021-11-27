@@ -220,7 +220,7 @@ resource "google_container_node_pool" "work-n2-custom-4-4096-pre" {
       mode = "GKE_METADATA"
     }
     labels = {
-      "role" = "work"
+      "kfirs.com/workload-nodes" = "true"
     }
     taint = [ {
       effect = "NO_EXECUTE"
