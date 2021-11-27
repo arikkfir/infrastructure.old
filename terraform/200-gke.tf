@@ -224,8 +224,8 @@ resource "google_container_node_pool" "work-n2-custom-4-4096-pre" {
     }
     taint = [ {
       effect = "NO_EXECUTE"
-      key = "role"
-      value = "work"
+      key = "kfirs.com/workload-nodes"
+      value = "true"
     } ]
   }
   upgrade_settings {
