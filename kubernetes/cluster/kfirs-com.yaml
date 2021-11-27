@@ -2,9 +2,8 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1beta1
 kind: Kustomization
 metadata:
   name: kfirs-com
+  namespace: default
 spec:
-  dependsOn:
-    - name: cnrm-system
   interval: 5m
   sourceRef:
     kind: GitRepository
@@ -12,4 +11,3 @@ spec:
     namespace: flux-system
   path: ./kubernetes/manifests/kfirs-com
   prune: true
-  validation: client
