@@ -1,9 +1,9 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: traefik-dashboard
+  name: traefik-kfirs-com
 spec:
-  secretName: traefik-dashboard-tls
+  secretName: traefik-kfirs-com-tls
   issuerRef:
     kind: ClusterIssuer
     name: google-clouddns
@@ -41,4 +41,4 @@ spec:
         - kind: TraefikService
           name: api@internal
   tls:
-    secretName: traefik-dashboard-tls
+    secretName: traefik-kfirs-com-tls
