@@ -138,13 +138,6 @@ resource "google_container_cluster" "production" {
   monitoring_config {
     enable_components = [ "SYSTEM_COMPONENTS", "WORKLOADS" ]
   }
-  maintenance_policy {
-    recurring_window {
-      start_time = "2021-12-01T02:00:00Z"
-      end_time = "2021-12-01T06:00:00Z"
-      recurrence = "FREQ=WEEKLY"
-    }
-  }
 }
 
 resource "google_container_node_pool" "core-n2-standard-2" {
