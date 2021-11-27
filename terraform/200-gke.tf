@@ -6,7 +6,7 @@ resource "google_compute_network" "gke" {
   name = "gke"
   description = "GKE VPC"
   auto_create_subnetworks = false
-  delete_default_routes_on_create = true
+  delete_default_routes_on_create = false
 }
 
 resource "google_compute_subnetwork" "gke_subnet" {
