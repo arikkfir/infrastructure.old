@@ -4,10 +4,10 @@ namespace: grafana
 resources:
   - namespace.yaml
   - gcp-service-account.yaml
-  - helm-grafana-community.yaml
-  - helm-grafana-release.yaml
-  - grafana-ingress.yaml
+  - helm-repositories.yaml
+  - helm-releases.yaml
   - grafana-secret.yaml
+  - grafana-ingress.yaml
 configMapGenerator:
   - name: grafana
     files:

@@ -1,7 +1,7 @@
 apiVersion: dns.cnrm.cloud.google.com/v1beta1
 kind: DNSRecordSet
 metadata:
-  name: grafana-kfirs-com
+  name: grafana-kfirs-com-cname
 spec:
   name: grafana.kfirs.com.
   type: "CNAME"
