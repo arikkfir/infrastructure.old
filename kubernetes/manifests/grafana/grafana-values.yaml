@@ -28,7 +28,6 @@ affinity:
 persistence:
   type: pvc
   enabled: true
-  storageClassName: premium-rwo
   accessModes:
     - ReadWriteOnce
   size: 10Gi
