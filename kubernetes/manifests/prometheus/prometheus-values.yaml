@@ -89,10 +89,10 @@ server:
   resources:
     limits:
       cpu: 500m
-      memory: 500Mi
+      memory: 1.5Gi
     requests:
       cpu: 500m
-      memory: 500Mi
+      memory: 1.5Gi
   retention: 7d
 
 pushgateway:
