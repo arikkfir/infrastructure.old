@@ -36,15 +36,7 @@ persistence:
 adminUser: "$__file{/etc/secrets/grafana-admin-username}"
 adminPassword: "$__file{/etc/secrets/grafana-admin-password}"
 
-plugins: []
-
-datasources: {}
-
-notifiers: {}
-
-dashboardProviders: {}
-
-dashboards:
+datasources:
   datasources.yaml:
     apiVersion: 1
     datasources:
@@ -58,8 +50,6 @@ dashboards:
       access: proxy
       jsonData:
         authenticationType: gce
-
-dashboardsConfigMaps: {}
 
 grafana.ini:
   server:
