@@ -15,6 +15,8 @@ serviceAccounts:
 alertmanager:
   enabled: true
   baseURL: "https://alertmanager.kfirs.com"
+  strategy:
+    type: Recreate
   tolerations:
   - key: kfirs.com/workload-nodes
     operator: Exists
@@ -50,6 +52,8 @@ kube-state-metrics:
 
 nodeExporter:
   enabled: true
+  strategy:
+    type: Recreate
   tolerations:
   - key: kfirs.com/workload-nodes
     operator: Exists
@@ -68,6 +72,8 @@ server:
     - web.enable-lifecycle
     - web.enable-admin-api
     - storage.tsdb.wal-compression
+  strategy:
+    type: Recreate
   global:
     scrape_interval: 1m     # How frequently to scrape targets by default
     scrape_timeout: 10s     # How long until a scrape request times out
@@ -97,6 +103,8 @@ server:
 
 pushgateway:
   enabled: true
+  strategy:
+    type: Recreate
   tolerations:
   - key: kfirs.com/workload-nodes
     operator: Exists
