@@ -49,6 +49,26 @@ kubeStateMetrics:
 
 kube-state-metrics:
   enabled: true
+  serviceAccount:
+    annotations:
+      iam.gke.io/gcp-service-account: prometheus@arikkfir.iam.gserviceaccount.com
+  tolerations:
+  - key: kfirs.com/workload-nodes
+    operator: Exists
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kfirs.com/workload-nodes
+            operator: Exists
+  resources:
+    limits:
+      cpu: 50m
+      memory: 32Mi
+    requests:
+      cpu: 50m
+      memory: 32Mi
 
 nodeExporter:
   enabled: true
