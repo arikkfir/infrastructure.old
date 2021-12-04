@@ -6,3 +6,4 @@ resources:
   - helm-repositories.yaml
   - helm-releases.yaml
   - gcp-service-account.yaml
+  - pod-monitor.yaml
