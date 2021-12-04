@@ -57,36 +57,6 @@
         <option name="pathOrUrl" value="https://github.com/jetstack/cert-manager/raw/master/deploy/crds/crd-orders.yaml" />
       </SpecSource>
       <SpecSource>
-        <option name="pathOrUrl" value="https://github.com/solo-io/gloo/raw/master/install/helm/gloo/crds/gateway.solo.io_v1_Gateway.yaml" />
-      </SpecSource>
-      <SpecSource>
-        <option name="pathOrUrl" value="https://github.com/solo-io/gloo/raw/master/install/helm/gloo/crds/gateway.solo.io_v1_RouteOption.yaml" />
-      </SpecSource>
-      <SpecSource>
-        <option name="pathOrUrl" value="https://github.com/solo-io/gloo/raw/master/install/helm/gloo/crds/gateway.solo.io_v1_RouteTable.yaml" />
-      </SpecSource>
-      <SpecSource>
-        <option name="pathOrUrl" value="https://github.com/solo-io/gloo/raw/master/install/helm/gloo/crds/gateway.solo.io_v1_VirtualHostOption.yaml" />
-      </SpecSource>
-      <SpecSource>
-        <option name="pathOrUrl" value="https://github.com/solo-io/gloo/raw/master/install/helm/gloo/crds/gateway.solo.io_v1_VirtualService.yaml" />
-      </SpecSource>
-      <SpecSource>
-        <option name="pathOrUrl" value="https://github.com/solo-io/gloo/raw/master/install/helm/gloo/crds/gloo.solo.io_v1_Proxy.yaml" />
-      </SpecSource>
-      <SpecSource>
-        <option name="pathOrUrl" value="https://github.com/solo-io/gloo/raw/master/install/helm/gloo/crds/gloo.solo.io_v1_Settings.yaml" />
-      </SpecSource>
-      <SpecSource>
-        <option name="pathOrUrl" value="https://github.com/solo-io/gloo/raw/master/install/helm/gloo/crds/gloo.solo.io_v1_Upstream.yaml" />
-      </SpecSource>
-      <SpecSource>
-        <option name="pathOrUrl" value="https://github.com/solo-io/gloo/raw/master/install/helm/gloo/crds/gloo.solo.io_v1_UpstreamGroup.yaml" />
-      </SpecSource>
-      <SpecSource>
-        <option name="pathOrUrl" value="https://github.com/solo-io/gloo/raw/master/install/helm/gloo/crds/ratelimit_config.yaml" />
-      </SpecSource>
-      <SpecSource>
         <option name="pathOrUrl" value="https://github.com/traefik/traefik-helm-chart/raw/master/traefik/crds/ingressroute.yaml" />
       </SpecSource>
       <SpecSource>
@@ -117,22 +87,7 @@
         <option name="pathOrUrl" value="https://github.com/bitnami-labs/sealed-secrets/raw/main/helm/sealed-secrets/crds/sealedsecret-crd.yaml" />
       </SpecSource>
       <SpecSource>
-        <option name="pathOrUrl" value="https://github.com/actions-runner-controller/actions-runner-controller/raw/actions-runner-controller-0.13.0/charts/actions-runner-controller/crds/actions.summerwind.dev_horizontalrunnerautoscalers.yaml" />
-      </SpecSource>
-      <SpecSource>
-        <option name="pathOrUrl" value="https://github.com/actions-runner-controller/actions-runner-controller/raw/actions-runner-controller-0.13.0/charts/actions-runner-controller/crds/actions.summerwind.dev_runnerdeployments.yaml" />
-      </SpecSource>
-      <SpecSource>
-        <option name="pathOrUrl" value="https://github.com/actions-runner-controller/actions-runner-controller/raw/actions-runner-controller-0.13.0/charts/actions-runner-controller/crds/actions.summerwind.dev_runnerreplicasets.yaml" />
-      </SpecSource>
-      <SpecSource>
-        <option name="pathOrUrl" value="https://github.com/actions-runner-controller/actions-runner-controller/raw/actions-runner-controller-0.13.0/charts/actions-runner-controller/crds/actions.summerwind.dev_runners.yaml" />
-      </SpecSource>
-      <SpecSource>
-        <option name="pathOrUrl" value="https://github.com/actions-runner-controller/actions-runner-controller/raw/actions-runner-controller-0.13.0/charts/actions-runner-controller/crds/actions.summerwind.dev_runnersets.yaml" />
-      </SpecSource>
-      <SpecSource>
-        <option name="pathOrUrl" value="https://github.com/evryfs/helm-charts/raw/master/charts/github-actions-runner-operator/crds/garo.tietoevry.com_githubactionrunners.yaml" />
+        <option name="pathOrUrl" value="$PROJECT_DIR$/kubernetes/references/monitoring.gke.io/podmonitors.monitoring.gke.io.yaml" />
       </SpecSource>
     </specSources>
   </component>
