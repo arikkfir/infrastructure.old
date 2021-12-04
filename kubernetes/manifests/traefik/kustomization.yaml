@@ -7,6 +7,7 @@ resources:
   - gcp-load-balancer-dns.yaml
   - helm-repositories.yaml
   - helm-releases.yaml
+  - pod-monitor.yaml
 configMapGenerator:
   - name: traefik
     files:
