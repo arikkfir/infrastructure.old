@@ -1,7 +1,8 @@
-resource "google_container_node_pool" "core-n2-custom-4-6144-pre" {
+resource "google_container_node_pool" "core-n2-custom-4-7168-pre" {
+  provider = google-beta
   project = google_container_cluster.production.project
   cluster = google_container_cluster.production.name
-  name = "core-n2-custom-4-6144-pre"
+  name = "core-n2-custom-4-7168-pre"
   location = var.gcp_zone
 
   # Scaling
@@ -22,7 +23,7 @@ resource "google_container_node_pool" "core-n2-custom-4-6144-pre" {
     auto_upgrade = true
   }
   node_config {
-    machine_type = "n2-custom-4-6144"
+    machine_type = "n2-custom-4-7168"
     preemptible = true
     disk_size_gb = 100
     service_account = google_service_account.kubernetes.email
