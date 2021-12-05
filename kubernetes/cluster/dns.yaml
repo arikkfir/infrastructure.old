@@ -1,7 +1,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1beta1
 kind: Kustomization
 metadata:
-  name: kfirfamily-com
+  name: dns
   namespace: default
 spec:
   interval: 5m
@@ -9,5 +9,5 @@ spec:
     kind: GitRepository
     name: flux-system
     namespace: flux-system
-  path: ./kubernetes/manifests/kfirfamily-com
+  path: ./kubernetes/manifests/dns
   prune: true

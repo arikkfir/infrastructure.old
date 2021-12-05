@@ -1,9 +1,19 @@
 apiVersion: dns.cnrm.cloud.google.com/v1beta1
+kind: DNSManagedZone
+metadata:
+  annotations:
+    cnrm.cloud.google.com/deletion-policy: abandon
+  name: yellow-mint-com
+spec:
+  description: "yellow-mint.com DNS zone"
+  dnsName: "yellow-mint.com."
+---
+apiVersion: dns.cnrm.cloud.google.com/v1beta1
 kind: DNSRecordSet
 metadata:
   annotations:
     cnrm.cloud.google.com/deletion-policy: abandon
-  name: cname-www-yellow-mint-com
+  name: www-yellow-mint-com-cname
 spec:
   name: "www.yellow-mint.com."
   type: "CNAME"
@@ -18,7 +28,7 @@ kind: DNSRecordSet
 metadata:
   annotations:
     cnrm.cloud.google.com/deletion-policy: abandon
-  name: apex-yellow-mint-com
+  name: yellow-mint-com-a
 spec:
   name: "yellow-mint.com."
   type: "A"
@@ -33,7 +43,7 @@ kind: DNSRecordSet
 metadata:
   annotations:
     cnrm.cloud.google.com/deletion-policy: abandon
-  name: txt-yellow-mint-com
+  name: yellow-mint-com-txt
 spec:
   name: "yellow-mint.com."
   type: "TXT"
@@ -48,7 +58,7 @@ kind: DNSRecordSet
 metadata:
   annotations:
     cnrm.cloud.google.com/deletion-policy: abandon
-  name: mx-yellow-mint-com
+  name: yellow-mint-com-mx
 spec:
   name: "yellow-mint.com."
   type: "MX"

@@ -4,3 +4,16 @@ namespace: kube-system
 resources:
   - helm-repositories.yaml
   - helm-releases.yaml
+  - https://raw.githubusercontent.com/GoogleCloudPlatform/secrets-store-csi-driver-provider-gcp/main/deploy/provider-gcp-plugin.yaml
+patches:
+  - target:
+      group: apps
+      version: v1
+      kind: DaemonSet
+      labelSelector: app=csi-secrets-store-provider-gcp
+    patch: |-
+      - op: add
+        path: /spec/template/spec/tolerations
+        value:
+          - key: kfirs.com/workload-nodes
+            operator: Exists
