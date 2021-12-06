@@ -24,5 +24,6 @@ jobs:
         uses: google-github-actions/auth@v0.4.1
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
+      - run: gcloud info
       - run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
       - run: gcloud info
