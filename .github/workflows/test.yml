@@ -1,0 +1,26 @@
+name: Test
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/test.yml
+  workflow_dispatch:
+defaults:
+  run:
+    shell: bash -eu {0}
+env:
+  GCP_REGION: europe-west3
+  GCP_ZONE: europe-west3-a
+jobs:
+  terraform:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v2
+      - uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+      - uses: google-github-actions/auth@v0.4.1
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+      - run: gcloud info
