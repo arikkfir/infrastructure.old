@@ -1,14 +1,14 @@
-name: Apply Terraform
+name: Apply GCP Terraform
 on:
   push:
     branches: [main]
     paths:
-      - .github/workflows/apply-terraform.yml
-      - terraform/**
+      - .github/workflows/apply-terraform-gcp.yml
+      - terraform/gcp/**
   workflow_dispatch:
 concurrency:
   cancel-in-progress: false
-  group: terraform
+  group: terraform/gcp
 defaults:
   run:
     shell: bash -eu {0}
@@ -37,8 +37,8 @@ jobs:
           terraform apply -input=false -lock-timeout=180s -auto-approve
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
-          GOOGLE_APPLICATION_CREDENTIALS: ../gcloud_google_credentials
+          GOOGLE_APPLICATION_CREDENTIALS: ../../gcloud_google_credentials
           TF_VAR_gcp_project: ${{ secrets.GCP_PROJECT_ID }}
           TF_VAR_gcp_region: ${{ env.GCP_REGION }}
           TF_VAR_gcp_zone: ${{ env.GCP_ZONE }}
-        working-directory: ./terraform
+        working-directory: ./terraform/gcp

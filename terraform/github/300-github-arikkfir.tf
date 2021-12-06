@@ -88,6 +88,7 @@ module "github-arikkfir-infrastructure-repository" {
   name               = "infrastructure"
   description        = "Infrastructure-as-Code for my infrastructure."
   protected_branches = ["main"]
+  visibility         = "public"
   topics             = ["fluxcd", "infrastructure", "iac", "kubernetes", "kustomize", "terraform"]
 }
 
@@ -115,7 +116,7 @@ module "github-arikkfir-msvc-repository" {
 }
 
 module "github-arikkfir-syncer-repository" {
-  providers          = {
+  providers              = {
     github = github.arikkfir
   }
   source                 = "./modules/github-repository"

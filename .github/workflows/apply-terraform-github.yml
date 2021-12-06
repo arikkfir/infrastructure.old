@@ -1,0 +1,44 @@
+name: Apply GitHub Terraform
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/apply-terraform-github.yml
+      - terraform/github/**
+  workflow_dispatch:
+concurrency:
+  cancel-in-progress: false
+  group: terraform/github
+defaults:
+  run:
+    shell: bash -eu {0}
+env:
+  GCP_REGION: europe-west3
+  GCP_ZONE: europe-west3-a
+jobs:
+  terraform:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v2
+      - uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+          credentials_file_path: gcloud_google_credentials
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.11
+          terraform_wrapper: false
+      - run: |-
+          terraform init -input=false
+          terraform validate
+          terraform apply -input=false -lock-timeout=180s -auto-approve
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+          GOOGLE_APPLICATION_CREDENTIALS: ../../gcloud_google_credentials
+          TF_VAR_gcp_project: ${{ secrets.GCP_PROJECT_ID }}
+          TF_VAR_gcp_region: ${{ env.GCP_REGION }}
+          TF_VAR_gcp_zone: ${{ env.GCP_ZONE }}
+        working-directory: ./terraform/github
