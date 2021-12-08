@@ -24,11 +24,11 @@ jobs:
       - run: |-
           apt-get update && apt-get install -y curl python3 git ssh
           curl -sSL ${GCLOUD_SDK_URL} | tar xz -C /usr/local
-          /usr/local/google-cloud-sdk/install.sh \
-                --usage-reporting=false \
-                --path-update=true \
-                --quiet \
-                --additional-components kustomize kubectl skaffold
+          /usr/local/google-cloud-sdk/install.sh --quiet --additional-components kustomize kubectl skaffold
+          ln -s /usr/local/google-cloud-sdk/bin/bq \
+                /usr/local/google-cloud-sdk/bin/docker-credential-gcloud \
+                /usr/local/google-cloud-sdk/bin/gcloud \
+                /usr/local/google-cloud-sdk/bin/gsutil /usr/local/bin/
         env:
           DEBIAN_FRONTEND: noninteractive
       - uses: google-github-actions/auth@v0.4.0
