@@ -22,13 +22,15 @@ jobs:
       id-token: write
     steps:
       - run: |-
-          apt update && apt install -y curl python3 git ssh
+          apt-get update && apt-get install -y curl python3 git ssh
           curl -sSL ${GCLOUD_SDK_URL} | tar xz -C /usr/local
           /usr/local/google-cloud-sdk/install.sh \
                 --usage-reporting=false \
                 --path-update=true \
                 --quiet \
                 --additional-components kustomize kubectl skaffold
+        env:
+          DEBIAN_FRONTEND: noninteractive
       - uses: google-github-actions/auth@v0.4.0
         with:
           workload_identity_provider: projects/8909046976/locations/global/workloadIdentityPools/github-actions/providers/default
