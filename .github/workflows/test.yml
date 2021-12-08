@@ -24,7 +24,8 @@ jobs:
         uses: google-github-actions/auth@v0.4.1
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
-      - run: gcloud info
-      - run: gcloud container clusters list
-      - run: gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
-      - run: gcloud info
+      - uses: google-github-actions/get-gke-credentials@v0.3.0
+        with:
+          cluster_name: production
+          location: ${GCP_ZONE}
+      - run: kubectl get pods --all-namespaces
