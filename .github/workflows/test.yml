@@ -9,20 +9,21 @@ defaults:
   run:
     shell: bash -eu {0}
 env:
+  GCLOUD_SDK_URL: https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-366.0.0-linux-x86_64.tar.gz
   GCP_REGION: europe-west3
   GCP_ZONE: europe-west3-a
 jobs:
   terraform:
     runs-on: ubuntu-20.04
-    container: ubuntu:20.04
+    container: ubuntu:21.10
     timeout-minutes: 60
     permissions:
       contents: read
       id-token: write
     steps:
-      - uses: google-github-actions/setup-gcloud@v0.3.0
-        with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
+      - run: |-
+          apt update && apt install -y curl
+          curl -sSL ${GCLOUD_SDK_URL} | tar xz -C /usr/local
       - id: auth
         uses: google-github-actions/auth@v0.4.0
         with:
