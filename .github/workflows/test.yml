@@ -35,6 +35,7 @@ jobs:
 #          credentials_json: ${{ secrets.GCP_SA_KEY }}
       - uses: google-github-actions/get-gke-credentials@v0.3.0
         with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
           cluster_name: production
           location: ${{ env.GCP_ZONE }}
       - run: kubectl get pods --all-namespaces
