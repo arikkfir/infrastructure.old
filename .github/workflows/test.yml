@@ -14,12 +14,12 @@ env:
 jobs:
   terraform:
     runs-on: ubuntu-20.04
+    container: ubuntu:21.10
     timeout-minutes: 60
     permissions:
       contents: read
       id-token: write
     steps:
-#      - uses: actions/checkout@v2
       - uses: google-github-actions/setup-gcloud@master
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
@@ -29,10 +29,6 @@ jobs:
           token_format: access_token
           workload_identity_provider: projects/8909046976/locations/global/workloadIdentityPools/github-actions/providers/default
           service_account: infrastructure-github-actions@arikkfir.iam.gserviceaccount.com
-#      - id: auth
-#        uses: google-github-actions/auth@v0.4.1
-#        with:
-#          credentials_json: ${{ secrets.GCP_SA_KEY }}
       - name: Authenticate Google Cloud SDK
         run: |-
           gcloud container clusters get-credentials --zone=${GCP_ZONE} production
