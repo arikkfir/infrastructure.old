@@ -27,5 +27,5 @@ jobs:
       - uses: google-github-actions/get-gke-credentials@v0.3.0
         with:
           cluster_name: production
-          location: ${GCP_ZONE}
+          location: ${{ env.GCP_ZONE }}
       - run: kubectl get pods --all-namespaces
