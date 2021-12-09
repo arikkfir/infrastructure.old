@@ -19,26 +19,44 @@ env:
 jobs:
   sync:
     runs-on: ubuntu-20.04
+    container: ubuntu:21.10
+    permissions:
+      contents: read
+      id-token: write
     steps:
-      - uses: actions/checkout@v2
-      - run: curl -sSL -o /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.7.1/yq_linux_amd64 && chmod +x /usr/local/bin/yq
-      - run: curl -sSL -o /usr/local/bin/jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && chmod +x /usr/local/bin/jq
-      - uses: google-github-actions/setup-gcloud@master
+      - name: Install packages
+        run: |-
+          apt-get update && apt-get install -y curl python3
+          curl -sSL -o /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.7.1/yq_linux_amd64 && chmod +x /usr/local/bin/yq
+          curl -sSL -o /usr/local/bin/jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && chmod +x /usr/local/bin/jq
+      - name: Setup Google Cloud SDK
+        run: |-
+          curl -sSL https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-366.0.0-linux-x86_64.tar.gz | tar xz -C /usr/local
+          /usr/local/google-cloud-sdk/install.sh --quiet --additional-components kubectl
+          ln -s /usr/local/google-cloud-sdk/bin/gcloud /usr/local/google-cloud-sdk/bin/gsutil /usr/local/google-cloud-sdk/bin/kubectl /usr/local/bin/
+        env:
+          DEBIAN_FRONTEND: noninteractive
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v0.4.0
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-          export_default_credentials: true
-          credentials_file_path: gcloud_google_credentials
-      - run: gcloud container clusters get-credentials --zone=${GCP_ZONE} production
-      - run: |-
+          workload_identity_provider: projects/8909046976/locations/global/workloadIdentityPools/github-actions/providers/default
+          service_account: infrastructure-github-actions@arikkfir.iam.gserviceaccount.com
+      - name: Authenticate to GKE
+        run: gcloud container clusters get-credentials --zone=${GCP_ZONE} production
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Obtain GKE Ingress IP address
+        run: |-
           kubectl wait -n traefik --for=condition=Ready ComputeAddress/traefik-ingress --timeout=5m
           kubectl get -n traefik ComputeAddress/traefik-ingress -ojson | jq -r '.spec.address' > /tmp/ip-address
-      - run: |-
+      - name: Update manifests
+        run: |-
           yq eval -i ".service.spec.loadBalancerIP=\"$(cat /tmp/ip-address)\"" kubernetes/manifests/traefik/traefik-values.yaml
           yq eval -i ".service.loadBalancerSourceRanges=[\"217.132.0.0/16\"]" kubernetes/manifests/traefik/traefik-values.yaml
           yq eval -i ".spec.rrdatas=[\"$(cat /tmp/ip-address)\"]" kubernetes/manifests/traefik/gcp-load-balancer-dns.yaml
           yq eval -i ".spec.location=\"${GCP_REGION}\"" kubernetes/manifests/traefik/gcp-reserved-ip-address.yaml
-      - uses: EndBug/add-and-commit@v7
+      - name: Commit & push
+        uses: EndBug/add-and-commit@v7
         with:
           add: kubernetes
           author_name: github-actions
