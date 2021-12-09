@@ -28,7 +28,10 @@ jobs:
           ln -s /usr/local/google-cloud-sdk/bin/bq \
                 /usr/local/google-cloud-sdk/bin/docker-credential-gcloud \
                 /usr/local/google-cloud-sdk/bin/gcloud \
-                /usr/local/google-cloud-sdk/bin/gsutil /usr/local/bin/
+                /usr/local/google-cloud-sdk/bin/gsutil \
+                /usr/local/google-cloud-sdk/bin/kustomize \
+                /usr/local/google-cloud-sdk/bin/kubectl \
+                /usr/local/google-cloud-sdk/bin/skaffold /usr/local/bin/
         env:
           DEBIAN_FRONTEND: noninteractive
       - uses: google-github-actions/auth@v0.4.0
