@@ -38,15 +38,15 @@ resources:
     cpu: 300m
     memory: 150Mi
 tolerations:
-- key: kfirs.com/workload-nodes
-  operator: Exists
+  - key: kfirs.com/workload-nodes
+    operator: Exists
 affinity:
   nodeAffinity:
     requiredDuringSchedulingIgnoredDuringExecution:
       nodeSelectorTerms:
-      - matchExpressions:
-        - key: kfirs.com/workload-nodes
-          operator: Exists
+        - matchExpressions:
+            - key: kfirs.com/workload-nodes
+              operator: Exists
 pilot:
   enabled: true
   token: "691f82bf-1c33-4c2e-85c5-53f5f8ed7e33"
