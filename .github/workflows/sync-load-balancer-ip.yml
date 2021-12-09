@@ -28,14 +28,13 @@ jobs:
         run: |-
           apt-get update && apt-get install -y curl python3 git jq
           curl -sSL -o /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.7.1/yq_linux_amd64 && chmod +x /usr/local/bin/yq
-          curl -sSL -o /usr/local/bin/jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 && chmod +x /usr/local/bin/jq
+        env:
+          DEBIAN_FRONTEND: noninteractive
       - name: Setup Google Cloud SDK
         run: |-
           curl -sSL https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-366.0.0-linux-x86_64.tar.gz | tar xz -C /usr/local
           /usr/local/google-cloud-sdk/install.sh --quiet --additional-components kubectl
           ln -s /usr/local/google-cloud-sdk/bin/gcloud /usr/local/google-cloud-sdk/bin/gsutil /usr/local/google-cloud-sdk/bin/kubectl /usr/local/bin/
-        env:
-          DEBIAN_FRONTEND: noninteractive
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v0.4.0
         with:
