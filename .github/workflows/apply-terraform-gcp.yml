@@ -36,12 +36,6 @@ jobs:
           workload_identity_provider: projects/8909046976/locations/global/workloadIdentityPools/github-actions/providers/default
           service_account: infrastructure-github-actions@arikkfir.iam.gserviceaccount.com
       - uses: actions/checkout@v2
-#      - uses: google-github-actions/setup-gcloud@master
-#        with:
-#          project_id: ${{ secrets.GCP_PROJECT_ID }}
-#          service_account_key: ${{ secrets.GCP_SA_KEY }}
-#          export_default_credentials: true
-#          credentials_file_path: gcloud_google_credentials
       - uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: 1.0.11
@@ -52,7 +46,6 @@ jobs:
           terraform apply -input=false -lock-timeout=180s -auto-approve
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
-#          GOOGLE_APPLICATION_CREDENTIALS: ../../gcloud_google_credentials
           TF_VAR_gcp_project: ${{ secrets.GCP_PROJECT_ID }}
           TF_VAR_gcp_region: ${{ env.GCP_REGION }}
           TF_VAR_gcp_zone: ${{ env.GCP_ZONE }}
