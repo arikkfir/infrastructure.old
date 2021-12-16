@@ -3,22 +3,40 @@
   <component name="KubernetesSettings">
     <specSources>
       <SpecSource>
-        <option name="pathOrUrl" value="https://github.com/fluxcd/source-controller/releases/download/v0.15.4/source-controller.crds.yaml" />
+        <option name="pathOrUrl" value="https://raw.githubusercontent.com/fluxcd/kustomize-controller/v0.15.4/config/crd/bases/kustomize.toolkit.fluxcd.io_kustomizations.yaml" />
       </SpecSource>
       <SpecSource>
-        <option name="pathOrUrl" value="https://github.com/fluxcd/kustomize-controller/releases/download/v0.14.0/kustomize-controller.crds.yaml" />
+        <option name="pathOrUrl" value="https://raw.githubusercontent.com/fluxcd/helm-controller/v0.14.1/config/crd/bases/helm.toolkit.fluxcd.io_helmreleases.yaml" />
       </SpecSource>
       <SpecSource>
-        <option name="pathOrUrl" value="https://github.com/fluxcd/helm-controller/releases/download/v0.11.2/helm-controller.crds.yaml" />
+        <option name="pathOrUrl" value="https://raw.githubusercontent.com/fluxcd/image-automation-controller/v0.18.0/config/crd/bases/image.toolkit.fluxcd.io_imageupdateautomations.yaml" />
       </SpecSource>
       <SpecSource>
-        <option name="pathOrUrl" value="https://github.com/fluxcd/notification-controller/releases/download/v0.16.0/notification-controller.crds.yaml" />
+        <option name="pathOrUrl" value="https://raw.githubusercontent.com/fluxcd/image-reflector-controller/v0.14.0/config/crd/bases/image.toolkit.fluxcd.io_imagepolicies.yaml" />
       </SpecSource>
       <SpecSource>
-        <option name="pathOrUrl" value="https://github.com/fluxcd/image-reflector-controller/releases/download/v0.11.1/image-reflector-controller.crds.yaml" />
+        <option name="pathOrUrl" value="https://raw.githubusercontent.com/fluxcd/image-reflector-controller/v0.14.0/config/crd/bases/image.toolkit.fluxcd.io_imagerepositories.yaml" />
       </SpecSource>
       <SpecSource>
-        <option name="pathOrUrl" value="https://github.com/fluxcd/image-automation-controller/releases/download/v0.14.1/image-automation-controller.crds.yaml" />
+        <option name="pathOrUrl" value="https://raw.githubusercontent.com/fluxcd/notification-controller/v0.15.1/config/crd/bases/notification.toolkit.fluxcd.io_alerts.yaml" />
+      </SpecSource>
+      <SpecSource>
+        <option name="pathOrUrl" value="https://raw.githubusercontent.com/fluxcd/notification-controller/v0.15.1/config/crd/bases/notification.toolkit.fluxcd.io_providers.yaml" />
+      </SpecSource>
+      <SpecSource>
+        <option name="pathOrUrl" value="https://raw.githubusercontent.com/fluxcd/notification-controller/v0.15.1/config/crd/bases/notification.toolkit.fluxcd.io_receivers.yaml" />
+      </SpecSource>
+      <SpecSource>
+        <option name="pathOrUrl" value="https://raw.githubusercontent.com/fluxcd/source-controller/v0.15.4/config/crd/bases/source.toolkit.fluxcd.io_buckets.yaml" />
+      </SpecSource>
+      <SpecSource>
+        <option name="pathOrUrl" value="https://raw.githubusercontent.com/fluxcd/source-controller/v0.15.4/config/crd/bases/source.toolkit.fluxcd.io_gitrepositories.yaml" />
+      </SpecSource>
+      <SpecSource>
+        <option name="pathOrUrl" value="https://raw.githubusercontent.com/fluxcd/source-controller/v0.15.4/config/crd/bases/source.toolkit.fluxcd.io_helmcharts.yaml" />
+      </SpecSource>
+      <SpecSource>
+        <option name="pathOrUrl" value="https://raw.githubusercontent.com/fluxcd/source-controller/v0.15.4/config/crd/bases/source.toolkit.fluxcd.io_helmrepositories.yaml" />
       </SpecSource>
       <SpecSource>
         <option name="pathOrUrl" value="https://github.com/GoogleCloudPlatform/k8s-config-connector/raw/master/crds/compute_v1beta1_computeaddress.yaml" />
