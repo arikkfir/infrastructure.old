@@ -33,8 +33,20 @@ resource "google_service_account" "infrastructure-github-actions" {
   display_name = "Infrastructure GitHub Actions"
 }
 
+resource "google_service_account_iam_member" "infrastructure-github-actions-oidc" {
+  service_account_id = google_service_account.infrastructure-github-actions.name
+  role = "roles/iam.workloadIdentityUser"
+  member = "principalSet://iam.googleapis.com/projects/8909046976/locations/global/workloadIdentityPools/github-actions/attribute.repository/arikkfir/infrastructure"
+}
+
 resource "google_service_account" "devbot-github-actions" {
   project = google_project.project.project_id
   account_id = "devbot-github-actions"
   display_name = "Devbot GitHub Actions"
+}
+
+resource "google_service_account_iam_member" "devbot-github-actions-oidc" {
+  service_account_id = google_service_account.devbot-github-actions.name
+  role = "roles/iam.workloadIdentityUser"
+  member = "principalSet://iam.googleapis.com/projects/8909046976/locations/global/workloadIdentityPools/github-actions/attribute.repository/arikkfir/devbot"
 }
