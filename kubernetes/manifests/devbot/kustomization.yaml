@@ -7,12 +7,10 @@ resources:
 - devbot-dns.yaml
 - devbot-routing.yaml
 components:
-  - components/api
-  - components/portal
+- components/api
+- components/portal
 images:
-- name: europe-docker.pkg.dev/arikkfir/public/devbot/api:latest
-  newName: europe-docker.pkg.dev/arikkfir/public/devbot/api
+- name: europe-docker.pkg.dev/arikkfir/public/devbot/api
   newTag: 2c1ecc2
-- name: europe-docker.pkg.dev/arikkfir/public/devbot/portal:latest
-  newName: europe-docker.pkg.dev/arikkfir/public/devbot/portal
+- name: europe-docker.pkg.dev/arikkfir/public/devbot/portal
   newTag: 2c1ecc2
