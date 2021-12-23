@@ -8,15 +8,6 @@ resources:
 - devbot-routing.yaml
 - devbot-api.yaml
 - devbot-portal.yaml
-patches:
-- patch: |-
-    - op: add
-      path: /spec/template/spec/containers/0/args
-      value: [--log-caller-info, --http-log-response-body]
-  target:
-    group: apps
-    name: api
-    version: v1
 images:
 - name: europe-docker.pkg.dev/arikkfir/public/devbot/api:latest
   newName: europe-docker.pkg.dev/arikkfir/public/devbot/api
