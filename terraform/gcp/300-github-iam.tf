@@ -26,3 +26,15 @@ resource "google_iam_workload_identity_pool_provider" "default" {
     issuer_uri = "https://token.actions.githubusercontent.com"
   }
 }
+
+resource "google_service_account" "infrastructure-github-actions" {
+  project = google_project.project.project_id
+  account_id = "infrastructure-github-actions"
+  display_name = "Infrastructure GitHub Actions"
+}
+
+resource "google_service_account" "devbot-github-actions" {
+  project = google_project.project.project_id
+  account_id = "devbot-github-actions"
+  display_name = "Devbot GitHub Actions"
+}
