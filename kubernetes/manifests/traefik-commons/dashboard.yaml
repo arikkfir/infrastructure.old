@@ -24,7 +24,7 @@ spec:
         - name: redirect-to-https
       services:
         - kind: TraefikService
-          name: api@internal
+          name: noop@internal
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute

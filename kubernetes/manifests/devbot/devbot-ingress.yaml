@@ -45,9 +45,8 @@ spec:
       middlewares:
         - name: redirect-to-https
       services:
-        - kind: Service
-          name: portal
-          port: 80
+        - kind: TraefikService
+          name: noop@internal
 ---
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
