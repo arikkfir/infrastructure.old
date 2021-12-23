@@ -1,29 +1,3 @@
-apiVersion: dns.cnrm.cloud.google.com/v1beta1
-kind: DNSRecordSet
-metadata:
-  name: devbot-kfirs-com
-spec:
-  name: devbot.kfirs.com.
-  type: "CNAME"
-  ttl: 300
-  managedZoneRef:
-    namespace: dns
-    name: kfirs-com
-  rrdatas:
-    - traefik.kfirs.com.
----
-apiVersion: cert-manager.io/v1
-kind: Certificate
-metadata:
-  name: devbot-kfirs-com
-spec:
-  secretName: devbot-kfirs-com-tls
-  issuerRef:
-    kind: ClusterIssuer
-    name: google-clouddns
-  dnsNames:
-    - devbot.kfirs.com
----
 apiVersion: traefik.containo.us/v1alpha1
 kind: Middleware
 metadata:

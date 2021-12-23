@@ -4,9 +4,10 @@ namespace: devbot
 resources:
 - namespace.yaml
 - gcp-service-account.yaml
+- devbot-dns.yaml
+- devbot-routing.yaml
 - devbot-api.yaml
 - devbot-portal.yaml
-- devbot-ingress.yaml
 patches:
 - patch: |-
     - op: add
