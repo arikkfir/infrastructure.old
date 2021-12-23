@@ -41,14 +41,8 @@ spec:
       - image: europe-docker.pkg.dev/arikkfir/public/devbot/portal:2c1ecc2
         name: portal
         ports:
-        - containerPort: 8080
+        - containerPort: 80
           name: http
-          protocol: TCP
-        - containerPort: 9000
-          name: metrics
-          protocol: TCP
-        - containerPort: 9001
-          name: health
           protocol: TCP
         resources:
           limits:
