@@ -38,7 +38,7 @@ spec:
         app.kubernetes.io/name: devbot
     spec:
       containers:
-      - image: europe-docker.pkg.dev/arikkfir/public/devbot/api:2c1ecc2
+      - image: europe-docker.pkg.dev/arikkfir/public/devbot/api:latest
         name: api
         ports:
         - containerPort: 8080
