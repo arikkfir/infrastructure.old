@@ -65,7 +65,7 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: HostRegexp(`devbot.kfirs.com`) && Path(`/api`)
+    - match: HostRegexp(`devbot.kfirs.com`) && PathPrefix(`/api`)
       kind: Rule
       middlewares:
         - name: strip-api-prefix
