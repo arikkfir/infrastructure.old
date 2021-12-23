@@ -6,8 +6,9 @@ resources:
 - gcp-service-account.yaml
 - devbot-dns.yaml
 - devbot-routing.yaml
-- devbot-api.yaml
-- devbot-portal.yaml
+components:
+  - components/api
+  - components/portal
 images:
 - name: europe-docker.pkg.dev/arikkfir/public/devbot/api:latest
   newName: europe-docker.pkg.dev/arikkfir/public/devbot/api
