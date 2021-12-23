@@ -22,7 +22,6 @@ spec:
       match: HostRegexp(`traefik.kfirs.com`)
       middlewares:
         - name: redirect-to-https
-          namespace: traefik
       services:
         - kind: TraefikService
           name: api@internal

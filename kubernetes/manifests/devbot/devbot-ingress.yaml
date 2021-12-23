@@ -25,6 +25,14 @@ spec:
     - devbot.kfirs.com
 ---
 apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-to-https
+spec:
+  redirectScheme:
+    scheme: https
+---
+apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
   name: devbot-kfirs-com-http
@@ -36,7 +44,6 @@ spec:
       kind: Rule
       middlewares:
         - name: redirect-to-https
-          namespace: traefik
       services:
         - kind: Service
           name: portal
