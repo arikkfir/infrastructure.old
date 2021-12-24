@@ -1,0 +1,20 @@
+name: Setup Skaffold
+description: Downloads & installs Skaffold
+inputs:
+  version:
+    description: Skaffold version
+    required: false
+    default: v1.35.1
+runs:
+  using: composite
+  steps:
+    - name: Install dependencies
+      run: apt-get update && apt-get install -y curl
+      shell: bash
+      env:
+        DEBIAN_FRONTEND: noninteractive
+    - name: Install
+      run: curl -sSL -o /usr/local/bin/skaffold "${URL}" && chmod +x /usr/local/bin/skaffold
+      shell: bash
+      env:
+        URL: https://storage.googleapis.com/skaffold/releases/${{ inputs.version }}/skaffold-linux-amd64
