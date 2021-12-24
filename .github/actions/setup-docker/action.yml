@@ -1,0 +1,10 @@
+name: Setup Docker
+description: Downloads & installs Docker
+runs:
+  using: composite
+  steps:
+    - name: Install dependencies
+      run: apt-get update && apt-get install -y docker.io
+      shell: bash
+      env:
+        DEBIAN_FRONTEND: noninteractive
