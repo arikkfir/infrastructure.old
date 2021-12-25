@@ -1,6 +1,6 @@
 resource "google_container_node_pool" "work-n2-custom-4-5120-pre" {
-  project = google_container_cluster.production.project
-  cluster = google_container_cluster.production.name
+  project = google_container_cluster.primary.project
+  cluster = google_container_cluster.primary.name
   name = "work-n2-custom-4-5120-pre"
   location = var.gcp_zone
 

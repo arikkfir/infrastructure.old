@@ -1,11 +1,11 @@
-resource "google_container_cluster" "production" {
+resource "google_container_cluster" "primary" {
   provider = google-beta
   depends_on = [
     google_compute_subnetwork.gke_subnet
   ]
 
-  name = "production"
-  description = "Production cluster."
+  name = "primary"
+  description = "Primary cluster."
   location = var.gcp_zone
   project = google_project.project.project_id
 
