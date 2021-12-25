@@ -137,3 +137,14 @@ module "github-arikkfir-unbotify-engineering-hometask-repository" {
   protected_branches = ["master"]
   topics             = []
 }
+
+module "github-arikkfir-devbot-repository" {
+  providers          = {
+    github = github.arikkfir
+  }
+  source             = "./modules/github-repository"
+  name               = "devbot"
+  description        = "An opinionated DevOps bot intended to simplify development & collaboration in modern-day development teams."
+  protected_branches = ["main"]
+  topics             = ["go", "devops"]
+}
