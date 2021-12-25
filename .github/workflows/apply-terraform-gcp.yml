@@ -24,20 +24,12 @@ jobs:
       id-token: write
     timeout-minutes: 60
     steps:
-      - name: Install packages
-        run: apt-get update && apt-get install -y curl python3 unzip
       - name: Setup Google Cloud SDK
-        run: |-
-          curl -sSL https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-366.0.0-linux-x86_64.tar.gz | tar xz -C /usr/local
-          /usr/local/google-cloud-sdk/install.sh --quiet
-          ln -s /usr/local/google-cloud-sdk/bin/gcloud /usr/local/google-cloud-sdk/bin/gsutil /usr/local/bin/
-        env:
-          DEBIAN_FRONTEND: noninteractive
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v0.4.0
+        uses: arikkfir/infrastructure/.github/actions/setup-gcloud@main
         with:
-          workload_identity_provider: projects/8909046976/locations/global/workloadIdentityPools/github-actions/providers/default
           service_account: infrastructure-github-actions@arikkfir.iam.gserviceaccount.com
+      - name: Install packages
+        run: apt-get update && apt-get install -y unzip
       - name: Checkout
         uses: actions/checkout@v2
       - name: Setup Terraform
