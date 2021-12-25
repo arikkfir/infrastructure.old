@@ -38,7 +38,7 @@ variable "has_issues" {
 variable "has_projects" {
   type = bool
   description = "Whether to enable projects for the repository."
-  default = false
+  default = true
 }
 variable "has_wiki" {
   type = bool
