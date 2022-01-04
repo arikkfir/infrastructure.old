@@ -36,12 +36,14 @@ jobs:
         uses: actions/checkout@v2
       - name: Apply FluxCD
         run: |-
+          kubectl create namespace system --save-config=true
+          kubectl annotate namespaces system cnrm.cloud.google.com/project-id=arikkfir
           flux bootstrap github --author-email=arik+flux@kfirs.com \
             --author-name=FluxCD \
             --branch=${GITHUB_REF#refs/heads/} \
             --commit-message-appendix="[skip ci]" \
             --interval=5m0s \
-            --namespace=flux-system \
+            --namespace=system \
             --owner=arikkfir \
             --path=kubernetes/cluster \
             --personal \
