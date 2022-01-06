@@ -1,7 +1,6 @@
 name: Apply GCP Terraform
 on:
   push:
-    branches: [main]
     paths:
       - .github/workflows/apply-terraform-gcp.yml
       - terraform/gcp/**
@@ -41,8 +40,13 @@ jobs:
         run: |-
           terraform init -input=false
           terraform validate
-          terraform apply -input=false -lock-timeout=180s -auto-approve
+          if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+            terraform apply -input=false -lock-timeout=180s -auto-approve
+          else
+            terraform plan -input=false -lock-timeout=180s
+          fi
         env:
+          GITHUB_REF: ${{ github.ref }}
           GITHUB_TOKEN: ${{ secrets.PAT }}
           TF_VAR_gcp_project: ${{ secrets.GCP_PROJECT_ID }}
           TF_VAR_gcp_region: ${{ env.GCP_REGION }}
