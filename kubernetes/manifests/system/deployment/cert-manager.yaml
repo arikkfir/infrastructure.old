@@ -1,0 +1,170 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: HelmRepository
+metadata:
+  name: jetstack
+spec:
+  interval: 1h
+  url: https://charts.jetstack.io
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMServiceAccount
+metadata:
+  name: cert-manager
+spec:
+  displayName: cert-manager.io
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: cert-manager-dns-admin
+spec:
+  memberFrom:
+    serviceAccountRef:
+      name: cert-manager
+  role: roles/dns.admin
+  resourceRef:
+    apiVersion: resourcemanager.cnrm.cloud.google.com/v1beta1
+    kind: Project
+    external: projects/8909046976
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: cert-manager-ksa-link
+spec:
+  member: serviceAccount:arikkfir.svc.id.goog[system/cert-manager]
+  role: roles/iam.workloadIdentityUser
+  resourceRef:
+    apiVersion: iam.cnrm.cloud.google.com/v1beta1
+    kind: IAMServiceAccount
+    name: cert-manager
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: cert-manager
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: cert-manager
+      version: v1.6.1
+      sourceRef:
+        kind: HelmRepository
+        name: jetstack
+  postRenderers:
+    - kustomize:
+        patchesJson6902:
+          - target:
+              group: apps
+              version: v1
+              kind: Deployment
+              name: cert-manager
+            patch:
+              - op: add
+                path: /spec/template/spec/containers/0/ports/0/name
+                value: metrics
+  values:
+    installCRDs: true
+    serviceAccount:
+      annotations:
+        iam.gke.io/gcp-service-account: cert-manager@arikkfir.iam.gserviceaccount.com
+    resources:
+      requests:
+        cpu: 100m
+        memory: 50Mi
+      limits:
+        cpu: 100m
+        memory: 50Mi
+    prometheus:
+      enabled: true
+      servicemonitor:
+        enabled: false
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: kfirs.com/workload-nodes
+                  operator: Exists
+    tolerations:
+      - key: kfirs.com/workload-nodes
+        operator: Exists
+    webhook:
+      resources:
+        requests:
+          cpu: 50m
+          memory: 50Mi
+        limits:
+          cpu: 50m
+          memory: 50Mi
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kfirs.com/workload-nodes
+                    operator: Exists
+      tolerations:
+        - key: kfirs.com/workload-nodes
+          operator: Exists
+      serviceAccount:
+        annotations:
+          iam.gke.io/gcp-service-account: cert-manager@arikkfir.iam.gserviceaccount.com
+    cainjector:
+      resources:
+        requests:
+          cpu: 100m
+          memory: 100Mi
+        limits:
+          cpu: 100m
+          memory: 150Mi
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kfirs.com/workload-nodes
+                    operator: Exists
+      tolerations:
+        - key: kfirs.com/workload-nodes
+          operator: Exists
+      serviceAccount:
+        annotations:
+          iam.gke.io/gcp-service-account: cert-manager@arikkfir.iam.gserviceaccount.com
+    startupapicheck:
+      resources:
+        requests:
+          cpu: 100m
+          memory: 50Mi
+        limits:
+          cpu: 100m
+          memory: 50Mi
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kfirs.com/workload-nodes
+                    operator: Exists
+      tolerations:
+        - key: kfirs.com/workload-nodes
+          operator: Exists
+      serviceAccount:
+        annotations:
+          iam.gke.io/gcp-service-account: cert-manager@arikkfir.iam.gserviceaccount.com
+---
+apiVersion: monitoring.gke.io/v1alpha1
+kind: PodMonitor
+metadata:
+  name: cert-manager
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cert-manager
+      app.kubernetes.io/component: controller
+  podMetricsEndpoints:
+    - port: metrics
+      path: /metrics
+      scheme: http
+      interval: 10s

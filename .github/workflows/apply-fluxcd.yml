@@ -22,26 +22,28 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    timeout-minutes: 60
+    timeout-minutes: 90
     steps:
       - name: Setup Google Cloud SDK
         uses: arikkfir/infrastructure/.github/actions/setup-gcloud@main
         with:
           service_account: infrastructure-github-actions@arikkfir.iam.gserviceaccount.com
       - name: Authenticate to GKE
-        run: gcloud container clusters get-credentials --zone=${GCP_ZONE} production
+        run: gcloud container clusters get-credentials --zone=${GCP_ZONE} primary
       - name: Setup FluxCD
         uses: arikkfir/infrastructure/.github/actions/setup-fluxcd@main
       - name: Checkout
         uses: actions/checkout@v2
       - name: Apply FluxCD
         run: |-
+          kubectl create namespace system --save-config=true
+          kubectl annotate namespaces system cnrm.cloud.google.com/project-id=arikkfir
           flux bootstrap github --author-email=arik+flux@kfirs.com \
             --author-name=FluxCD \
             --branch=${GITHUB_REF#refs/heads/} \
             --commit-message-appendix="[skip ci]" \
             --interval=5m0s \
-            --namespace=flux-system \
+            --namespace=system \
             --owner=arikkfir \
             --path=kubernetes/cluster \
             --personal \
@@ -49,6 +51,6 @@ jobs:
             --reconcile \
             --repository=${GITHUB_REPOSITORY#arikkfir/} \
             --toleration-keys=kfirs.com/workload-nodes \
-            --timeout=15m
+            --timeout=60m
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
