@@ -105,3 +105,18 @@ spec:
     name: kfirs-com
   rrdatas:
     - www80.wixdns.net.
+---
+apiVersion: dns.cnrm.cloud.google.com/v1beta1
+kind: DNSRecordSet
+metadata:
+  annotations:
+    cnrm.cloud.google.com/deletion-policy: abandon
+  name: helm-charts-kfirs-com-cname
+spec:
+  name: helm.charts.kfirs.com.
+  type: CNAME
+  ttl: 300
+  managedZoneRef:
+    name: kfirs-com
+  rrdatas:
+    - www.kfirs.com.
