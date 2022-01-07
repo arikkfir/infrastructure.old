@@ -5,12 +5,12 @@ metadata:
   namespace: system
 spec:
   dependsOn:
-    - namespace: flux-system
+    - namespace: system
       name: deployment
   interval: 5m
   sourceRef:
     kind: GitRepository
-    name: flux-system
-    namespace: flux-system
+    name: system
+    namespace: system
   path: ./kubernetes/manifests/system/configuration
   prune: true
