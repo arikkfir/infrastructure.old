@@ -7,3 +7,5 @@ resources:
   - gcp-dns-kfirs-com.yaml
   - gcp-dns-yellow-mint-com.yaml
   - traefik-dashboard.yaml
+configurations:
+  - kustomizeconfig.yaml
