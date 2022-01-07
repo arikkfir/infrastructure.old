@@ -51,6 +51,6 @@ jobs:
             --reconcile \
             --repository=${GITHUB_REPOSITORY#arikkfir/} \
             --toleration-keys=kfirs.com/workload-nodes \
-            --timeout=15m
+            --timeout=60m
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
