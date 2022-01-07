@@ -57,7 +57,7 @@ jobs:
           # sync Traefik DNS record to point to the GCP reserved IP address
           TRAEFIK_CONFIG_FILE="kubernetes/manifests/system/configuration/traefik-dashboard.yaml"
           TRAEFIK_DNS_SELECTOR=".apiVersion==\"dns.cnrm.cloud.google.com/v1beta1\" and .kind==\"DNSRecordSet\" and .metadata.name==\"traefik-kfirs-com-a\""
-          yq ea -i "select(${TRAEFIK_DNS_SELECTOR}).spec.rrdatas |= \[\"$(cat /tmp/ip-address)\"\]" "${TRAEFIK_CONFIG_FILE}"
+          yq ea -i "select(${TRAEFIK_DNS_SELECTOR}).spec.rrdatas |= [\"$(cat /tmp/ip-address)\"]" "${TRAEFIK_CONFIG_FILE}"
       - name: Commit & push
         uses: EndBug/add-and-commit@v7
         with:
