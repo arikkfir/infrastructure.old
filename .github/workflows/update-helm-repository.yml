@@ -1,0 +1,38 @@
+name: Apply FluxCD
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/update-helm-repository.yml
+      - kubernetes/charts/**
+  workflow_dispatch:
+concurrency:
+  cancel-in-progress: false
+  group: fluxcd
+defaults:
+  run:
+    shell: bash -eu {0}
+jobs:
+  fluxcd:
+    runs-on: ubuntu-20.04
+    container: ubuntu:21.10
+    permissions:
+      contents: read
+      id-token: write
+    timeout-minutes: 5
+    steps:
+      - name: Setup Google Cloud SDK
+        uses: arikkfir/infrastructure/.github/actions/setup-gcloud@main
+        with:
+          service_account: infrastructure-github-actions@arikkfir.iam.gserviceaccount.com
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Package Charts
+        run: |-
+          for dir in $(ls); do
+            helm package devbot
+          done
+          helm repo index . --url=https://arikkfir-helm-repository.storage.googleapis.com/
+        working-directory: kubernetes/charts
+      - name: Upload
+        run: gsutil cp * gs://arikkfir-helm-repository/
