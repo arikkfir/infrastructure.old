@@ -52,7 +52,7 @@ spec:
       spec:
         loadBalancerIP: 34.141.22.31
         externalTrafficPolicy: Local
-      loadBalancerSourceRanges: [89.138.98.41/32]
+      loadBalancerSourceRanges: [89.138.98.41/32,31.168.217.84/32]
     ingressRoute:
       dashboard:
         enabled: false
