@@ -37,7 +37,7 @@ jobs:
       - name: Install packages
         run: apt-get update && apt-get install -y unzip
       - name: Authenticate to GKE
-        run: gcloud container clusters get-credentials --zone=${GCP_ZONE} production
+        run: gcloud container clusters get-credentials --zone=${GCP_ZONE} primary
       - name: Checkout
         uses: actions/checkout@v2
       - name: Obtain GKE Ingress IP address
@@ -46,9 +46,19 @@ jobs:
           kubectl get -n traefik ComputeAddress/traefik-ingress -ojson | jq -r '.spec.address' > /tmp/ip-address
       - name: Update manifests
         run: |-
-          yq eval -i ".service.spec.loadBalancerIP=\"$(cat /tmp/ip-address)\"" kubernetes/manifests/traefik/traefik-values.yaml
-          yq eval -i ".spec.rrdatas=[\"$(cat /tmp/ip-address)\"]" kubernetes/manifests/traefik/gcp-load-balancer-dns.yaml
-          yq eval -i ".spec.location=\"${GCP_REGION}\"" kubernetes/manifests/traefik/gcp-reserved-ip-address.yaml
+          # sync the region of the reserved IP address in GCP
+          TRAEFIK_ADDR_SELECTOR=".apiVersion==\"compute.cnrm.cloud.google.com/v1beta1\" and .kind==\"ComputeAddress\" and .metadata.name==\"traefik-ingress\""
+          yq ea -i "select(${TRAEFIK_ADDR_SELECTOR}).spec.location |= \"${GCP_REGION}\"" "${TRAEFIK_DEPLOYMENT_FILE}"
+          
+          # sync Traefik load balancer Service IP address (from Kubernetes side) to the GCP reserved IP address
+          TRAEFIK_DEPLOYMENT_FILE="kubernetes/manifests/system/deployment/traefik.yaml"
+          TRAEFIK_HR_SELECTOR=".apiVersion==\"helm.toolkit.fluxcd.io/v2beta1\" and .kind==\"HelmRelease\" and .metadata.name==\"traefik\""
+          yq ea -i "select(${TRAEFIK_HR_SELECTOR}).spec.values.service.spec.loadBalancerIP |= \"$(cat /tmp/ip-address)\"" "${TRAEFIK_DEPLOYMENT_FILE}"
+          
+          # sync Traefik DNS record to point to the GCP reserved IP address
+          TRAEFIK_CONFIG_FILE="kubernetes/manifests/system/configuration/traefik-dashboard.yaml"
+          TRAEFIK_DNS_SELECTOR=".apiVersion==\"dns.cnrm.cloud.google.com/v1beta1\" and .kind==\"DNSRecordSet\" and .metadata.name==\"traefik-kfirs-com-a\""
+          yq ea -i "select(${TRAEFIK_DNS_SELECTOR}).spec.rrdatas |= \"$(cat /tmp/ip-address)\"" "${TRAEFIK_CONFIG_FILE}"
       - name: Commit & push
         uses: EndBug/add-and-commit@v7
         with:
