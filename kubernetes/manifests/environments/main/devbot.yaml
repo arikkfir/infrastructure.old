@@ -6,11 +6,11 @@ spec:
   interval: 5m
   chart:
     spec:
-      chart: devbot
+      chart: kubernetes/charts/devbot
       sourceRef:
         kind: GitRepository
         namespace: system
-        name: flux-system
+        name: system
   values:
     api:
       serviceAccount:
@@ -32,7 +32,7 @@ spec:
       enabled: true
       dns:
         record:
-          name: devbot.main.kfirs.com
+          name: devbot.bad.cluster.local
           type: CNAME
           zone:
             namespace: system

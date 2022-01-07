@@ -6,3 +6,13 @@ resources:
   - devbot.yaml
 configurations:
   - kustomizeconfig.yaml
+patches:
+  - target:
+      group: helm.toolkit.fluxcd.io
+      version: v2beta1
+      kind: HelmRelease
+      name: devbot
+    patch: |-
+      - op: replace
+        path: /spec/values/ingress/dns/record/name
+        value: devbot.main.kfirs.com
