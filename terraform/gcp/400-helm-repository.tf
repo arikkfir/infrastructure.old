@@ -11,3 +11,9 @@ resource "google_storage_bucket_iam_member" "public-access" {
   role = "roles/storage.objectViewer"
   member = "allUsers"
 }
+
+resource "google_storage_bucket_iam_member" "public-access" {
+  bucket = google_storage_bucket.arikkfir-helm-repository.name
+  role = "roles/storage.objectAdmin"
+  member = "serviceAccount:${google_service_account.infrastructure-github-actions.email}"
+}
