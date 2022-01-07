@@ -42,8 +42,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Obtain GKE Ingress IP address
         run: |-
-          kubectl wait -n traefik --for=condition=Ready ComputeAddress/traefik-ingress --timeout=5m
-          kubectl get -n traefik ComputeAddress/traefik-ingress -ojson | jq -r '.spec.address' > /tmp/ip-address
+          kubectl wait -n system --for=condition=Ready ComputeAddress/traefik-ingress --timeout=5m
+          kubectl get -n system ComputeAddress/traefik-ingress -ojson | jq -r '.spec.address' > /tmp/ip-address
       - name: Update manifests
         run: |-
           # sync the region of the reserved IP address in GCP
