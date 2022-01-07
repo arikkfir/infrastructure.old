@@ -1,4 +1,4 @@
-name: Apply FluxCD
+name: Helm Repository
 on:
   push:
     branches: [main]
@@ -13,7 +13,7 @@ defaults:
   run:
     shell: bash -eu {0}
 jobs:
-  fluxcd:
+  helm:
     runs-on: ubuntu-20.04
     container: ubuntu:21.10
     permissions:
