@@ -4,7 +4,8 @@ on:
     branches: [main]
     paths:
       - .github/workflows/apply-fluxcd.yml
-      - kubernetes/**
+      - kubernetes/cluster/**
+      - kubernetes/manifests/**
   workflow_dispatch:
 concurrency:
   cancel-in-progress: false
