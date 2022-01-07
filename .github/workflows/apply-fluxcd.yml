@@ -29,7 +29,7 @@ jobs:
         with:
           service_account: infrastructure-github-actions@arikkfir.iam.gserviceaccount.com
       - name: Authenticate to GKE
-        run: gcloud container clusters get-credentials --zone=${GCP_ZONE} production
+        run: gcloud container clusters get-credentials --zone=${GCP_ZONE} primary
       - name: Setup FluxCD
         uses: arikkfir/infrastructure/.github/actions/setup-fluxcd@main
       - name: Checkout
