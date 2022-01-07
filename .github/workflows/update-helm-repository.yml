@@ -21,6 +21,13 @@ jobs:
       id-token: write
     timeout-minutes: 5
     steps:
+      - name: Install packages
+        run: |-
+          apt-get update && apt-get install -y curl jq git unzip
+          curl -sSL "${URL}" | tar xzf - -C /tmp && mv /tmp/linux-amd64/helm /usr/local/bin/
+        env:
+          DEBIAN_FRONTEND: noninteractive
+          URL: https://get.helm.sh/helm-v3.7.2-linux-amd64.tar.gz
       - name: Setup Google Cloud SDK
         uses: arikkfir/infrastructure/.github/actions/setup-gcloud@main
         with:
