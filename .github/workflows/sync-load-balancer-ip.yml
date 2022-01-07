@@ -46,12 +46,13 @@ jobs:
           kubectl get -n system ComputeAddress/traefik-ingress -ojson | jq -r '.spec.address' > /tmp/ip-address
       - name: Update manifests
         run: |-
-          # sync the region of the reserved IP address in GCP
+          TRAEFIK_DEPLOYMENT_FILE="kubernetes/manifests/system/deployment/traefik.yaml"
+
+                    # sync the region of the reserved IP address in GCP
           TRAEFIK_ADDR_SELECTOR=".apiVersion==\"compute.cnrm.cloud.google.com/v1beta1\" and .kind==\"ComputeAddress\" and .metadata.name==\"traefik-ingress\""
           yq ea -i "select(${TRAEFIK_ADDR_SELECTOR}).spec.location |= \"${GCP_REGION}\"" "${TRAEFIK_DEPLOYMENT_FILE}"
           
           # sync Traefik load balancer Service IP address (from Kubernetes side) to the GCP reserved IP address
-          TRAEFIK_DEPLOYMENT_FILE="kubernetes/manifests/system/deployment/traefik.yaml"
           TRAEFIK_HR_SELECTOR=".apiVersion==\"helm.toolkit.fluxcd.io/v2beta1\" and .kind==\"HelmRelease\" and .metadata.name==\"traefik\""
           yq ea -i "select(${TRAEFIK_HR_SELECTOR}).spec.values.service.spec.loadBalancerIP |= \"$(cat /tmp/ip-address)\"" "${TRAEFIK_DEPLOYMENT_FILE}"
           
