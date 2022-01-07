@@ -8,8 +8,7 @@ spec:
   ttl: 300
   managedZoneRef:
     name: kfirs-com
-  rrdatas:
-    - 34.141.22.31
+  rrdatas: 34.141.22.31
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
