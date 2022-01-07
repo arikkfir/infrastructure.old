@@ -22,7 +22,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    timeout-minutes: 60
+    timeout-minutes: 90
     steps:
       - name: Setup Google Cloud SDK
         uses: arikkfir/infrastructure/.github/actions/setup-gcloud@main
