@@ -6,11 +6,11 @@ spec:
   interval: 5m
   chart:
     spec:
-      chart: kubernetes/charts/devbot
+      chart: devbot
       sourceRef:
-        kind: GitRepository
+        kind: HelmRepository
         namespace: system
-        name: system
+        name: arikkfir
   values:
     api:
       serviceAccount:
