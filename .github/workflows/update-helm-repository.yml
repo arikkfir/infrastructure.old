@@ -44,6 +44,16 @@ jobs:
       - name: Index
         run: helm repo index . --url=https://arikkfir-helm-repository.storage.googleapis.com/
         working-directory: kubernetes/helm/repository
+      - name: Index
+        run: helm repo index . --url=https://arikkfir-helm-repository.storage.googleapis.com/
+        working-directory: kubernetes/helm/repository
+      - name: Commit & push
+        uses: EndBug/add-and-commit@v7
+        with:
+          add: kubernetes/helm/repository
+          author_name: github-actions
+          author_email: <github-actions@users.noreply.github.com>
+          message: Update Helm repository
       - name: Upload
         run: gsutil -m rsync -r . gs://arikkfir-helm-repository/
         working-directory: kubernetes/helm/repository
