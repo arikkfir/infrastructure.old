@@ -20,30 +20,32 @@ runs:
       shell: bash
       env:
         DEBIAN_FRONTEND: noninteractive
-    - name: Download & extract
-      run: curl -sSL "${URL}" | tar xz -C /usr/local
-      shell: bash
-      env:
-        URL: https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${{ inputs.version }}-linux-x86_64.tar.gz
-    - name: Install
-      run: |-
-        /usr/local/google-cloud-sdk/install.sh --quiet --additional-components kubectl kustomize
-        for f in bq docker-credential-gcloud gcloud gsutil kubectl kustomize; do
-          ln -s /usr/local/google-cloud-sdk/bin/${f} /usr/local/bin/
-        done
-      shell: bash
-    - name: Authenticate to Google Cloud
+#    - name: Download & extract
+#      run: curl -sSL "${URL}" | tar xz -C /usr/local
+#      shell: bash
+#      env:
+#        URL: https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-${{ inputs.version }}-linux-x86_64.tar.gz
+#    - name: Install
+#      run: |-
+#        /usr/local/google-cloud-sdk/install.sh --quiet --additional-components kubectl kustomize
+#        for f in bq docker-credential-gcloud gcloud gsutil kubectl kustomize; do
+#          ln -s /usr/local/google-cloud-sdk/bin/${f} /usr/local/bin/
+#        done
+#      shell: bash
+    - name: Authenticate to Google Cloud (workload identity)
       uses: google-github-actions/auth@v0
       if: ${{ inputs.credentials_json == '' }}
       with:
         workload_identity_provider: projects/8909046976/locations/global/workloadIdentityPools/github-actions/providers/default
         service_account: ${{ inputs.service_account }}
-    - name: Authenticate to Google Cloud
+    - name: Authenticate to Google Cloud (key)
       uses: google-github-actions/auth@v0
       if: ${{ inputs.credentials_json != '' }}
       with:
         service_account: ${{ inputs.service_account }}
         credentials_json: ${{ inputs.credentials_json }}
+    - name: Set up Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v0
     - name: Authenticate to Google Artifact Registry
       run: gcloud auth configure-docker europe-docker.pkg.dev
       shell: bash
