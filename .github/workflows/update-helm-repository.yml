@@ -45,5 +45,5 @@ jobs:
         run: helm repo index . --url=https://arikkfir-helm-repository.storage.googleapis.com/
         working-directory: kubernetes/charts/upload
       - name: Upload
-        run: gsutil -m rsync -r -d . gs://arikkfir-helm-repository/
+        run: gsutil -m rsync -r . gs://arikkfir-helm-repository/
         working-directory: kubernetes/charts/upload
