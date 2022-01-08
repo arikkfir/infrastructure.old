@@ -1,4 +1,4 @@
-name: Helm Repository
+name: Helm
 on:
   push:
     branches: [main]
@@ -37,7 +37,6 @@ jobs:
         uses: actions/checkout@v2
       - name: Package Charts
         run: |-
-          mkdir ./upload
           for dir in $(ls); do
             helm package "${dir}" --destination=./upload
           done
