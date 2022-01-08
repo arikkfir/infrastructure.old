@@ -32,6 +32,7 @@ jobs:
         uses: arikkfir/infrastructure/.github/actions/setup-gcloud@main
         with:
           service_account: infrastructure-github-actions@arikkfir.iam.gserviceaccount.com
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
       - name: Checkout
         uses: actions/checkout@v2
       - name: Package Charts
