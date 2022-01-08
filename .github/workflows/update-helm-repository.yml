@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-20.04
     container: ubuntu:21.10
     permissions:
-      contents: read
+      contents: write
       id-token: write
     timeout-minutes: 5
     steps:
@@ -40,9 +40,6 @@ jobs:
           for dir in $(ls ../charts); do
             helm package "../charts/${dir}"
           done
-        working-directory: kubernetes/helm/repository
-      - name: Index
-        run: helm repo index . --url=https://arikkfir-helm-repository.storage.googleapis.com/
         working-directory: kubernetes/helm/repository
       - name: Index
         run: helm repo index . --url=https://arikkfir-helm-repository.storage.googleapis.com/
