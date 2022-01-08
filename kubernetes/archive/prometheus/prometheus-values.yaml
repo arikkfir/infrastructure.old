@@ -1,0 +1,147 @@
+serviceAccounts:
+  alertmanager:
+    annotations:
+      iam.gke.io/gcp-service-account: prometheus@arikkfir.iam.gserviceaccount.com
+  nodeExporter:
+    annotations:
+      iam.gke.io/gcp-service-account: prometheus@arikkfir.iam.gserviceaccount.com
+  pushgateway:
+    annotations:
+      iam.gke.io/gcp-service-account: prometheus@arikkfir.iam.gserviceaccount.com
+  server:
+    annotations:
+      iam.gke.io/gcp-service-account: prometheus@arikkfir.iam.gserviceaccount.com
+
+alertmanager:
+  enabled: true
+  baseURL: "https://alertmanager.kfirs.com"
+  strategy:
+    type: Recreate
+  tolerations:
+  - key: kfirs.com/workload-nodes
+    operator: Exists
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kfirs.com/workload-nodes
+            operator: Exists
+  persistentVolume:
+    enabled: true
+    size: 2Gi
+  resources:
+    limits:
+      cpu: 10m
+      memory: 32Mi
+    requests:
+      cpu: 10m
+      memory: 32Mi
+
+configmapReload:
+  prometheus:
+    enabled: false
+  alertmanager:
+    enabled: false
+
+kubeStateMetrics:
+  enabled: true
+
+kube-state-metrics:
+  enabled: true
+  serviceAccount:
+    annotations:
+      iam.gke.io/gcp-service-account: prometheus@arikkfir.iam.gserviceaccount.com
+  tolerations:
+  - key: kfirs.com/workload-nodes
+    operator: Exists
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kfirs.com/workload-nodes
+            operator: Exists
+  resources:
+    limits:
+      cpu: 50m
+      memory: 32Mi
+    requests:
+      cpu: 50m
+      memory: 32Mi
+
+nodeExporter:
+  enabled: true
+  strategy:
+    type: Recreate
+  tolerations:
+  - key: kfirs.com/workload-nodes
+    operator: Exists
+  resources:
+    limits:
+      cpu: 200m
+      memory: 50Mi
+    requests:
+      cpu: 100m
+      memory: 30Mi
+
+server:
+  enabled: true
+  baseURL: "https://prometheus.kfirs.com"
+  extraFlags:
+    - web.enable-lifecycle
+    - web.enable-admin-api
+    - storage.tsdb.wal-compression
+  strategy:
+    type: Recreate
+  global:
+    scrape_interval: 1m     # How frequently to scrape targets by default
+    scrape_timeout: 10s     # How long until a scrape request times out
+    evaluation_interval: 1m # How frequently to evaluate rules
+  tolerations:
+  - key: kfirs.com/workload-nodes
+    operator: Exists
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kfirs.com/workload-nodes
+            operator: Exists
+  persistentVolume:
+    enabled: true
+    size: 8Gi
+  alertmanagers: []
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1.5Gi
+    requests:
+      cpu: 500m
+      memory: 1.5Gi
+  retention: 7d
+
+pushgateway:
+  enabled: true
+  strategy:
+    type: Recreate
+  tolerations:
+  - key: kfirs.com/workload-nodes
+    operator: Exists
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kfirs.com/workload-nodes
+            operator: Exists
+  resources:
+    limits:
+      cpu: 10m
+      memory: 32Mi
+    requests:
+       cpu: 10m
+       memory: 32Mi
+  persistentVolume:
+    enabled: true
+    size: 2Gi

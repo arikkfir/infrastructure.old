@@ -1,0 +1,60 @@
+apiVersion: dns.cnrm.cloud.google.com/v1beta1
+kind: DNSRecordSet
+metadata:
+  name: grafana-kfirs-com-cname
+spec:
+  name: grafana.kfirs.com.
+  type: "CNAME"
+  ttl: 300
+  managedZoneRef:
+    namespace: kfirs-com
+    name: kfirs-com
+  rrdatas:
+    - traefik.kfirs.com.
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: grafana-kfirs-com
+spec:
+  secretName: grafana-kfirs-com-tls
+  issuerRef:
+    kind: ClusterIssuer
+    name: google-clouddns
+  dnsNames:
+    - grafana.kfirs.com
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: grafana-kfirs-com-http
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: HostRegexp(`grafana.kfirs.com`)
+      kind: Rule
+      middlewares:
+        - name: redirect-to-https
+          namespace: traefik
+      services:
+        - kind: Service
+          name: grafana
+          port: 80
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: grafana-kfirs-com-https
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: HostRegexp(`grafana.kfirs.com`)
+      kind: Rule
+      services:
+        - kind: Service
+          name: grafana
+          port: 80
+  tls:
+    secretName: grafana-kfirs-com-tls
