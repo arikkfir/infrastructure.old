@@ -34,14 +34,8 @@ spec:
         - image: {{ print $image.repository ":" $image.tag | quote }}
           name: {{ $component | quote }}
           ports:
-            - containerPort: 8080
+            - containerPort: 80
               name: http
-              protocol: TCP
-            - containerPort: 9000
-              name: metrics
-              protocol: TCP
-            - containerPort: 9001
-              name: health
               protocol: TCP
           resources:
             limits:
