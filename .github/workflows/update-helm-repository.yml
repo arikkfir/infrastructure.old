@@ -42,7 +42,6 @@ jobs:
           done
           helm repo index . --url=https://arikkfir-helm-repository.storage.googleapis.com/
         working-directory: kubernetes/charts
-      - run: gcloud info
-
       - name: Upload
-        run: gsutil cp * gs://arikkfir-helm-repository/
+        run: gsutil cp index.yaml *.tgz gs://arikkfir-helm-repository/
+        working-directory: kubernetes/charts
