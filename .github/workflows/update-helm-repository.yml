@@ -4,7 +4,7 @@ on:
     branches: [main]
     paths:
       - .github/workflows/update-helm-repository.yml
-      - kubernetes/charts/**
+      - kubernetes/helm/charts/**
   workflow_dispatch:
 concurrency:
   cancel-in-progress: false
