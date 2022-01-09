@@ -9,6 +9,14 @@ api:
     name: ""
     # gcpWorkloadIdentityProject specifies the GCP project in which a Workload Identity will be set up with the Kubernetes service account
     gcpWorkloadIdentityProject: ""
+  # api pod resources
+  resources:
+    requests:
+      cpu: 100m
+      memory: 50Mi
+    limits:
+      cpu: 500m
+      memory: 100Mi
   image:
     repository: europe-docker.pkg.dev/arikkfir/public/devbot/api
     tag: latest
@@ -27,6 +35,14 @@ portal:
   image:
     repository: europe-docker.pkg.dev/arikkfir/public/devbot/portal
     tag: latest
+  # portal pod resources
+  resources:
+    requests:
+      cpu: 100m
+      memory: 50Mi
+    limits:
+      cpu: 500m
+      memory: 100Mi
   tolerations: []
 ingress:
   # enabled controls whether ingress, dns and certificate objects are created or not.

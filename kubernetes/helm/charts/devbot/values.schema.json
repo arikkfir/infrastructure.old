@@ -33,6 +33,30 @@
         }
       }
     },
+    "cpuAndMemory": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "cpu": {
+          "type": "string"
+        },
+        "memory": {
+          "type": "string"
+        }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "requests": {
+          "type": "#/$defs/cpuAndMemory"
+        },
+        "limits": {
+          "type": "#/$defs/cpuAndMemory"
+        }
+      }
+    },
     "api": {
       "type": "object",
       "additionalProperties": false,
@@ -40,6 +64,7 @@
         "rbac": {"$ref": "#/$defs/rbac"},
         "serviceAccount": {"$ref": "#/$defs/serviceAccount"},
         "image": {"$ref": "#/$defs/image"},
+        "resources": {"$ref": "#/$defs/resources"},
         "tolerations": {
           "type": "array"
         }
@@ -52,6 +77,7 @@
         "rbac": {"$ref": "#/$defs/rbac"},
         "serviceAccount": {"$ref": "#/$defs/serviceAccount"},
         "image": {"$ref": "#/$defs/image"},
+        "resources": {"$ref": "#/$defs/resources"},
         "tolerations": {
           "type": "array"
         }
