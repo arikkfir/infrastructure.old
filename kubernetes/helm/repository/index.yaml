@@ -3,7 +3,24 @@ entries:
   devbot:
   - apiVersion: v2
     appVersion: "1"
-    created: "2022-01-09T22:38:01.123617271Z"
+    created: "2022-01-09T22:45:49.800312947Z"
+    description: Development bot for GitHub
+    digest: b6b268e50a1316516e59aad2c63faa377edd4cd3d98ede04fabe300a9fc98cf8
+    home: https://github.com/arikkfir/devbot
+    icon: https://github.com/arikkfir/infrastructure/kubernetes/charts/devbot/devbot.png
+    maintainers:
+    - email: arik@kfirs.com
+      name: Arik Kfir
+    name: devbot
+    sources:
+    - https://github.com/arikkfir/devbot
+    type: application
+    urls:
+    - https://arikkfir-helm-repository.storage.googleapis.com/devbot-0.0.4.tgz
+    version: 0.0.4
+  - apiVersion: v2
+    appVersion: "1"
+    created: "2022-01-09T22:45:49.799458354Z"
     description: Development bot for GitHub
     digest: 24c97ed802e8b5a3ca8aabd38cf70e8efbaf80c83418ff4e40ed1909ac3f1a78
     home: https://github.com/arikkfir/devbot
@@ -20,7 +37,7 @@ entries:
     version: 0.0.3
   - apiVersion: v2
     appVersion: "1"
-    created: "2022-01-09T22:38:01.121631473Z"
+    created: "2022-01-09T22:45:49.798329764Z"
     description: Development bot for GitHub
     digest: 5af3d0bbe1ee2d768f999645eee00870a311d45469cb7d1070bff67da5211fbe
     home: https://github.com/arikkfir/devbot
@@ -37,7 +54,7 @@ entries:
     version: 0.0.2
   - apiVersion: v2
     appVersion: "1"
-    created: "2022-01-09T22:38:01.120278374Z"
+    created: "2022-01-09T22:45:49.797380073Z"
     description: Development bot for GitHub
     digest: 40e2cab366425503fb650cc7da655c199533fc01c7640ba0ebd6948bdb751114
     home: https://github.com/arikkfir/devbot
@@ -52,4 +69,4 @@ entries:
     urls:
     - https://arikkfir-helm-repository.storage.googleapis.com/devbot-0.0.1.tgz
     version: 0.0.1
-generated: "2022-01-09T22:38:01.119169375Z"
+generated: "2022-01-09T22:45:49.796130884Z"
