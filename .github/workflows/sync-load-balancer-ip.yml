@@ -30,14 +30,14 @@ jobs:
           curl -sSL -o /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.7.1/yq_linux_amd64 && chmod +x /usr/local/bin/yq
         env:
           DEBIAN_FRONTEND: noninteractive
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Setup Google Cloud SDK
         uses: arikkfir/infrastructure/.github/actions/setup-gcloud@main
         with:
           service_account: infrastructure-github-actions@arikkfir.iam.gserviceaccount.com
       - name: Authenticate to GKE
         run: gcloud container clusters get-credentials --zone=${GCP_ZONE} primary
-      - name: Checkout
-        uses: actions/checkout@v2
       - name: Obtain GKE Ingress IP address
         run: |-
           kubectl wait -n system --for=condition=Ready ComputeAddress/traefik-ingress --timeout=5m
