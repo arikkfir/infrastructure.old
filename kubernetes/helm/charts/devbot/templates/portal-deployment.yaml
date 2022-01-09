@@ -39,10 +39,10 @@ spec:
               protocol: TCP
           resources:
             limits:
-              cpu: 500m
-              memory: 100Mi
+              cpu: {{ default "500m" .Values.portal.resources.limits.cpu | quote }}
+              memory: {{ default "100Mi" .Values.portal.resources.limits.memory | quote }}
             requests:
-              cpu: 100m
-              memory: 50Mi
+              cpu: {{ default "100m" .Values.portal.resources.requests.cpu | quote }}
+              memory: {{ default "50Mi" .Values.portal.resources.requests.memory | quote }}
       serviceAccountName: {{ $serviceAccountName | quote }}
       tolerations: {{ .Values.portal.tolerations | toJson }}

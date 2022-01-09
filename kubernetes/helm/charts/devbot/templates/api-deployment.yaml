@@ -45,10 +45,10 @@ spec:
               protocol: TCP
           resources:
             limits:
-              cpu: 500m
-              memory: 100Mi
+              cpu: {{ default "500m" .Values.api.resources.limits.cpu | quote }}
+              memory: {{ default "100Mi" .Values.api.resources.limits.memory | quote }}
             requests:
-              cpu: 100m
-              memory: 50Mi
+              cpu: {{ default "100m" .Values.api.resources.requests.cpu | quote }}
+              memory: {{ default "50Mi" .Values.api.resources.requests.memory | quote }}
       serviceAccountName: {{ $serviceAccountName | quote }}
       tolerations: {{ .Values.api.tolerations | toJson }}
