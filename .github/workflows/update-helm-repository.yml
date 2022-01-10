@@ -43,6 +43,7 @@ jobs:
         working-directory: kubernetes/helm/repository
       - name: Reject repackaging
         run: |-
+          git status
           git add .
           REPACKAGES="$(git status --short --no-renames . | grep -E '^M .*')"
           REPACKAGES_COUNT="$(echo "${REPACKAGES}" | grep -E '^M .*' | wc -l | tr -d ' ')"
