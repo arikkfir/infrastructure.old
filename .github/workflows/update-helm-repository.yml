@@ -41,6 +41,17 @@ jobs:
             helm package "../charts/${dir}"
           done
         working-directory: kubernetes/helm/repository
+      - name: Reject repackaging
+        run: |-
+          git add .
+          REPACKAGES="$(git status --short --no-renames . | grep -E '^M .*')"
+          REPACKAGES_COUNT="$(echo "${REPACKAGES}" | grep -E '^M .*' | wc -l | tr -d ' ')"
+          if [[ "${REPACKAGES_COUNT}" != "0" ]]; then
+            echo "Following Helm charts were modified without incrementing their chart version: " >&2
+            echo "${REPACKAGES}" >&2
+            exit 1
+          fi
+        working-directory: kubernetes/helm/repository
       - name: Index
         run: helm repo index . --url=https://arikkfir-helm-repository.storage.googleapis.com/
         working-directory: kubernetes/helm/repository
