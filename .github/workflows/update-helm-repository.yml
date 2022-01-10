@@ -47,9 +47,8 @@ jobs:
           git add *.tgz
           git status --short --no-renames .
           git status --short --no-renames . | grep -E '^M .*' || echo "NONE"
-          REPACKAGES="$(git status --short --no-renames . | grep -E '^M .*')"
-          REPACKAGES_COUNT="$(echo "${REPACKAGES}" | wc -l | tr -d ' ')"
-          if [[ "${REPACKAGES_COUNT}" != "0" ]]; then
+          REPACKAGES="$(git status --short --no-renames . | grep -E '^M .*' || echo "NONE")"
+          if [[ "${REPACKAGES}" != "NONE" ]]; then
             echo "Following Helm charts were modified without incrementing their chart version: " >&2
             echo "${REPACKAGES}" >&2
             exit 1
