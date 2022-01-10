@@ -3,7 +3,24 @@ entries:
   devbot:
   - apiVersion: v2
     appVersion: "1"
-    created: "2022-01-10T20:22:31.131758999Z"
+    created: "2022-01-10T22:06:15.912549082Z"
+    description: Development bot for GitHub
+    digest: 0cc108dbd6a6a8dabb44dcc41647aea9addc6e7f93a0843003d03281bc50f25c
+    home: https://github.com/arikkfir/devbot
+    icon: https://github.com/arikkfir/infrastructure/kubernetes/charts/devbot/devbot.png
+    maintainers:
+    - email: arik@kfirs.com
+      name: Arik Kfir
+    name: devbot
+    sources:
+    - https://github.com/arikkfir/devbot
+    type: application
+    urls:
+    - https://arikkfir-helm-repository.storage.googleapis.com/devbot-0.0.5.tgz
+    version: 0.0.5
+  - apiVersion: v2
+    appVersion: "1"
+    created: "2022-01-10T22:06:15.91177489Z"
     description: Development bot for GitHub
     digest: 68a0da651497cda740a3a0c0dece2c1b2435e6f34b5e93835cc81616c4e8facc
     home: https://github.com/arikkfir/devbot
@@ -20,7 +37,7 @@ entries:
     version: 0.0.4
   - apiVersion: v2
     appVersion: "1"
-    created: "2022-01-10T20:22:31.130972883Z"
+    created: "2022-01-10T22:06:15.910945399Z"
     description: Development bot for GitHub
     digest: 24c97ed802e8b5a3ca8aabd38cf70e8efbaf80c83418ff4e40ed1909ac3f1a78
     home: https://github.com/arikkfir/devbot
@@ -37,7 +54,7 @@ entries:
     version: 0.0.3
   - apiVersion: v2
     appVersion: "1"
-    created: "2022-01-10T20:22:31.129810959Z"
+    created: "2022-01-10T22:06:15.909528114Z"
     description: Development bot for GitHub
     digest: 5af3d0bbe1ee2d768f999645eee00870a311d45469cb7d1070bff67da5211fbe
     home: https://github.com/arikkfir/devbot
@@ -54,7 +71,7 @@ entries:
     version: 0.0.2
   - apiVersion: v2
     appVersion: "1"
-    created: "2022-01-10T20:22:31.128668935Z"
+    created: "2022-01-10T22:06:15.908808222Z"
     description: Development bot for GitHub
     digest: 40e2cab366425503fb650cc7da655c199533fc01c7640ba0ebd6948bdb751114
     home: https://github.com/arikkfir/devbot
@@ -69,4 +86,4 @@ entries:
     urls:
     - https://arikkfir-helm-repository.storage.googleapis.com/devbot-0.0.1.tgz
     version: 0.0.1
-generated: "2022-01-10T20:22:31.127755616Z"
+generated: "2022-01-10T22:06:15.907825632Z"
