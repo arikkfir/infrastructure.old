@@ -52,3 +52,4 @@ spec:
               memory: {{ default "50Mi" .Values.api.resources.requests.memory | quote }}
       serviceAccountName: {{ $serviceAccountName | quote }}
       tolerations: {{ .Values.api.tolerations | toJson }}
+      # TODO: add support for affinity

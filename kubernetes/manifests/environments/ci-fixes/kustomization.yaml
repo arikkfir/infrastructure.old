@@ -1,10 +1,17 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: main
+namespace: ci-fixes
 resources:
-  - namespace.yaml
-  - devbot.yaml
+  - ../main
 patches:
+  - target:
+      group: ""
+      version: v1
+      kind: Namespace
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: ci-fixes
   - target:
       group: helm.toolkit.fluxcd.io
       version: v2beta1
@@ -13,10 +20,10 @@ patches:
     patch: |-
       - op: add
         path: /spec/values/api/image/tag
-        value: main-tag
+        value: ci-fixes-tag
       - op: add
         path: /spec/values/portal/image/tag
-        value: main-tag
+        value: ci-fixes-tag
       - op: replace
         path: /spec/values/ingress/dns/record/name
-        value: devbot.main.kfirs.com
+        value: devbot.ci-fixes.kfirs.com
