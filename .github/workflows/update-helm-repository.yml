@@ -45,6 +45,8 @@ jobs:
         run: |-
           set -x
           git add *.tgz
+          git status --short --no-renames .
+          git status --short --no-renames . | grep -E '^M .*'
           REPACKAGES="$(git status --short --no-renames . | grep -E '^M .*')"
           REPACKAGES_COUNT="$(echo "${REPACKAGES}" | wc -l | tr -d ' ')"
           if [[ "${REPACKAGES_COUNT}" != "0" ]]; then
