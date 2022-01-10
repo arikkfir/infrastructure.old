@@ -50,10 +50,10 @@
       "additionalProperties": false,
       "properties": {
         "requests": {
-          "type": "#/$defs/cpuAndMemory"
+          "$ref": "#/$defs/cpuAndMemory"
         },
         "limits": {
-          "type": "#/$defs/cpuAndMemory"
+          "$ref": "#/$defs/cpuAndMemory"
         }
       }
     },
