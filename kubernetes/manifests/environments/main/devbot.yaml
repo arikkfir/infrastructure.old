@@ -7,25 +7,23 @@ spec:
   chart:
     spec:
       chart: devbot
-      version: 0.0.1
+      version: 0.0.6
       sourceRef:
         kind: HelmRepository
         namespace: system
         name: arikkfir
   values:
     api:
+      image: {}
       serviceAccount:
         gcpWorkloadIdentityProject: arikkfir
-      image:
-        tag: abc123
       tolerations:
         - key: kfirs.com/workload-nodes
           operator: Exists
     portal:
+      image: {}
       serviceAccount:
         gcpWorkloadIdentityProject: arikkfir
-      image:
-        tag: abc456
       tolerations:
         - key: kfirs.com/workload-nodes
           operator: Exists
@@ -33,7 +31,7 @@ spec:
       enabled: true
       dns:
         record:
-          name: devbot.bad.cluster.local
+          name: devbot.cluster.local
           type: CNAME
           zone:
             namespace: system
