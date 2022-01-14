@@ -47,3 +47,10 @@ spec:
       serviceAccountName: {{ $serviceAccountName | quote }}
       tolerations: {{ .Values.portal.tolerations | toJson }}
       # TODO: add support for affinity
+#    affinity:
+#      nodeAffinity:
+#        requiredDuringSchedulingIgnoredDuringExecution:
+#          nodeSelectorTerms:
+#            - matchExpressions:
+#                - key: kfirs.com/workload-nodes
+#                  operator: Exists
