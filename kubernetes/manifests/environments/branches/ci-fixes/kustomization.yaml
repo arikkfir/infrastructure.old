@@ -18,15 +18,12 @@ patches:
       kind: HelmRelease
       name: devbot
     patch: |-
-      - op: add
-        path: /spec/values/appVersion
-        value: ci-fixes-tag
       - op: replace
         path: /spec/values/ingress/dns/record/name
         value: devbot.ci-fixes.kfirs.com
-#      - op: add
-#        path: /spec/values/api/image/tag
-#        value: ci-fixes-tag
-#      - op: add
-#        path: /spec/values/portal/image/tag
-#        value: ci-fixes-tag
+      - op: add
+        path: /spec/values/api/image/tag
+        value: ci-fixes-tag
+      - op: add
+        path: /spec/values/portal/image/tag
+        value: ci-fixes-tag
