@@ -22,8 +22,8 @@ patches:
         path: /spec/values/ingress/dns/record/name
         value: devbot.ci-fixes.kfirs.com
       - op: add
-        path: /spec/values/api/image/tag
-        value: ci-fixes-tag
+        path: /spec/values/api/image
+        value: {tag: ci-fixes-tag}
       - op: add
-        path: /spec/values/portal/image/tag
-        value: ci-fixes-tag
+        path: /spec/values/portal/image
+        value: {tag: ci-fixes-tag}

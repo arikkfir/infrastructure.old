@@ -15,8 +15,8 @@ patches:
         path: /spec/values/ingress/dns/record/name
         value: devbot.main.kfirs.com
       - op: add
-        path: /spec/values/api/image/tag
-        value: main-tag
+        path: /spec/values/api/image
+        value: {tag: main-tag}
       - op: add
-        path: /spec/values/portal/image/tag
-        value: main-tag
+        path: /spec/values/portal/image
+        value: {tag: main-tag}
