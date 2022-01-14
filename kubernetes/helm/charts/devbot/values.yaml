@@ -19,7 +19,6 @@ api:
       memory: 100Mi
   image:
     repository: europe-docker.pkg.dev/arikkfir/public/devbot/api
-    tag: latest
   tolerations: []
 portal:
   rbac:
@@ -34,7 +33,6 @@ portal:
     gcpWorkloadIdentityProject: ""
   image:
     repository: europe-docker.pkg.dev/arikkfir/public/devbot/portal
-    tag: latest
   # portal pod resources
   resources:
     requests:

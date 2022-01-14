@@ -31,7 +31,7 @@ spec:
         app.kubernetes.io/component: {{ $component | quote }}
     spec:
       containers:
-        - image: {{ print $image.repository ":" $image.tag | quote }}
+        - image: {{ print $image.repository ":" (default .Chart.AppVersion $image.tag) | quote }}
           name: {{ $component | quote }}
           ports:
             - containerPort: 80
