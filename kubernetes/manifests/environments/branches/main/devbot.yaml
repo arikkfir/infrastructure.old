@@ -14,14 +14,12 @@ spec:
         name: arikkfir
   values:
     api:
-      image: {}
       serviceAccount:
         gcpWorkloadIdentityProject: arikkfir
       tolerations:
         - key: kfirs.com/workload-nodes
           operator: Exists
     portal:
-      image: {}
       serviceAccount:
         gcpWorkloadIdentityProject: arikkfir
       tolerations:

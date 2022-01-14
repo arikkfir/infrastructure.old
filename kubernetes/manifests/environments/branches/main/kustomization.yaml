@@ -12,11 +12,14 @@ patches:
       name: devbot
     patch: |-
       - op: add
-        path: /spec/values/api/image/tag
-        value: main-tag
-      - op: add
-        path: /spec/values/portal/image/tag
+        path: /spec/values/appVersion
         value: main-tag
       - op: replace
         path: /spec/values/ingress/dns/record/name
         value: devbot.main.kfirs.com
+#      - op: add
+#        path: /spec/values/api/image/tag
+#        value: main-tag
+#      - op: add
+#        path: /spec/values/portal/image/tag
+#        value: main-tag
