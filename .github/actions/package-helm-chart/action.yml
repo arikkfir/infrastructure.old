@@ -1,0 +1,25 @@
+name: Package Helm Chart
+description: Package Helm chart
+inputs:
+  directory:
+    description: Directory of the Helm chart
+    required: false
+    default: .
+runs:
+  using: composite
+  steps:
+    - name: Package Helm Chart
+      run: |-
+        yq e -i ".version += \"-${GITHUB_SHA::7}\"" Chart.yaml
+        yq e -i ".appVersion = \"${GITHUB_SHA::7}\"" Chart.yaml
+        gsutil cp gs://arikkfir-helm-repository/$(yq e '.name' Chart.yaml)-$(yq e '.version' Chart.yaml).tgz . || echo "Package does not exist"
+        if [[ -e "$(yq e '.name' Chart.yaml)-$(yq e '.version' Chart.yaml).tgz" ]]; then
+          echo "Package already exists!" >&2
+          exit 1
+        fi 
+        helm package .
+        gsutil cp gs://arikkfir-helm-repository/index.yaml .
+        helm repo index . --merge=./index.yaml --url=https://arikkfir-helm-repository.storage.googleapis.com/
+        gsutil cp ./index.yaml *.tgz gs://arikkfir-helm-repository/
+      working-directory: ${{ inputs.directory }}
+      shell: bash
