@@ -148,3 +148,14 @@ module "github-arikkfir-devbot-repository" {
   protected_branches = ["main"]
   topics             = ["go", "devops"]
 }
+
+module "github-arikkfir-kfirs-com-repository" {
+  providers          = {
+    github = github.arikkfir
+  }
+  source             = "./modules/github-repository"
+  name               = "kfirs-com"
+  description        = "Website for the kfirs.com website"
+  protected_branches = ["main"]
+  topics             = ["website"]
+}
