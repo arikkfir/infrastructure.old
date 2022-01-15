@@ -8,6 +8,8 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Setup YQ
+      uses: arikkfir/infrastructure/.github/actions/setup-yq@main
     - name: Package Helm Chart
       run: |-
         yq e -i ".version += \"-${GITHUB_SHA::7}\"" Chart.yaml
