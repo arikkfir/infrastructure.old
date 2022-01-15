@@ -39,7 +39,7 @@ resource "google_service_account_iam_member" "infrastructure-github-actions-oidc
   member = "principalSet://iam.googleapis.com/projects/8909046976/locations/global/workloadIdentityPools/github-actions/attribute.repository/arikkfir/infrastructure"
 }
 
-resource "google_project_iam_member" "infrastructure_owner" {
+resource "google_project_iam_member" "infrastructure_storageAdmin" {
   project = google_project.project.project_id
   role = "roles/storage.admin"
   member = "serviceAccount:${google_service_account.infrastructure-github-actions.email}"
