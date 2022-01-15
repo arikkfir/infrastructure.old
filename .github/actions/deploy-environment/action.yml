@@ -1,0 +1,45 @@
+name: Deploy Environment
+description: Create/update a deployment environment
+inputs:
+  token:
+    description: GitHub PAT
+    required: true
+  name:
+    description: The environment name
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Install packages
+      shell: bash
+      run: apt-get update && apt-get install -y curl git
+      env:
+        DEBIAN_FRONTEND: noninteractive
+    - name: Checkout Infrastructure
+      uses: actions/checkout@v2
+      with:
+        repository: arikkfir/infrastructure
+        ref: main
+        token: ${{ inputs.token }}
+        path: .deploy_infra
+    - name: Ensure environment
+      shell: bash
+      run: mkdir -pv "${{ github.ref_name }}"
+      working-directory: .deploy_infra/kubernetes/manifests/environments/branches
+    - name: Patch Infrastructure
+      shell: bash
+      run: |-
+        if [[ ! -f "./${{ github.ref_name }}/kustomization.yaml" ]]; then
+          cp ../../template/*.yaml .
+          yq eval -i '.namespace = "${{ github.ref_name }}"' "./${{ github.ref_name }}/kustomization.yaml"
+          yq eval -i '.[0].value = "${{ github.ref_name }}"' "./${{ github.ref_name }}/patch-namespace.yaml"
+        fi
+        git diff
+      working-directory: .deploy_infra/kubernetes/manifests/environments/branches/${{ github.ref_name }}
+#      - name: Commit changes
+#        uses: EndBug/add-and-commit@v7
+#        with:
+#          cwd: ./infrastructure
+#          author_name: github-actions
+#          author_email: <github-actions@users.noreply.github.com>
+#          message: Update Devbot Kubernetes manifest
