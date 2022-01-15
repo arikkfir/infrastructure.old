@@ -7,7 +7,7 @@ spec:
   chart:
     spec:
       chart: devbot
-      version: 0.0.6
+      version: non-existent-version
       sourceRef:
         kind: HelmRepository
         namespace: system

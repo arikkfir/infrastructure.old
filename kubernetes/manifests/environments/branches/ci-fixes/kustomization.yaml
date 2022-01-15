@@ -4,26 +4,10 @@ namespace: ci-fixes
 resources:
   - ../main
 patches:
-  - target:
-      group: ""
-      version: v1
-      kind: Namespace
+  - target: { group: "", version: v1, kind: Namespace }
     patch: |-
-      - op: replace
-        path: /metadata/name
-        value: ci-fixes
-  - target:
-      group: helm.toolkit.fluxcd.io
-      version: v2beta1
-      kind: HelmRelease
-      name: devbot
+      - { op: replace, path: /metadata/name, value: ci-fixes }
+  - target: { group: helm.toolkit.fluxcd.io, version: v2beta1, kind: HelmRelease, name: devbot }
     patch: |-
-      - op: replace
-        path: /spec/values/ingress/dns/record/name
-        value: devbot.ci-fixes.kfirs.com
-      - op: add
-        path: /spec/values/api/image
-        value: {tag: ci-fixes-tag}
-      - op: add
-        path: /spec/values/portal/image
-        value: {tag: ci-fixes-tag}
+      - { op: replace, path: /spec/chart/spec/version, value: ci-fixes-tag }
+      - { op: replace, path: /spec/values/ingress/dns/record/name, value: devbot.ci-fixes.kfirs.com }
