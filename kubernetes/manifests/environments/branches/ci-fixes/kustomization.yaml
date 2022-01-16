@@ -5,9 +5,8 @@ resources:
   - ../main
 patches:
   - target: { group: "", version: v1, kind: Namespace }
-    patch: |-
-      - { op: replace, path: /metadata/name, value: ci-fixes }
+    path: patch-namespace.yaml
   - target: { group: helm.toolkit.fluxcd.io, version: v2beta1, kind: HelmRelease, name: devbot }
-    patch: |-
-      - { op: replace, path: /spec/chart/spec/version, value: ci-fixes-tag }
-      - { op: replace, path: /spec/values/ingress/dns/record/name, value: devbot.ci-fixes.kfirs.com }
+    path: patch-devbot-helmrelease.yaml
+  - target: { group: helm.toolkit.fluxcd.io, version: v2beta1, kind: HelmRelease, name: kfirs-com }
+    path: patch-kfirs-com-helmrelease.yaml
