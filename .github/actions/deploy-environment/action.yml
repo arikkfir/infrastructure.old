@@ -24,18 +24,18 @@ runs:
         path: .deploy_infra
     - name: Ensure environment
       shell: bash
-      run: mkdir -pv "${{ github.ref_name }}"
+      run: mkdir -pv "${{ inputs.name }}"
       working-directory: .deploy_infra/kubernetes/manifests/environments/branches
     - name: Patch Infrastructure
       shell: bash
       run: |-
-        if [[ ! -f "./${{ github.ref_name }}/kustomization.yaml" ]]; then
+        if [[ ! -f "./${{ inputs.name }}/kustomization.yaml" ]]; then
           cp ../../template/*.yaml .
-          yq eval -i '.namespace = "${{ github.ref_name }}"' "./${{ github.ref_name }}/kustomization.yaml"
-          yq eval -i '.[0].value = "${{ github.ref_name }}"' "./${{ github.ref_name }}/patch-namespace.yaml"
+          yq eval -i '.namespace = "${{ inputs.name }}"' "./${{ inputs.name }}/kustomization.yaml"
+          yq eval -i '.[0].value = "${{ inputs.name }}"' "./${{ inputs.name }}/patch-namespace.yaml"
         fi
         git diff
-      working-directory: .deploy_infra/kubernetes/manifests/environments/branches/${{ github.ref_name }}
+      working-directory: .deploy_infra/kubernetes/manifests/environments/branches/${{ inputs.name }}
 #      - name: Commit changes
 #        uses: EndBug/add-and-commit@v7
 #        with:
