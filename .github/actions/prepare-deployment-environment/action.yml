@@ -1,4 +1,4 @@
-name: Deploy Environment
+name: Prepare Deployment Environment
 description: Create/update a deployment environment
 inputs:
   token:
@@ -36,17 +36,7 @@ runs:
     - name: Patch Infrastructure
       shell: bash
       run: |-
-        if [[ ! -f "./${{ inputs.name }}/kustomization.yaml" ]]; then
-          cp ../../template/*.yaml .
-          yq eval -i '.namespace = "${{ inputs.name }}"' "./${{ inputs.name }}/kustomization.yaml"
-          yq eval -i '.[0].value = "${{ inputs.name }}"' "./${{ inputs.name }}/patch-namespace.yaml"
-        fi
-        git diff
+        cp -vn ../../template/{kustomization,patch-namespace}.yaml .
+        yq eval -i '.namespace = "${{ inputs.name }}"' "./${{ inputs.name }}/kustomization.yaml"
+        yq eval -i '.[0].value = "${{ inputs.name }}"' "./${{ inputs.name }}/patch-namespace.yaml"
       working-directory: .deploy_infra/kubernetes/manifests/environments/branches/${{ inputs.name }}
-#      - name: Commit changes
-#        uses: EndBug/add-and-commit@v7
-#        with:
-#          cwd: ./infrastructure
-#          author_name: github-actions
-#          author_email: <github-actions@users.noreply.github.com>
-#          message: Update Devbot Kubernetes manifest
