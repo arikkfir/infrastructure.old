@@ -8,6 +8,9 @@ inputs:
     description: The environment name
     required: true
 outputs:
+  directory:
+    description: Directory of infrastructure checkout
+    value: .deploy_infra
   environment-directory:
     description: Directory of environment
     value: ${{ steps.ensure-environment.outputs.directory }}
