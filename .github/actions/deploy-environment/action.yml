@@ -7,6 +7,10 @@ inputs:
   name:
     description: The environment name
     required: true
+outputs:
+  environment-directory:
+    description: Directory of environment
+    value: ${{ steps.ensure-environment.outputs.directory }}
 runs:
   using: composite
   steps:
@@ -23,8 +27,11 @@ runs:
         token: ${{ inputs.token }}
         path: .deploy_infra
     - name: Ensure environment
+      id: ensure-environment
       shell: bash
-      run: mkdir -pv "${{ inputs.name }}"
+      run: |-
+        mkdir -pv "${{ inputs.name }}"
+        echo "::set-output name=directory::$(cd "${{ inputs.name }}" && pwd)"
       working-directory: .deploy_infra/kubernetes/manifests/environments/branches
     - name: Patch Infrastructure
       shell: bash
