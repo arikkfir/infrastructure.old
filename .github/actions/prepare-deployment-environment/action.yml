@@ -37,6 +37,6 @@ runs:
       shell: bash
       run: |-
         cp -vn ../../template/*.yaml .
-        yq eval -i '.namespace = "${{ inputs.name }}"' "./${{ inputs.name }}/kustomization.yaml"
-        yq eval -i '.[0].value = "${{ inputs.name }}"' "./${{ inputs.name }}/patch-namespace.yaml"
+        yq eval -i '.namespace = "${{ inputs.name }}"' kustomization.yaml
+        yq eval -i '.[0].value = "${{ inputs.name }}"' patch-namespace.yaml
       working-directory: .deploy_infra/kubernetes/manifests/environments/branches/${{ inputs.name }}
