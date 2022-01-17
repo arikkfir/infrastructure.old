@@ -25,14 +25,14 @@ runs:
         repository: arikkfir/infrastructure
         ref: main
         token: ${{ inputs.token }}
-        path: /deploy_infra
+        path: .deploy_infra
     - name: Ensure environment
       id: ensure-environment
       shell: bash
       run: |-
         mkdir -pv "${{ inputs.name }}"
         echo "::set-output name=directory::$(cd "${{ inputs.name }}" && pwd)"
-      working-directory: /deploy_infra/kubernetes/manifests/environments/branches
+      working-directory: .deploy_infra/kubernetes/manifests/environments/branches
     - name: Patch Infrastructure
       shell: bash
       run: |-
