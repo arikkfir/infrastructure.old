@@ -30,29 +30,29 @@ runs:
       env:
         DEBIAN_FRONTEND: noninteractive
     - name: Install Docker
-      if: ${{ inputs.docker == "true" }}
+      if: inputs.docker == "true"
       run: apt-get install -y docker.io
       shell: bash
       env:
         DEBIAN_FRONTEND: noninteractive
     - name: Install FluxCD CLI
-      if: ${{ inputs.fluxcd == "true" }}
+      if: inputs.fluxcd == "true"
       run: curl -s https://fluxcd.io/install.sh | bash
       shell: bash
     - name: Install Helm
-      if: ${{ inputs.helm == "true" }}
+      if: inputs.helm == "true"
       run: curl -sSL "${URL}" | tar xzf - -C /usr/local/bin --strip-components=1
       shell: bash
       env:
         URL: https://get.helm.sh/helm-v3.7.2-linux-amd64.tar.gz
     - name: Install Skaffold
-      if: ${{ inputs.skaffold == "true" }}
+      if: inputs.skaffold == "true"
       run: curl -sSL -o /usr/local/bin/skaffold "${URL}" && chmod +x /usr/local/bin/skaffold
       shell: bash
       env:
         URL: https://storage.googleapis.com/skaffold/releases/v1.35.1/skaffold-linux-amd64
     - name: Install YQ
-      if: ${{ inputs.yq == "true" }}
+      if: inputs.yq == "true"
       run: curl -sSL -o /usr/local/bin/yq "${URL}" && chmod +x /usr/local/bin/yq
       shell: bash
       env:
