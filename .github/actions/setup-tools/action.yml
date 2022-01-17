@@ -1,0 +1,59 @@
+name: Setup Tools
+description: Setup commonly used workflow tools
+inputs:
+  docker:
+    description: Whether to setup Docker or not
+    required: false
+    default: "false"
+  fluxcd:
+    description: Whether to setup FluxCD CLI or not
+    required: false
+    default: "false"
+  helm:
+    description: Whether to setup Helm CLI or not
+    required: false
+    default: "false"
+  skaffold:
+    description: Whether to setup Skaffold or not
+    required: false
+    default: "false"
+  yq:
+    description: Whether to setup YQ or not
+    required: false
+    default: "false"
+runs:
+  using: composite
+  steps:
+    - name: Install dependencies
+      run: apt-get update && apt-get install -y curl
+      shell: bash
+      env:
+        DEBIAN_FRONTEND: noninteractive
+    - name: Install Docker
+      if: ${{ inputs.docker == "true" }}
+      run: apt-get install -y docker.io
+      shell: bash
+      env:
+        DEBIAN_FRONTEND: noninteractive
+    - name: Install FluxCD CLI
+      if: ${{ inputs.fluxcd == "true" }}
+      run: curl -s https://fluxcd.io/install.sh | bash
+      shell: bash
+    - name: Install Helm
+      if: ${{ inputs.helm == "true" }}
+      run: curl -sSL "${URL}" | tar xzf - -C /usr/local/bin --strip-components=1
+      shell: bash
+      env:
+        URL: https://get.helm.sh/helm-v3.7.2-linux-amd64.tar.gz
+    - name: Install Skaffold
+      if: ${{ inputs.skaffold == "true" }}
+      run: curl -sSL -o /usr/local/bin/skaffold "${URL}" && chmod +x /usr/local/bin/skaffold
+      shell: bash
+      env:
+        URL: https://storage.googleapis.com/skaffold/releases/v1.35.1/skaffold-linux-amd64
+    - name: Install YQ
+      if: ${{ inputs.yq == "true" }}
+      run: curl -sSL -o /usr/local/bin/yq "${URL}" && chmod +x /usr/local/bin/yq
+      shell: bash
+      env:
+        URL: https://github.com/mikefarah/yq/releases/download/v4.16.2/yq_linux_amd64
