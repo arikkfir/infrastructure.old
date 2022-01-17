@@ -1,6 +1,6 @@
 - op: replace
   path: /spec/chart/spec/version
-  value: 0.0.6-b80a350
+  value: 0.0.6-c18562f
 - op: replace
   path: /spec/values/ingress/dns/record/name
   value: www.ci-fixes.kfirs.com
