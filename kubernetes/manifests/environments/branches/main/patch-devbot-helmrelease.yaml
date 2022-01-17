@@ -1,2 +1,6 @@
-- { op: replace, path: /spec/chart/spec/version, value: main-tag }
-- { op: replace, path: /spec/values/ingress/dns/record/name, value: devbot.main.kfirs.com }
+- op: replace
+  path: /spec/chart/spec/version
+  value: 0.0.6-1983795
+- op: replace
+  path: /spec/values/ingress/dns/record/name
+  value: www.main.kfirs.com
