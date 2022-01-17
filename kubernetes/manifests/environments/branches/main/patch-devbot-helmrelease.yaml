@@ -1,6 +1,6 @@
 - op: replace
   path: /spec/chart/spec/version
-  value: 0.0.6-1983795
+  value: 0.0.6-318871f
 - op: replace
   path: /spec/values/ingress/dns/record/name
-  value: www.main.kfirs.com
+  value: devbot.main.kfirs.com
