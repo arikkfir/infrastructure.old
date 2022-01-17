@@ -8,9 +8,6 @@ inputs:
     description: The environment name
     required: true
 outputs:
-  directory:
-    description: Directory of infrastructure checkout
-    value: .deploy_infra
   environment-directory:
     description: Directory of environment
     value: ${{ steps.ensure-environment.outputs.directory }}
@@ -28,18 +25,18 @@ runs:
         repository: arikkfir/infrastructure
         ref: main
         token: ${{ inputs.token }}
-        path: .deploy_infra
+        path: /deploy_infra
     - name: Ensure environment
       id: ensure-environment
       shell: bash
       run: |-
         mkdir -pv "${{ inputs.name }}"
         echo "::set-output name=directory::$(cd "${{ inputs.name }}" && pwd)"
-      working-directory: .deploy_infra/kubernetes/manifests/environments/branches
+      working-directory: /deploy_infra/kubernetes/manifests/environments/branches
     - name: Patch Infrastructure
       shell: bash
       run: |-
         cp -vn ../../template/*.yaml .
         yq eval -i '.namespace = "${{ inputs.name }}"' kustomization.yaml
         yq eval -i '.[0].value = "${{ inputs.name }}"' patch-namespace.yaml
-      working-directory: .deploy_infra/kubernetes/manifests/environments/branches/${{ inputs.name }}
+      working-directory: ${{ steps.ensure-environment.outputs.directory }}
