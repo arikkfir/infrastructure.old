@@ -1,6 +1,7 @@
 name: Apply GCP Terraform
 on:
   push:
+    branches: [main]
     paths:
       - .github/workflows/apply-terraform-gcp.yml
       - terraform/gcp/**
