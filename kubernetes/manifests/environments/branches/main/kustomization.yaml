@@ -8,5 +8,3 @@ patches:
     path: patch-namespace.yaml
   - target: {group: helm.toolkit.fluxcd.io, version: v2beta1, kind: HelmRelease, name: devbot}
     path: patch-devbot-helmrelease.yaml
-  - target: {group: helm.toolkit.fluxcd.io, version: v2beta1, kind: HelmRelease, name: kfirs-com}
-    path: patch-kfirs-com-helmrelease.yaml
