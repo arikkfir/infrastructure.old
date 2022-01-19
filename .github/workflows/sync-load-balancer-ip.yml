@@ -24,14 +24,14 @@ jobs:
       contents: write
       id-token: write
     steps:
-      - name: Install packages
-        run: |-
-          apt-get update && apt-get install -y curl jq git unzip
-          curl -sSL -o /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v4.7.1/yq_linux_amd64 && chmod +x /usr/local/bin/yq
-        env:
-          DEBIAN_FRONTEND: noninteractive
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Setup Tools
+        uses: arikkfir/infrastructure/.github/actions/setup-tools@main
+        with:
+          docker: "true"
+          yq: "true"
+          packages: "jq git unzip"
       - name: Setup Google Cloud SDK
         uses: arikkfir/infrastructure/.github/actions/setup-gcloud@main
         with:
@@ -46,7 +46,7 @@ jobs:
         run: |-
           TRAEFIK_DEPLOYMENT_FILE="kubernetes/manifests/system/deployment/traefik.yaml"
 
-                    # sync the region of the reserved IP address in GCP
+          # sync the region of the reserved IP address in GCP
           TRAEFIK_ADDR_SELECTOR=".apiVersion==\"compute.cnrm.cloud.google.com/v1beta1\" and .kind==\"ComputeAddress\" and .metadata.name==\"traefik-ingress\""
           yq ea -i "select(${TRAEFIK_ADDR_SELECTOR}).spec.location |= \"${GCP_REGION}\"" "${TRAEFIK_DEPLOYMENT_FILE}"
           
