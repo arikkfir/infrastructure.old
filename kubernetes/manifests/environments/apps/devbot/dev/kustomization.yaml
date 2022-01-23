@@ -4,3 +4,6 @@ resources:
   - api-deployment.yaml
   - api-service.yaml
   - api-service-account.yaml
+  - portal-deployment.yaml
+  - portal-service.yaml
+  - portal-service-account.yaml

@@ -1,0 +1,22 @@
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/component: portal
+  name: devbot-portal
+spec:
+  displayName: Devbot Portal
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  labels:
+    app.kubernetes.io/component: portal
+  name: ksa-link-devbot-portal
+spec:
+  member: serviceAccount:arikkfir.svc.id.goog[default/devbot-portal]
+  role: roles/iam.workloadIdentityUser
+  resourceRef:
+    apiVersion: iam.cnrm.cloud.google.com/v1beta1
+    kind: IAMServiceAccount
+    name: devbot-portal

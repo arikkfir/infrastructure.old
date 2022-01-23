@@ -5,3 +5,4 @@ commonLabels:
 resources:
   - ../dev
   - api-gcp.yaml
+  - portal-gcp.yaml

@@ -8,6 +8,8 @@ commonLabels:
 patches:
   - target: { group: iam.cnrm.cloud.google.com, version: v1beta1, kind: IAMPolicyMember, name: ksa-link-devbot-api }
     patch: '[ { "op": "add","path": "/spec/member","value": "serviceAccount:arikkfir.svc.id.goog[${ENVIRONMENT}/${ENVIRONMENT}-devbot-api]" } ]'
+  - target: { group: iam.cnrm.cloud.google.com, version: v1beta1, kind: IAMPolicyMember, name: ksa-link-devbot-portal }
+    patch: '[ { "op": "add","path": "/spec/member","value": "serviceAccount:arikkfir.svc.id.goog[${ENVIRONMENT}/${ENVIRONMENT}-devbot-portal]" } ]'
 replacements:
   - source: { group: "", version: v1, kind: Namespace, fieldPath: metadata.name }
     targets:
