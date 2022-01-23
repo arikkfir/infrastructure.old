@@ -20,7 +20,7 @@ runs:
       uses: actions/checkout@v2
       with:
         repository: arikkfir/infrastructure
-        ref: ${{ github.action_ref }}
+        ref: replace-helm-with-kustomize
         token: ${{ inputs.token }}
         path: .deploy_infra
     - name: Patch Infrastructure
