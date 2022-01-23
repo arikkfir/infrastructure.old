@@ -1,0 +1,22 @@
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/component: api
+  name: devbot-api
+spec:
+  displayName: Devbot API
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  labels:
+    app.kubernetes.io/component: api
+  name: ksa-link-devbot-api
+spec:
+  member: serviceAccount:arikkfir.svc.id.goog[default/devbot-api]
+  role: roles/iam.workloadIdentityUser
+  resourceRef:
+    apiVersion: iam.cnrm.cloud.google.com/v1beta1
+    kind: IAMServiceAccount
+    name: devbot-api

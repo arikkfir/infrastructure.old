@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: api
+  name: devbot-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: api
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: api
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kfirs.com/workload-nodes
+                    operator: Exists
+      containers:
+        - image: europe-docker.pkg.dev/arikkfir/public/devbot/api
+          name: server
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+            - containerPort: 9000
+              name: metrics
+              protocol: TCP
+            - containerPort: 9001
+              name: health
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 500m
+              memory: 100Mi
+            requests:
+              cpu: 100m
+              memory: 50Mi
+      serviceAccountName: devbot-api
+      tolerations:
+        - key: kfirs.com/workload-nodes
+          operator: Exists

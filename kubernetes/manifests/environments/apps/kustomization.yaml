@@ -1,25 +1,28 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: main
+namespace: default
+configurations:
+  - kustomizeconfig.yaml
 resources:
-  - ../../apps
+  - namespace.yaml
+  - devbot/gcp
 commonLabels:
-  app.kubernetes.io/instance: main
+  app.kubernetes.io/instance: default
+namePrefix: default-
 patches:
+  - target: { group: "", version: v1, kind: Namespace, name: default }
+    patch: '[ { "op": "replace","path": "/metadata/name","value": "default" } ]'
   - target: { group: iam.cnrm.cloud.google.com, version: v1beta1, kind: IAMPolicyMember, name: ksa-link-devbot-api }
-    patch: '[ { "op": "add","path": "/spec/member","value": "serviceAccount:arikkfir.svc.id.goog[main/main-devbot-api]" } ]'
+    patch: '[ { "op": "add","path": "/spec/member","value": "serviceAccount:arikkfir.svc.id.goog[default/default-devbot-api]" } ]'
 replacements:
   - source: { group: "", version: v1, kind: Namespace, fieldPath: metadata.name }
     targets:
-      - select: { }
-        fieldPaths: [ "metadata.name" ]
-        options: { delimiter: "-", index: 0, create: false }
       - select: { group: "", version: v1, kind: ServiceAccount }
         fieldPaths: [ "metadata.annotations.[iam.gke.io/gcp-service-account]" ]
-        options: { delimiter: "-", index: 0, create: false }
+        options: { delimiter: "-", index: -1, create: true }
       - select: { group: iam.cnrm.cloud.google.com, version: v1beta1, kind: IAMServiceAccount }
         fieldPaths: [ "spec.displayName" ]
-        options: { delimiter: " // ", index: 1, create: false }
+        options: { delimiter: " // ", index: 1, create: true }
 images:
   - name: europe-docker.pkg.dev/arikkfir/public/devbot/api
-    newTag: "2"
+    newTag: "1"

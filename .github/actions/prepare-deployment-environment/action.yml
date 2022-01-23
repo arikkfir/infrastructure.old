@@ -4,39 +4,47 @@ inputs:
   token:
     description: GitHub PAT
     required: true
-  name:
-    description: The environment name
-    required: true
 outputs:
   environment-directory:
     description: Directory of environment
-    value: ${{ steps.ensure-environment.outputs.directory }}
+    value: ${{ steps.patch.outputs.directory }}
 runs:
   using: composite
   steps:
     - name: Install packages
       shell: bash
-      run: apt-get update && apt-get install -y curl git
+      run: apt-get update && apt-get install -y curl git gettext-base
       env:
         DEBIAN_FRONTEND: noninteractive
     - name: Checkout Infrastructure
       uses: actions/checkout@v2
       with:
         repository: arikkfir/infrastructure
-        ref: main
+        ref: ${{ github.action_ref }}
         token: ${{ inputs.token }}
         path: .deploy_infra
-    - name: Ensure environment
-      id: ensure-environment
-      shell: bash
-      run: |-
-        mkdir -pv "${{ inputs.name }}"
-        echo "::set-output name=directory::$(cd "${{ inputs.name }}" && pwd)"
-      working-directory: .deploy_infra/kubernetes/manifests/environments/branches
     - name: Patch Infrastructure
+      id: patch
       shell: bash
       run: |-
-        cp -vn ../../template/*.yaml .
-        yq eval -i '.namespace = "${{ inputs.name }}"' kustomization.yaml
-        yq eval -i '.[0].value = "${{ inputs.name }}"' patch-namespace.yaml
-      working-directory: ${{ steps.ensure-environment.outputs.directory }}
+        set -x
+        mkdir -pv "${{ inputs.name }}"
+        cd "${{ inputs.name }}"
+        if [[ ! -f "kustomization.yaml" ]]; then
+          export NAMESPACE="${{ github.ref_name }}"
+          envsubst < ../../template/kustomization.yaml > kustomization.yaml
+        fi
+        kustomize edit set image europe-docker.pkg.dev/arikkfir/public/${{ github.repository }}/portal:${GITHUB_SHA::7}
+        git diff .
+        echo "::set-output name=directory::$(pwd)"
+        # TODO: find all KSA/GSA links and add patches for them
+      working-directory: .deploy_infra/kubernetes/manifests/environments/branches
+#    - name: Commit changes
+#      uses: EndBug/add-and-commit@v7
+#      with:
+#        branch: ${{ github.action_ref }}
+#        branch_mode: create
+#        cwd: ".deploy_infra"
+#        author_name: github-actions
+#        author_email: <github-actions@users.noreply.github.com>
+#        message: Deploy "${{ github.repository }}:${{ github.sha }}" in "${{ github.ref_name }}"

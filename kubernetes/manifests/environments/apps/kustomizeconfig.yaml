@@ -1,0 +1,9 @@
+nameReference:
+  - group: iam.cnrm.cloud.google.com
+    version: v1beta1
+    kind: IAMServiceAccount
+    fieldSpecs:
+      - group: iam.cnrm.cloud.google.com
+        version: v1beta1
+        kind: IAMPolicyMember
+        path: spec/resourceRef/name
