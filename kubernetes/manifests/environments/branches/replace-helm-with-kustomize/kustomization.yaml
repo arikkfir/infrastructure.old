@@ -42,4 +42,4 @@ replacements:
       version: v1beta1
 images:
 - name: europe-docker.pkg.dev/arikkfir/public/arikkfir/devbot/portal
-  newTag: 0bba74c
+  newTag: 386ee05
