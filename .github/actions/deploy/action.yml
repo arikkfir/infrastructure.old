@@ -35,7 +35,7 @@ runs:
           envsubst < ../../template/kustomization.yaml > kustomization.yaml
         fi
         kustomize edit set image europe-docker.pkg.dev/arikkfir/public/${{ github.repository }}/portal:${GITHUB_SHA::7}
-        git diff --cached .
+        cat kustomization.yaml
         echo "::set-output name=directory::$(pwd)"
         # TODO: find all KSA/GSA links and add patches for them
       working-directory: .deploy_infra/kubernetes/manifests/environments/branches
