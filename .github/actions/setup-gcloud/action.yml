@@ -29,7 +29,7 @@ runs:
     - name: Install
       if: ${{ inputs.credentials_json == '' }}
       run: |-
-        /usr/local/google-cloud-sdk/install.sh --quiet --additional-components kubectl kustomize
+        /usr/local/google-cloud-sdk/install.sh --quiet --additional-components kubectl
         for f in bq docker-credential-gcloud gcloud gsutil kubectl kustomize; do
           ln -s /usr/local/google-cloud-sdk/bin/${f} /usr/local/bin/
         done

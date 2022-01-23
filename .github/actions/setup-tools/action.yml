@@ -17,6 +17,10 @@ inputs:
     description: Whether to setup Helm CLI or not
     required: false
     default: "false"
+  kustomize:
+    description: Whether to setup Kustomize or not
+    required: false
+    default: "false"
   skaffold:
     description: Whether to setup Skaffold or not
     required: false
@@ -57,6 +61,10 @@ runs:
       shell: bash
       env:
         URL: https://get.helm.sh/helm-v3.7.2-linux-amd64.tar.gz
+    - name: Install Kustomize
+      if: ${{ inputs.kustomize == 'true' }}
+      run: curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+      shell: bash
     - name: Install Skaffold
       if: ${{ inputs.skaffold == 'true' }}
       run: curl -sSL -o /usr/local/bin/skaffold "${URL}" && chmod +x /usr/local/bin/skaffold
