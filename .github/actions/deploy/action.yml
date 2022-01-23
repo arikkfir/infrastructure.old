@@ -28,8 +28,8 @@ runs:
       shell: bash
       run: |-
         set -x
-        mkdir -pv "${{ inputs.name }}"
-        cd "${{ inputs.name }}"
+        mkdir -pv "${{ github.ref_name }}"
+        cd "${{ github.ref_name }}"
         if [[ ! -f "kustomization.yaml" ]]; then
           export NAMESPACE="${{ github.ref_name }}"
           envsubst < ../../template/kustomization.yaml > kustomization.yaml
