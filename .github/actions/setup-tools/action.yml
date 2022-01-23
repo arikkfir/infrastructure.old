@@ -63,8 +63,10 @@ runs:
         URL: https://get.helm.sh/helm-v3.7.2-linux-amd64.tar.gz
     - name: Install Kustomize
       if: ${{ inputs.kustomize == 'true' }}
-      run: curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh" | bash
+      run: curl -L "${URL}" | tar xzf - -C ./usr/local/bin/
       shell: bash
+      env:
+        URL: https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize/v4.4.1/kustomize_v4.4.1_linux_amd64.tar.gz
     - name: Install Skaffold
       if: ${{ inputs.skaffold == 'true' }}
       run: curl -sSL -o /usr/local/bin/skaffold "${URL}" && chmod +x /usr/local/bin/skaffold
