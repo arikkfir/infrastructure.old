@@ -12,6 +12,10 @@ replacements:
   - source: { group: "", version: v1, kind: Namespace, fieldPath: metadata.name }
     targets:
       - select: { }
+        reject:
+          - group: ""
+            version: v1
+            kind: Namespace
         fieldPaths: [ "metadata.name" ]
         options: { delimiter: "-", index: 0, create: false }
       - select: { group: "", version: v1, kind: ServiceAccount }
