@@ -9,6 +9,10 @@ inputs:
     description: Whether to setup FluxCD CLI or not
     required: false
     default: "false"
+  git:
+    description: Whether to setup Git or not
+    required: false
+    default: "false"
   helm:
     description: Whether to setup Helm CLI or not
     required: false
@@ -42,6 +46,10 @@ runs:
     - name: Install FluxCD CLI
       if: ${{ inputs.fluxcd == 'true' }}
       run: curl -s https://fluxcd.io/install.sh | bash
+      shell: bash
+    - name: Install Git
+      if: ${{ inputs.git == 'true' }}
+      run: apt-get install -y git
       shell: bash
     - name: Install Helm
       if: ${{ inputs.helm == 'true' }}
