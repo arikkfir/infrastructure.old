@@ -1,0 +1,40 @@
+name: Trigger Pull Request Deployment
+
+on:
+  issue_comment:
+    types:
+      - created
+
+defaults:
+  run:
+    shell: bash -eu {0}
+
+jobs:
+
+  trigger-deployment:
+    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/deploy ')
+    runs-on: ubuntu-20.04
+    steps:
+      # TODO: verify up to date before deployment
+      #      - run: echo $EVENT_CONTEXT
+      #        env:
+      #          EVENT_CONTEXT: ${{ toJSON(github.event) }}
+      - uses: actions/github-script@v6
+        with:
+          script: |+
+            const result = github.rest.repos.createDeployment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: "${{ github.sha }}",
+                auto_merge: false,
+                environment: context.payload.comment.body.match(/^\/deploy (.+)$/)[1],
+                description: `Deploy PR#${context.issue.number}`,
+                transient_environment: false,
+                production_environment: false
+            });
+            github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `Result from \`createDeployment\`:\n\n\`\`\`\n${JSON.stringify(result)}\n\`\`\``
+            });
