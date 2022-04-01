@@ -1,0 +1,102 @@
+name: Verify Pull Request
+
+on:
+  pull_request:
+    types:
+      - synchronize
+      - opened
+      - reopened
+
+concurrency:
+  cancel-in-progress: false
+  group: terraform/gcp2
+
+defaults:
+  run:
+    shell: bash -eu {0}
+
+jobs:
+
+  check-terraform-format:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-20.04
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: ./terraform/gcp
+    env:
+      TF_IN_AUTOMATION: true
+    steps:
+      - uses: actions/checkout@v3
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.1.7
+      - run: terraform fmt -check -recursive -no-color -diff
+        id: fmt
+      - uses: actions/github-script@v6
+        if: always()
+        env:
+          OUTCOME: ${{ steps.fmt.outcome }}
+          STDOUT: ${{ steps.fmt.outputs.stdout }}
+        with:
+          script: |-
+            if (process.env.OUTCOME === "success") {
+                const body = `✅ Terraform formatting is valid.`;
+                github.rest.issues.createComment({
+                    issue_number: context.issue.number, owner: context.repo.owner, repo: context.repo.repo, body
+                });
+            } else {
+                const body = `❌ Terraform formatting issues found!\n
+            <details><summary>Expand...</summary>
+            \n\`\`\`\n${process.env.STDOUT}\n\`\`\`\n
+            </details>`;
+                github.rest.issues.createComment({
+                    issue_number: context.issue.number, owner: context.repo.owner, repo: context.repo.repo, body
+                });
+                core.setFailed(`terraform format issues found`);
+            }
+
+  check-terraform-plan:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-20.04
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: ./terraform/gcp
+    env:
+      TF_IN_AUTOMATION: true
+    steps:
+      - uses: actions/checkout@v3
+      - uses: google-github-actions/auth@v0
+        with:
+          service_account: gha-arikkfir-infrastructure@arikkfir.iam.gserviceaccount.com
+          credentials_json: ${{ secrets.GCP_SA_GHA_ARIKKFIR_INFRASTRUCTURE_KEY }}
+      - uses: google-github-actions/setup-gcloud@v0
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.1.7
+      - run: terraform init -input=false -no-color
+      - run: terraform plan -input=false -lock-timeout=180s -no-color
+        id: plan
+        env:
+          TF_VAR_gcp_billing_account: ${{ secrets.GCP_BILLING_ACCOUNT_ID }}
+          TF_VAR_gcp_project: ${{ secrets.GCP_PROJECT_ID }}
+          TF_VAR_gcp_region: europe-west3
+          TF_VAR_gcp_zone: europe-west3-a
+      - uses: actions/github-script@v6
+        if: always()
+        env:
+          OUTCOME: ${{ steps.plan.outcome }}
+          STDOUT: ${{ steps.plan.outputs.stdout }}
+        with:
+          script: |-
+            const body = `${process.env.OUTCOME === "success" ? "✅" : "❌"} Terraform plan\n
+            <details><summary>Expand...</summary>
+            \n\`\`\`\n${process.env.STDOUT}\n\`\`\`\n
+            </details>`;
+            github.rest.issues.createComment({
+                issue_number: context.issue.number, owner: context.repo.owner, repo: context.repo.repo, body
+            });
+            if (process.env.OUTCOME !== "success") {
+                core.setFailed(`terraform plan failed`);
+            }
