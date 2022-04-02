@@ -14,14 +14,6 @@ jobs:
   trigger-deployment:
     if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/deploy ') && !contains(github.event.comment.body, '\n')
     runs-on: ubuntu-20.04
-    permissions:
-      pull-requests: read
-      deployments: write
-      issues: read
-      contents: read
-      checks: read
-      actions: read
-      statuses: read
     steps:
       - run: |+
           set -x
