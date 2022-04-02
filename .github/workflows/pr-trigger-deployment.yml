@@ -23,6 +23,13 @@ jobs:
       actions: read
       statuses: read
     steps:
+      - run: |+
+          curl -sSL \
+               -H "Accept: application/vnd.github.v3+json" \
+               -H "Authorization: token ${GITHUB_TOKEN}" \
+               "https://api.github.com/repos/arikkfir/infrastructure/pulls/11"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/github-script@v6
         with:
           script: |+
