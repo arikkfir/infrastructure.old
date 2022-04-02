@@ -15,10 +15,6 @@ jobs:
     if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/deploy ')
     runs-on: ubuntu-20.04
     steps:
-      # TODO: verify up to date before deployment
-      #      - run: echo $EVENT_CONTEXT
-      #        env:
-      #          EVENT_CONTEXT: ${{ toJSON(github.event) }}
       - uses: actions/github-script@v6
         with:
           script: |+
