@@ -18,13 +18,14 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |+
-            console.log(JSON.stringify(context.issue));
-            console.log(JSON.stringify(context.pull_request));
+            console.log("JSON.stringify({...}):");
+            console.log(JSON.stringify({owner: context.repo.owner, repo: context.repo.repo, pull_number: context.issue.number}));
             const pr = github.rest.pulls.get({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 pull_number: context.issue.number
             });
+            console.log("JSON.stringify(pr):");
             console.log(JSON.stringify(pr));
             const result = github.rest.repos.createDeployment({
                 owner: context.repo.owner,
