@@ -7,12 +7,6 @@ defaults:
   run:
     shell: bash -eu {0}
 
-env:
-  TF_VAR_gcp_billing_account: ${{ secrets.GCP_BILLING_ACCOUNT_ID }}
-  TF_VAR_gcp_project: ${{ secrets.GCP_PROJECT_ID }}
-  TF_VAR_gcp_region: europe-west3
-  TF_VAR_gcp_zone: europe-west3-a
-
 jobs:
 
   deploy-terraform-gcp:
