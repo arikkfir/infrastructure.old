@@ -37,4 +37,5 @@ jobs:
                 transient_environment: false,
                 production_environment: false
             });
+            console.log("JSON.stringify(result):");
             console.log(JSON.stringify(result));
