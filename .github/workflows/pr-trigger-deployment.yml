@@ -12,7 +12,7 @@ defaults:
 jobs:
 
   trigger-deployment:
-    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/deploy ')
+    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/deploy ') && !contains(github.event.comment.body, '\n')
     runs-on: ubuntu-20.04
     permissions:
       pull-requests: read
@@ -24,33 +24,14 @@ jobs:
       statuses: read
     steps:
       - run: |+
-          curl -sSL \
-               -H "Accept: application/vnd.github.v3+json" \
-               -H "Authorization: token ${GITHUB_TOKEN}" \
-               "https://api.github.com/repos/arikkfir/infrastructure/pulls/11"
+          set -x
+          PR_REF=$(curl -sSL -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${GITHUB_TOKEN}" \
+                        "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.issue.number }}" | jq -r '.head.ref')
+          TARGET_ENV="$(echo -n '/deploy qa02' | sed -e 's/^\/deploy \(.*\)$/\1/')"
+          DESCRIPTION="Deploy #${{ github.event.issue.number }}"
+          TRANSIENT="false"
+          curl -sSL -X POST -H "Accept: application/vnd.github.v3+json" -H "Authorization: token ${GITHUB_TOKEN}" \
+               "https://api.github.com/repos/${{ github.repository }}/deployments" \
+               -d "{\"auto_merge\": false, \"environment\": \"${TARGET_ENV}\", \"description\": \"${DESCRIPTION}\", \"ref\":\"${PR_REF}\", \"transient_environment\": ${TRANSIENT}}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/github-script@v6
-        with:
-          script: |+
-            console.log("JSON.stringify({...}):");
-            console.log(JSON.stringify({owner: context.repo.owner, repo: context.repo.repo, pull_number: context.issue.number}));
-            const pr = github.rest.pulls.get({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                pull_number: context.issue.number
-            });
-            console.log("JSON.stringify(pr):");
-            console.log(JSON.stringify(pr));
-            const result = github.rest.repos.createDeployment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                ref: pr.head.ref,
-                auto_merge: false,
-                environment: context.payload.comment.body.match(/^\/deploy (.+)$/)[1],
-                description: `Deploy PR#${context.issue.number}`,
-                transient_environment: false,
-                production_environment: false
-            });
-            console.log("JSON.stringify(result):");
-            console.log(JSON.stringify(result));
