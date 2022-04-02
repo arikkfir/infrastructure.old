@@ -1,2 +1,2 @@
 /.terraform
-/gcp.auto.tfvars
+/*.auto.tfvars
