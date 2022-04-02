@@ -21,7 +21,7 @@ jobs:
             const result = github.rest.repos.createDeployment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                ref: "${{ github.sha }}",
+                ref: "${{ github.ref }}",
                 auto_merge: false,
                 environment: context.payload.comment.body.match(/^\/deploy (.+)$/)[1],
                 description: `Deploy PR#${context.issue.number}`,
