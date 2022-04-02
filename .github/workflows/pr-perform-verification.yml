@@ -17,7 +17,7 @@ defaults:
 
 jobs:
 
-  check-terraform-format:
+  verify-format-terraform-gcp:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-20.04
     timeout-minutes: 5
@@ -56,7 +56,7 @@ jobs:
                 core.setFailed(`terraform format issues found`);
             }
 
-  check-terraform-plan:
+  plan-terraform-gcp:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-20.04
     timeout-minutes: 60

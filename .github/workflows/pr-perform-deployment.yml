@@ -1,38 +1,42 @@
 name: Deploy Pull Request
-# TODO: verify up to date before deployment
 
 on:
-  deployment: { }
+  deployment
 
 defaults:
   run:
     shell: bash -eu {0}
 
-#env:
-#  TF_VAR_gcp_billing_account: ${{ secrets.GCP_BILLING_ACCOUNT_ID }}
-#  TF_VAR_gcp_project: ${{ secrets.GCP_PROJECT_ID }}
-#  TF_VAR_gcp_region: europe-west3
-#  TF_VAR_gcp_zone: europe-west3-a
+env:
+  TF_VAR_gcp_billing_account: ${{ secrets.GCP_BILLING_ACCOUNT_ID }}
+  TF_VAR_gcp_project: ${{ secrets.GCP_PROJECT_ID }}
+  TF_VAR_gcp_region: europe-west3
+  TF_VAR_gcp_zone: europe-west3-a
 
 jobs:
-  deploy:
+
+  deploy-terraform-gcp:
     runs-on: ubuntu-20.04
+    defaults:
+      run:
+        working-directory: ./terraform/gcp
+    env:
+      TF_IN_AUTOMATION: true
     steps:
-      - run: echo $EVENT_CONTEXT
+      - uses: actions/checkout@v3
+      - uses: google-github-actions/auth@v0
+        with:
+          service_account: gha-arikkfir-infrastructure@arikkfir.iam.gserviceaccount.com
+          credentials_json: ${{ secrets.GCP_SA_GHA_ARIKKFIR_INFRASTRUCTURE_KEY }}
+      - uses: google-github-actions/setup-gcloud@v0
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.1.7
+      - run: terraform init -input=false -no-color
+      - run: terraform apply -input=false -lock-timeout=180s -auto-approve -no-color
+        id: apply
         env:
-          EVENT_CONTEXT: ${{ toJSON(github.event) }}
-#      - uses: actions/checkout@v3
-#      - uses: google-github-actions/auth@v0
-#        with:
-#          service_account: gha-arikkfir-infrastructure@arikkfir.iam.gserviceaccount.com
-#          credentials_json: ${{ secrets.GCP_SA_GHA_ARIKKFIR_INFRASTRUCTURE_KEY }}
-#      - uses: google-github-actions/setup-gcloud@v0
-#      - uses: hashicorp/setup-terraform@v1
-#        with:
-#          terraform_version: 1.1.7
-#      - run: terraform init -input=false
-#        working-directory: ./terraform/gcp
-#      - run: terraform validate
-#        working-directory: ./terraform/gcp
-#      - run: echo terraform apply -input=false -lock-timeout=180s -auto-approve
-#        working-directory: ./terraform/gcp
+          TF_VAR_gcp_billing_account: ${{ secrets.GCP_BILLING_ACCOUNT_ID }}
+          TF_VAR_gcp_project: ${{ secrets.GCP_PROJECT_ID }}
+          TF_VAR_gcp_region: europe-west3
+          TF_VAR_gcp_zone: europe-west3-a
