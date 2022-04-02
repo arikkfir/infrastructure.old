@@ -1,7 +1,7 @@
 name: Deploy Pull Request
 
 on:
-  deployment
+  deployment: { }
 
 defaults:
   run:
@@ -16,6 +16,9 @@ jobs:
         working-directory: ./terraform/gcp
     env:
       TF_IN_AUTOMATION: true
+    environment:
+      name: ${{ github.event.environment }}
+      url: https://${{ github.event.environment }}.kfirs.com
     steps:
       - uses: actions/checkout@v3
       - uses: google-github-actions/auth@v0
