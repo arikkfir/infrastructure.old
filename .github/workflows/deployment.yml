@@ -70,7 +70,7 @@ jobs:
         with:
           state: in_progress
           token: ${{ steps.token.outputs.token }}
-          log_url: ${{ needs.setup.outputs.log_url }}
+          target_url: ${{ needs.setup.outputs.log_url }}
           deployment_id: ${{ steps.create.outputs.deployment_id }}
 
   deploy-terraform-gcp:
@@ -115,7 +115,7 @@ jobs:
         with:
           state: failure
           token: ${{ steps.token.outputs.token }}
-          log_url: ${{ needs.setup.outputs.log_url }}
+          target_url: ${{ needs.setup.outputs.log_url }}
           deployment_id: ${{ needs.create-deployment.outputs.id }}
 
   on-success:
@@ -132,6 +132,6 @@ jobs:
         with:
           state: success
           token: ${{ steps.token.outputs.token }}
-          log_url: ${{ needs.setup.outputs.log_url }}
+          target_url: ${{ needs.setup.outputs.log_url }}
           environment_url: ${{ needs.setup.outputs.url }}
           deployment_id: ${{ needs.create-deployment.outputs.id }}
