@@ -27,7 +27,8 @@ resource "google_project" "project" {
 }
 
 resource "google_project_service" "apis" {
-  for_each = toset([
+  depends_on = [google_project_iam_member.gha-arikkfir-infrastructure-serviceusage-serviceUsageAdmin]
+  for_each   = toset([
     "artifactregistry.googleapis.com",
     "bigquery.googleapis.com",
     "bigquerystorage.googleapis.com",

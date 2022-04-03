@@ -1,9 +1,9 @@
 resource "google_compute_network" "gke" {
-  project = google_project.project.project_id
-
   depends_on = [
-    google_project_service.apis
+    google_project_service.apis,
+    google_project_iam_member.gha-arikkfir-infrastructure-compute-networkAdmin
   ]
+  project                         = google_project.project.project_id
   name                            = "gke"
   description                     = "GKE VPC"
   auto_create_subnetworks         = false
