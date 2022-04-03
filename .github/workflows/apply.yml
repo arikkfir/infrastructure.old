@@ -1,4 +1,4 @@
-name: Apply
+name: Deployment
 
 on:
   pull_request:
@@ -39,17 +39,19 @@ jobs:
       log_url: ${{ steps.env.outputs.log_url }}
       url: ${{ steps.env.outputs.url }}
     steps:
-      - uses: xt0rted/pull-request-comment-branch@v1
-        id: pr
-        if: github.event.issue.pull_request && github.event.comment.body == '/deploy'
       - run: |+
-          if [[ "${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}" == "true" ]]; then
-            BRANCH="main"
-            ENVIRONMENT="production"
-            URL="https://www.kfirs.com"
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            BRANCH="${GITHUB_REF##*/}"
+            if [[ "${BRANCH}" == "main" ]]; then
+              ENVIRONMENT="production"
+              URL="https://www.kfirs.com"
+            else
+              ENVIRONMENT="${BRANCH}"
+              URL="https://www.${ENVIRONMENT}.kfirs.com"
+            fi
           else
-            BRANCH="${{ github.ref_name }}"
-            ENVIRONMENT="${{ github.ref_name }}"
+            BRANCH="${GITHUB_HEAD_REF}"
+            ENVIRONMENT="${BRANCH}"
             URL="https://www.${ENVIRONMENT}.kfirs.com"
           fi
           echo "::set-output name=branch::${BRANCH}"
@@ -59,7 +61,7 @@ jobs:
         id: env
 
   apply-terraform-gcp:
-    name: Verify GCP Terraform plan
+    name: Apply GCP Terraform
     needs: setup
     environment:
       name: ${{ needs.setup.outputs.environment }}
@@ -93,24 +95,32 @@ jobs:
       - uses: thollander/actions-comment-pull-request@v1
         if: always() && github.event_name == 'pull_request'
         with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           message: |-
-            #### Terraform formatting: ${{ steps.fmt.outcome }}
+            ### Terraform formatting: ${{ steps.fmt.outcome }}
+            <details><summary>Expand...</summary>
+            
             ```diff
             ${{ steps.fmt.outputs.stdout }}
             ```
-            #### Terraform plan: ${{ steps.plan.outcome }}
+            </details>
+            
+            ### Terraform plan: ${{ steps.plan.outcome }}
+            <details><summary>Expand...</summary>
+            
             ```HCL
             ${{ steps.plan.outputs.stdout }}
             ```
+            </details>
       - uses: peter-evans/commit-comment@v2
         if: always() && github.event_name == 'push'
         with:
           body: |-
-            #### Terraform formatting: ${{ steps.fmt.outcome }}
+            ### Terraform formatting: ${{ steps.fmt.outcome }}
             ```diff
             ${{ steps.fmt.outputs.stdout }}
             ```
-            #### Terraform plan: ${{ steps.plan.outcome }}
+            ### Terraform plan: ${{ steps.plan.outcome }}
             ```HCL
             ${{ steps.plan.outputs.stdout }}
             ```
