@@ -18,6 +18,7 @@ defaults:
 jobs:
 
   verify-format-terraform-gcp:
+    name: Verify GCP Terraform formatting
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-20.04
     timeout-minutes: 5
@@ -57,6 +58,7 @@ jobs:
             }
 
   plan-terraform-gcp:
+    name: Verify GCP Terraform plan
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-20.04
     timeout-minutes: 60
