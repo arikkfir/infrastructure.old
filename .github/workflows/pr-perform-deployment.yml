@@ -13,23 +13,28 @@ jobs:
 
   setup:
     name: Infer Target Environment
-    if: github.event.issue.pull_request && github.event.comment.body == '/deploy'
+    if: >-
+      github.event.issue.pull_request 
+      && (startsWith(github.event.comment.body, '/deploy ') || github.event.comment.body == '/deploy') 
+      && !contains(github.event.comment.body, '\n')
     runs-on: ubuntu-20.04
     outputs:
       branch: ${{ steps.env.outputs.branch }}
       environment: ${{ steps.env.outputs.environment }}
     steps:
-      - run: |+
-          echo "github.job:         ${{github.job}}"
-          echo "github.run_id:      ${{github.run_id}}"
-          echo "github.run_number:  ${{github.run_number}}"
-          echo "github.run_attempt: ${{github.run_attempt}}"
       - uses: xt0rted/pull-request-comment-branch@v1
         id: pr
       - run: |+
+          if [[ "${COMMENT}" == "/deploy" ]]; then
+            ENVIRONMENT="${{ steps.pr.outputs.head_ref }}"
+          else
+            ENVIRONMENT="$(echo -n "${COMMENT}" | sed -e 's/^\/deploy \(.*\)$/\1/')"
+          fi
           echo "::set-output name=branch::${{ steps.pr.outputs.head_ref }}"
-          echo "::set-output name=environment::${{ steps.pr.outputs.head_ref }}"
+          echo "::set-output name=environment::${ENVIRONMENT}"
         id: env
+        env:
+          COMMENT: "${{ github.event.comment.body }}"
 
   create-deployment:
     needs: setup
