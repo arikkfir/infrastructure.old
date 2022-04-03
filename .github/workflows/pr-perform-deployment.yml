@@ -44,7 +44,6 @@ jobs:
           token: ${{ needs.setup.outputs.token }}
           target_url: https://${{ needs.setup.outputs.environment }}.env.kfirs.com
           description: "Deploy #${{ github.event.issue.number }}"
-          auto_merge: false
           environment: ${{ needs.setup.outputs.environment }}
           ref: ${{ needs.setup.outputs.branch }}
 
