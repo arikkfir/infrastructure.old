@@ -26,6 +26,7 @@ jobs:
     outputs:
       branch: ${{ steps.env.outputs.branch }}
       environment: ${{ steps.env.outputs.environment }}
+      url: ${{ steps.env.outputs.url }}
     steps:
       - uses: xt0rted/pull-request-comment-branch@v1
         id: pr
@@ -34,12 +35,15 @@ jobs:
           if [[ "${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}" == "true" ]]; then
             BRANCH="main"
             ENVIRONMENT="production"
+            URL="https://www.kfirs.com"
           else
             BRANCH="${{ steps.pr.outputs.head_ref }}"
             ENVIRONMENT="${{ steps.pr.outputs.head_ref }}"
+            URL="https://www.${ENVIRONMENT}.kfirs.com"
           fi
           echo "::set-output name=branch::${BRANCH}"
           echo "::set-output name=environment::${ENVIRONMENT}"
+          echo "::set-output name=url::${URL}"
         id: env
 
   create-deployment:
@@ -123,4 +127,5 @@ jobs:
         with:
           state: success
           token: ${{ steps.token.outputs.token }}
+          environment_url: ${{ needs.setup.outputs.url }}
           deployment_id: ${{ needs.create-deployment.outputs.id }}
