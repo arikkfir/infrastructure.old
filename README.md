@@ -14,6 +14,7 @@ The repository is divided into two three main sections:
 ### GitHub Infrastructure
 
 GitHub Infrastructure such as repositories & their configuration are managed by the 
+
 ### Cloud Infrastructure
 
 Cloud Infrastructure is managed by Terraform files, placed in the `/terraform` directory. This directory is monitored by
