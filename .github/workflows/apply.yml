@@ -44,13 +44,18 @@ jobs:
         if: github.event.issue.pull_request && github.event.comment.body == '/deploy'
       - run: |+
           set -x
-          if [[ "${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}" == "true" ]]; then
-            BRANCH="main"
-            ENVIRONMENT="production"
-            URL="https://www.kfirs.com"
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            BRANCH="${GITHUB_REF##*/}"
+            if [[ "${BRANCH}" == "main" ]]; then
+              ENVIRONMENT="production"
+              URL="https://www.kfirs.com"
+            else
+              ENVIRONMENT="${BRANCH}"
+              URL="https://www.${ENVIRONMENT}.kfirs.com"
+            fi
           else
-            BRANCH="${{ github.ref_name }}"
-            ENVIRONMENT="${{ github.ref_name }}"
+            BRANCH="${GITHUB_HEAD_REF}"
+            ENVIRONMENT="${BRANCH}"
             URL="https://www.${ENVIRONMENT}.kfirs.com"
           fi
           echo "::set-output name=branch::${BRANCH}"
