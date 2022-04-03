@@ -34,6 +34,12 @@ resource "google_project_iam_member" "gha-arikkfir-infrastructure-resourcemanage
   member  = "serviceAccount:${google_service_account.gha-arikkfir-infrastructure.email}"
 }
 
+resource "google_project_iam_member" "gha-arikkfir-infrastructure-compute-networkAdmin" {
+  project = google_project.project.project_id
+  role    = "roles/compute.networkAdmin"
+  member  = "serviceAccount:${google_service_account.gha-arikkfir-infrastructure.email}"
+}
+
 resource "google_project_iam_member" "gha-arikkfir-infrastructure-serviceusage-serviceUsageAdmin" {
   project = google_project.project.project_id
   role    = "roles/serviceusage.serviceUsageAdmin"
