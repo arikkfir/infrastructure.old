@@ -1,4 +1,4 @@
-name: Deploy Pull Request
+name: Deployment
 
 on:
   issue_comment:
