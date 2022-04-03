@@ -7,7 +7,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - .github/workflows/deployment.yml
+      - .github/workflows/deployment2.yml
       - kubernetes/**
       - terraform/**
 
