@@ -18,7 +18,6 @@ jobs:
     outputs:
       branch: ${{ steps.env.outputs.branch }}
       environment: ${{ steps.env.outputs.environment }}
-      token: ${{ steps.app.outputs.token }}
     steps:
       - uses: xt0rted/pull-request-comment-branch@v1
         id: pr
@@ -26,11 +25,6 @@ jobs:
           echo "::set-output name=branch::${{ steps.pr.outputs.head_ref }}"
           echo "::set-output name=environment::${{ steps.pr.outputs.head_ref }}"
         id: env
-      - uses: tibdex/github-app-token@v1
-        id: app
-        with:
-          app_id: ${{ secrets.ARIKKFIR_APP_ID }}
-          private_key: ${{ secrets.ARIKKFIR_APP_PRIVATE_KEY }}
 
   create-deployment:
     needs: setup
@@ -38,10 +32,15 @@ jobs:
     outputs:
       id: ${{ steps.create.outputs.deployment_id }}
     steps:
+      - uses: tibdex/github-app-token@v1
+        id: token
+        with:
+          app_id: ${{ secrets.ARIKKFIR_APP_ID }}
+          private_key: ${{ secrets.ARIKKFIR_APP_PRIVATE_KEY }}
       - uses: chrnorm/deployment-action@releases/v1
         id: create
         with:
-          token: ${{ needs.setup.outputs.token }}
+          token: ${{ steps.token.outputs.token }}
           target_url: https://${{ needs.setup.outputs.environment }}.env.kfirs.com
           description: "Deploy #${{ github.event.issue.number }}"
           environment: ${{ needs.setup.outputs.environment }}
