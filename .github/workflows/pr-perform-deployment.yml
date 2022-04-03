@@ -55,7 +55,6 @@ jobs:
     needs: [ setup, create-deployment ]
     runs-on: ubuntu-20.04
     environment: ${{ needs.setup.outputs.environment }}
-    continue-on-error: true
     defaults:
       run:
         working-directory: ./terraform/gcp
@@ -81,10 +80,11 @@ jobs:
           TF_VAR_gcp_region: europe-west3
           TF_VAR_gcp_zone: europe-west3-a
 
-  update-deployment-status:
+  on-failure:
     needs: [ setup, create-deployment, deploy-terraform-gcp ]
     runs-on: ubuntu-20.04
     environment: ${{ needs.setup.outputs.environment }}
+    if: failure() || cancelled()
     steps:
       - uses: tibdex/github-app-token@v1
         id: token
@@ -92,16 +92,24 @@ jobs:
           app_id: ${{ secrets.ARIKKFIR_APP_ID }}
           private_key: ${{ secrets.ARIKKFIR_APP_PRIVATE_KEY }}
       - uses: chrnorm/deployment-status@releases/v1
-        if: success()
-        with:
-          state: success
-          token: ${{ steps.token.outputs.token }}
-          deployment_id: ${{ needs.create-deployment.outputs.id }}
-      - uses: chrnorm/deployment-status@releases/v1
-        if: failure() || cancelled()
         with:
           state: failure
           token: ${{ steps.token.outputs.token }}
           deployment_id: ${{ needs.create-deployment.outputs.id }}
-      - run: exit 1
-        if: failure() || cancelled()
+
+  on-success:
+    needs: [ setup, create-deployment, deploy-terraform-gcp ]
+    runs-on: ubuntu-20.04
+    environment: ${{ needs.setup.outputs.environment }}
+    if: success()
+    steps:
+      - uses: tibdex/github-app-token@v1
+        id: token
+        with:
+          app_id: ${{ secrets.ARIKKFIR_APP_ID }}
+          private_key: ${{ secrets.ARIKKFIR_APP_PRIVATE_KEY }}
+      - uses: chrnorm/deployment-status@releases/v1
+        with:
+          state: success
+          token: ${{ steps.token.outputs.token }}
+          deployment_id: ${{ needs.create-deployment.outputs.id }}
