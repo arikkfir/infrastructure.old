@@ -95,23 +95,30 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           message: |-
-            #### Terraform formatting: ${{ steps.fmt.outcome }}
+            ### Terraform formatting: ${{ steps.fmt.outcome }}
+            <details><summary>Expand...</summary>
+            
             ```diff
             ${{ steps.fmt.outputs.stdout }}
             ```
-            #### Terraform plan: ${{ steps.plan.outcome }}
+            </details>
+            
+            ### Terraform plan: ${{ steps.plan.outcome }}
+            <details><summary>Expand...</summary>
+            
             ```HCL
             ${{ steps.plan.outputs.stdout }}
             ```
+            </details>
       - uses: peter-evans/commit-comment@v2
         if: always() && github.event_name == 'push'
         with:
           body: |-
-            #### Terraform formatting: ${{ steps.fmt.outcome }}
+            ### Terraform formatting: ${{ steps.fmt.outcome }}
             ```diff
             ${{ steps.fmt.outputs.stdout }}
             ```
-            #### Terraform plan: ${{ steps.plan.outcome }}
+            ### Terraform plan: ${{ steps.plan.outcome }}
             ```HCL
             ${{ steps.plan.outputs.stdout }}
             ```
