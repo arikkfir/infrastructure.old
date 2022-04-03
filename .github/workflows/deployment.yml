@@ -28,6 +28,11 @@ jobs:
       environment: ${{ steps.env.outputs.environment }}
       url: ${{ steps.env.outputs.url }}
     steps:
+      - run: |+
+          echo "github.job:         ${{github.job}}"
+          echo "github.run_id:      ${{github.run_id}}"
+          echo "github.run_number:  ${{github.run_number}}"
+          echo "github.run_attempt: ${{github.run_attempt}}"
       - uses: xt0rted/pull-request-comment-branch@v1
         id: pr
         if: github.event.issue.pull_request && github.event.comment.body == '/deploy'
@@ -64,11 +69,16 @@ jobs:
           description: "Deploy branch '${{ needs.setup.outputs.branch }}'"
           environment: ${{ needs.setup.outputs.environment }}
           ref: ${{ needs.setup.outputs.branch }}
+      - uses: chrnorm/deployment-status@releases/v1
+        with:
+          state: in_progress
+          token: ${{ steps.token.outputs.token }}
+          #log_url: "" # TODO
+          deployment_id: ${{ needs.create-deployment.outputs.id }}
 
   deploy-terraform-gcp:
     needs: [ setup, create-deployment ]
     runs-on: ubuntu-20.04
-    environment: ${{ needs.setup.outputs.environment }}
     defaults:
       run:
         working-directory: ./terraform/gcp
@@ -97,7 +107,6 @@ jobs:
   on-failure:
     needs: [ setup, create-deployment, deploy-terraform-gcp ]
     runs-on: ubuntu-20.04
-    environment: ${{ needs.setup.outputs.environment }}
     if: failure() || cancelled()
     steps:
       - uses: tibdex/github-app-token@v1
@@ -109,12 +118,12 @@ jobs:
         with:
           state: failure
           token: ${{ steps.token.outputs.token }}
+          #log_url: "" # TODO
           deployment_id: ${{ needs.create-deployment.outputs.id }}
 
   on-success:
     needs: [ setup, create-deployment, deploy-terraform-gcp ]
     runs-on: ubuntu-20.04
-    environment: ${{ needs.setup.outputs.environment }}
     if: success()
     steps:
       - uses: tibdex/github-app-token@v1
@@ -126,5 +135,6 @@ jobs:
         with:
           state: success
           token: ${{ steps.token.outputs.token }}
+          #log_url: "" # TODO
           environment_url: ${{ needs.setup.outputs.url }}
           deployment_id: ${{ needs.create-deployment.outputs.id }}
