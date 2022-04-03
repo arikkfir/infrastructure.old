@@ -4,6 +4,8 @@ on:
   issue_comment:
     types:
       - created
+  push:
+    branches: [ main ]
 
 defaults:
   run:
@@ -12,11 +14,10 @@ defaults:
 jobs:
 
   setup:
-    name: Infer Target Environment
+    name: Setup
     if: >-
-      github.event.issue.pull_request 
-      && (startsWith(github.event.comment.body, '/deploy ') || github.event.comment.body == '/deploy') 
-      && !contains(github.event.comment.body, '\n')
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') || 
+      (github.event.issue.pull_request && github.event.comment.body == '/deploy')
     runs-on: ubuntu-20.04
     outputs:
       branch: ${{ steps.env.outputs.branch }}
@@ -25,16 +26,16 @@ jobs:
       - uses: xt0rted/pull-request-comment-branch@v1
         id: pr
       - run: |+
-          if [[ "${COMMENT}" == "/deploy" ]]; then
-            ENVIRONMENT="${{ steps.pr.outputs.head_ref }}"
+          if [[ "${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}" == "true" ]]; then
+            BRANCH="main"
+            ENVIRONMENT="production"
           else
-            ENVIRONMENT="$(echo -n "${COMMENT}" | sed -e 's/^\/deploy \(.*\)$/\1/')"
+            BRANCH="${{ steps.pr.outputs.head_ref }}"
+            ENVIRONMENT="${{ steps.pr.outputs.head_ref }}"
           fi
-          echo "::set-output name=branch::${{ steps.pr.outputs.head_ref }}"
+          echo "::set-output name=branch::${BRANCH}"
           echo "::set-output name=environment::${ENVIRONMENT}"
         id: env
-        env:
-          COMMENT: "${{ github.event.comment.body }}"
 
   create-deployment:
     needs: setup
@@ -52,7 +53,7 @@ jobs:
         with:
           initial_status: in_progress
           token: ${{ steps.token.outputs.token }}
-          description: "Deploy #${{ github.event.issue.number }}"
+          description: "Deploy branch '${{ needs.setup.outputs.branch }}'"
           environment: ${{ needs.setup.outputs.environment }}
           ref: ${{ needs.setup.outputs.branch }}
 
@@ -79,7 +80,7 @@ jobs:
       - run: terraform apply -input=false -lock-timeout=180s -auto-approve -no-color
         id: apply
         env:
-          TF_VAR_environment: ${{ needs.infer-environment-name.outputs.environment }}
+          TF_VAR_environment: ${{ needs.setup.outputs.environment }}
           TF_VAR_gcp_billing_account: ${{ secrets.GCP_BILLING_ACCOUNT_ID }}
           TF_VAR_gcp_project: ${{ secrets.GCP_PROJECT_ID }}
           TF_VAR_gcp_region: europe-west3
