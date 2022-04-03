@@ -55,6 +55,7 @@ jobs:
     needs: [ setup, create-deployment ]
     runs-on: ubuntu-20.04
     environment: ${{ needs.setup.outputs.environment }}
+    continue-on-error: true
     defaults:
       run:
         working-directory: ./terraform/gcp
@@ -102,3 +103,5 @@ jobs:
           state: failure
           token: ${{ steps.token.outputs.token }}
           deployment_id: ${{ needs.create-deployment.outputs.id }}
+      - run: exit 1
+        if: failure() || cancelled()
