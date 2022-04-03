@@ -6,6 +6,9 @@ on:
       - created
   push:
     branches: [ main ]
+    paths:
+      - kubernetes/**
+      - terraform/**
 
 defaults:
   run:
