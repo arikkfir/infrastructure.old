@@ -19,6 +19,7 @@ jobs:
       log_url: ${{ steps.env.outputs.log_url }}
       url: ${{ steps.env.outputs.url }}
     steps:
+      - uses: rlespinasse/github-slug-action@v4
       - run: |+
           if [[ "${{ github.event_name }}" == "push" ]]; then
             BRANCH="${GITHUB_REF##*/}"
@@ -26,12 +27,12 @@ jobs:
               ENVIRONMENT="production"
               URL="https://www.kfirs.com"
             else
-              ENVIRONMENT="${BRANCH}"
+              ENVIRONMENT="${GITHUB_REF_SLUG##*/}"
               URL="https://www.${ENVIRONMENT}.kfirs.com"
             fi
           else
             BRANCH="${GITHUB_HEAD_REF}"
-            ENVIRONMENT="${BRANCH}"
+            ENVIRONMENT="${GITHUB_HEAD_REF_SLUG}"
             URL="https://www.${ENVIRONMENT}.kfirs.com"
           fi
           echo "::set-output name=branch::${BRANCH}"
