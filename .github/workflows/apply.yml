@@ -59,7 +59,7 @@ jobs:
         id: env
 
   apply-terraform-gcp:
-    name: Verify GCP Terraform plan
+    name: Apply GCP Terraform
     needs: setup
     environment:
       name: ${{ needs.setup.outputs.environment }}
