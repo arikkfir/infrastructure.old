@@ -68,7 +68,7 @@ jobs:
   deploy-terraform-gcp:
     needs: [ setup, create-deployment ]
     runs-on: ubuntu-20.04
-#    environment: ${{ needs.setup.outputs.environment }}
+    environment: ${{ needs.setup.outputs.environment }}
     defaults:
       run:
         working-directory: ./terraform/gcp
@@ -97,7 +97,7 @@ jobs:
   on-failure:
     needs: [ setup, create-deployment, deploy-terraform-gcp ]
     runs-on: ubuntu-20.04
-    #    environment: ${{ needs.setup.outputs.environment }}
+    environment: ${{ needs.setup.outputs.environment }}
     if: failure() || cancelled()
     steps:
       - uses: tibdex/github-app-token@v1
@@ -114,7 +114,7 @@ jobs:
   on-success:
     needs: [ setup, create-deployment, deploy-terraform-gcp ]
     runs-on: ubuntu-20.04
-    #    environment: ${{ needs.setup.outputs.environment }}
+    environment: ${{ needs.setup.outputs.environment }}
     if: success()
     steps:
       - uses: tibdex/github-app-token@v1
