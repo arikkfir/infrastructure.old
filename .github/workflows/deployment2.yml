@@ -49,7 +49,7 @@ jobs:
         id: env
 
   deploy-terraform-gcp:
-    needs: [ setup, create-deployment ]
+    needs: setup
     runs-on: ubuntu-20.04
     environment:
       name: ${{ needs.setup.outputs.environment }}
