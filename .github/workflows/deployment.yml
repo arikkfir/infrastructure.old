@@ -28,6 +28,7 @@ jobs:
     steps:
       - uses: xt0rted/pull-request-comment-branch@v1
         id: pr
+        if: github.event.issue.pull_request && github.event.comment.body == '/deploy'
       - run: |+
           if [[ "${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}" == "true" ]]; then
             BRANCH="main"
