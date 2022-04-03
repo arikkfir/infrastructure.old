@@ -11,49 +11,42 @@ defaults:
 
 jobs:
 
-  infer-environment-name:
+  setup:
     name: Infer Target Environment
     if: github.event.issue.pull_request && github.event.comment.body == '/deploy'
     runs-on: ubuntu-20.04
     outputs:
-      environment: ${{ steps.infer.outputs.environment }}
+      branch: ${{ steps.env.outputs.branch }}
+      environment: ${{ steps.env.outputs.environment }}
+      token: ${{ steps.app.outputs.token }}
     steps:
       - uses: xt0rted/pull-request-comment-branch@v1
         id: pr
       - run: |+
-          set -x
-          PR_HEAD_REF="${{ steps.pr.outputs.head_ref }}"
-          echo "::set-output name=environment::${PR_HEAD_REF}"
-        id: infer
-
-  generate-token:
-    name: Generate Deployment Token
-    needs: infer-environment-name
-    runs-on: ubuntu-20.04
-    outputs:
-      token: ${{ steps.token.outputs.token }}
-    steps:
+          echo "::set-output name=branch::${{ steps.pr.outputs.head_ref }}"
+          echo "::set-output name=environment::${{ steps.pr.outputs.head_ref }}"
+        id: env
       - uses: tibdex/github-app-token@v1
-        id: token
+        id: app
         with:
           app_id: ${{ secrets.ARIKKFIR_APP_ID }}
           private_key: ${{ secrets.ARIKKFIR_APP_PRIVATE_KEY }}
 
-#  create-deployment:
-#    needs: [generate-token, infer-environment-name]
-#    runs-on: ubuntu-20.04
-#    outputs:
-#      id: ${{ steps.deployment.outputs.deployment_id }}
-#    steps:
-#      - uses: chrnorm/deployment-action@releases/v1
-#        id: deployment
-#        with:
-#          token: ${{ needs.generate-token.outputs.token }}
-#          target_url: https://${{ needs.infer-environment-name.outputs.environment }}.env.kfirs.com
-#          description: "Deploy #${{ github.event.issue.number }}"
-#          auto_merge: false
-#          environment: ${{ needs.infer-environment-name.outputs.environment }}
-#          ref:
+  create-deployment:
+    needs: setup
+    runs-on: ubuntu-20.04
+    outputs:
+      id: ${{ steps.create.outputs.deployment_id }}
+    steps:
+      - uses: chrnorm/deployment-action@releases/v1
+        id: create
+        with:
+          token: ${{ needs.setup.outputs.token }}
+          target_url: https://${{ needs.setup.outputs.environment }}.env.kfirs.com
+          description: "Deploy #${{ github.event.issue.number }}"
+          auto_merge: false
+          environment: ${{ needs.setup.outputs.environment }}
+          ref: ${{ needs.setup.outputs.branch }}
 
 #  deploy-terraform-gcp:
 #    needs: [generate-token, infer-environment-name, create-deployment]
