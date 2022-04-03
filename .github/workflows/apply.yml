@@ -60,7 +60,7 @@ jobs:
 
   apply-terraform-gcp:
     name: Verify GCP Terraform plan
-    needs: [ setup, verify-format-terraform-gcp ]
+    needs: setup
     environment:
       name: ${{ needs.setup.outputs.environment }}
       url: ${{ needs.setup.outputs.url }}
