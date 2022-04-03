@@ -1,7 +1,9 @@
 name: Deploy Pull Request
 
 on:
-  deployment: { }
+  issue_comment:
+    types:
+      - created
 
 defaults:
   run:
@@ -9,32 +11,93 @@ defaults:
 
 jobs:
 
-  deploy-terraform-gcp:
+  generate-token:
+    name: Generate Deployment Token
     runs-on: ubuntu-20.04
-    defaults:
-      run:
-        working-directory: ./terraform/gcp
-    env:
-      TF_IN_AUTOMATION: true
-    environment:
-      name: ${{ github.event.environment }}
-      url: https://${{ github.event.environment }}.kfirs.com
+    outputs:
+      token: ${{ steps.token.outputs.token }}
     steps:
-      - run: echo ${{ github.event.environment }}
-      - uses: actions/checkout@v3
-      - uses: google-github-actions/auth@v0
+      - uses: tibdex/github-app-token@v1
+        id: token
         with:
-          service_account: gha-arikkfir-infrastructure@arikkfir.iam.gserviceaccount.com
-          credentials_json: ${{ secrets.GCP_SA_GHA_ARIKKFIR_INFRASTRUCTURE_KEY }}
-      - uses: google-github-actions/setup-gcloud@v0
-      - uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: 1.1.7
-      - run: terraform init -input=false -no-color
-      - run: terraform apply -input=false -lock-timeout=180s -auto-approve -no-color
-        id: apply
-        env:
-          TF_VAR_gcp_billing_account: ${{ secrets.GCP_BILLING_ACCOUNT_ID }}
-          TF_VAR_gcp_project: ${{ secrets.GCP_PROJECT_ID }}
-          TF_VAR_gcp_region: europe-west3
-          TF_VAR_gcp_zone: europe-west3-a
+          app_id: ${{ secrets.ARIKKFIR_APP_ID }}
+          private_key: ${{ secrets.ARIKKFIR_APP_PRIVATE_KEY }}
+
+  infer-environment-name:
+    name: Infer Target Environment
+    if: github.event.issue.pull_request && github.event.comment.body == '/deploy'
+    runs-on: ubuntu-20.04
+    outputs:
+      environment: ${{ steps.infer.outputs.environment }}
+    steps:
+      - uses: xt0rted/pull-request-comment-branch@v1
+        id: pr
+      - run: |+
+          set -x
+          PR_HEAD_REF="${{ steps.pr.outputs.head_ref }}"
+          echo "::set-output name=environment::${PR_HEAD_REF}"
+        id: infer
+
+#  create-deployment:
+#    needs: [generate-token, infer-environment-name]
+#    runs-on: ubuntu-20.04
+#    outputs:
+#      id: ${{ steps.deployment.outputs.deployment_id }}
+#    steps:
+#      - uses: chrnorm/deployment-action@releases/v1
+#        id: deployment
+#        with:
+#          token: ${{ needs.generate-token.outputs.token }}
+#          target_url: https://${{ needs.infer-environment-name.outputs.environment }}.env.kfirs.com
+#          description: "Deploy #${{ github.event.issue.number }}"
+#          auto_merge: false
+#          environment: ${{ needs.infer-environment-name.outputs.environment }}
+#          ref:
+
+#  deploy-terraform-gcp:
+#    needs: [generate-token, infer-environment-name, create-deployment]
+#    runs-on: ubuntu-20.04
+#    environment: ${{ needs.infer-environment-name.outputs.environment }}
+#    defaults:
+#      run:
+#        working-directory: ./terraform/gcp
+#    env:
+#      TF_IN_AUTOMATION: true
+#    steps:
+#      - run: |+
+#          set -x
+#          cat >request.json <<EOF
+#          {
+#            "state": false,
+#            "environment": "${ENVIRONMENT}",
+#            "description": "Deploy #${{ github.event.issue.number }}",
+#            "ref": "$(curl -sSL -H "${ACCEPT_HEADER}" -H "${AUTH_HEADER}" "${GET_PR_URL}" | jq -r '.head.ref')"
+#          }
+#          EOF
+#          curl -sSL -o deployment-status.json -X POST -H "${ACCEPT_HEADER}" -H "${AUTH_HEADER}" "${POST_DEPLOYMENT_STATUS_URL}" -d @request.json
+#          cat deployment.json
+#          echo "::set-output name=id::$(cat deployment.json | jq -r '.id')"
+#        id: create-deployment
+#        env:
+#          ENVIRONMENT: "${{ needs.infer-environment-name.outputs.environment }}"
+#          ACCEPT_HEADER: "Accept: application/vnd.github.v3+json"
+#          AUTH_HEADER: "Authorization: token ${{ needs.generate-token.outputs.token }}"
+#          POST_DEPLOYMENT_STATUS_URL: "https://api.github.com/repos/${{ github.repository }}/deployments/${{ needs.create-deployment.outputs.id }}/statuses"
+#      - uses: actions/checkout@v3
+#      - uses: google-github-actions/auth@v0
+#        with:
+#          service_account: gha-arikkfir-infrastructure@arikkfir.iam.gserviceaccount.com
+#          credentials_json: ${{ secrets.GCP_SA_GHA_ARIKKFIR_INFRASTRUCTURE_KEY }}
+#      - uses: google-github-actions/setup-gcloud@v0
+#      - uses: hashicorp/setup-terraform@v1
+#        with:
+#          terraform_version: 1.1.7
+#      - run: terraform init -input=false -no-color
+#      - run: terraform apply -input=false -lock-timeout=180s -auto-approve -no-color
+#        id: apply
+#        env:
+#          TF_VAR_environment: ${{ needs.infer-environment-name.outputs.environment }}
+#          TF_VAR_gcp_billing_account: ${{ secrets.GCP_BILLING_ACCOUNT_ID }}
+#          TF_VAR_gcp_project: ${{ secrets.GCP_PROJECT_ID }}
+#          TF_VAR_gcp_region: europe-west3
+#          TF_VAR_gcp_zone: europe-west3-a
