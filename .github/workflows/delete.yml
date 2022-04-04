@@ -22,18 +22,21 @@ jobs:
       - uses: rlespinasse/github-slug-action@v4
       - run: |+
           if [[ "${{ github.event_name }}" == "push" ]]; then
-            BRANCH="${GITHUB_REF##*/}"
+            BRANCH="${GITHUB_REF_NAME}"
             if [[ "${BRANCH}" == "main" ]]; then
               ENVIRONMENT="production"
               URL="https://www.kfirs.com"
             else
-              ENVIRONMENT="${GITHUB_REF_SLUG##*/}"
+              ENVIRONMENT="${GITHUB_REF_NAME_SLUG}"
               URL="https://www.${ENVIRONMENT}.kfirs.com"
             fi
-          else
+          elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
             BRANCH="${GITHUB_HEAD_REF}"
             ENVIRONMENT="${GITHUB_HEAD_REF_SLUG}"
             URL="https://www.${ENVIRONMENT}.kfirs.com"
+          else
+            echo "Unsupported event type: ${{ github.event_name }}" >&2
+            exit 1
           fi
           echo "::set-output name=branch::${BRANCH}"
           echo "::set-output name=environment::${ENVIRONMENT}"
