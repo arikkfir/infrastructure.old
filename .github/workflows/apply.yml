@@ -126,4 +126,5 @@ jobs:
             ${{ steps.plan.outputs.stdout }}
             ```
       - run: terraform apply -input=false -lock-timeout=180s -auto-approve -no-color tfplan
+        if: github.event_name == 'push'
         id: apply
