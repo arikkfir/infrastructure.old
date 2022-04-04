@@ -61,12 +61,9 @@ jobs:
           echo "::set-output name=url::${URL}"
         id: env
 
-  apply-terraform-gcp:
-    name: Apply GCP Terraform
+  plan-terraform-gcp:
+    name: Build GCP Terraform plan
     needs: setup
-    environment:
-      name: ${{ needs.setup.outputs.environment }}
-      url: ${{ needs.setup.outputs.url }}
     runs-on: ubuntu-20.04
     defaults:
       run:
@@ -93,6 +90,13 @@ jobs:
       - run: terraform init -input=false -no-color
       - run: terraform plan -input=false -lock-timeout=180s -no-color -out tfplan
         id: plan
+      - run: tar -cvjf ../../terraform.tar.bz2 .terraform* *.tf tfplan
+      - uses: actions/upload-artifact@v3
+        with:
+          name: terraform.tar.bz2
+          path: terraform.tar.bz2
+          if-no-files-found: error
+          retention-days: 1
       - uses: thollander/actions-comment-pull-request@v1
         if: always() && github.event_name == 'pull_request'
         with:
@@ -125,6 +129,41 @@ jobs:
             ```HCL
             ${{ steps.plan.outputs.stdout }}
             ```
+
+  apply-terraform-gcp:
+    name: Apply GCP Terraform plan
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [ setup, plan-terraform-gcp ]
+    environment:
+      name: ${{ needs.setup.outputs.environment }}
+      url: ${{ needs.setup.outputs.url }}
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: google-github-actions/auth@v0
+        with:
+          service_account: gha-arikkfir-infrastructure@arikkfir.iam.gserviceaccount.com
+          credentials_json: ${{ secrets.GCP_SA_GHA_ARIKKFIR_INFRASTRUCTURE_KEY }}
+      - uses: google-github-actions/setup-gcloud@v0
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.1.7
+      - uses: actions/download-artifact@v3
+        with:
+          name: terraform.tar.bz2
+      - run: tar -xvjf terraform.tar.bz2
       - run: terraform apply -input=false -lock-timeout=180s -auto-approve -no-color tfplan
-        if: github.event_name == 'push'
         id: apply
+        env:
+          TF_IN_AUTOMATION: true
+          TF_VAR_environment: ${{ needs.setup.outputs.environment }}
+          TF_VAR_gcp_billing_account: ${{ secrets.GCP_BILLING_ACCOUNT_ID }}
+          TF_VAR_gcp_project: ${{ secrets.GCP_PROJECT_ID }}
+          TF_VAR_gcp_region: europe-west3
+          TF_VAR_gcp_zone: europe-west3-a
+      - uses: peter-evans/commit-comment@v2
+        with:
+          body: |-
+            ### Terraform apply: ${{ steps.apply.outcome }}
+            ```HCL
+            ${{ steps.apply.outputs.stdout }}
+            ```
