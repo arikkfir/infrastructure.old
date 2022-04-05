@@ -19,23 +19,25 @@ resource "google_container_node_pool" "core-n2-custom-4-7168-pre" {
 
   # Operations
   management {
-    auto_repair = true
+    auto_repair  = true
     auto_upgrade = true
   }
+  upgrade_settings {
+    max_surge       = 3
+    max_unavailable = 0
+  }
+
+  # Node configuration
   node_config {
-    machine_type = "n2-custom-4-7168"
-    preemptible = true
-    disk_size_gb = 100
-    service_account = google_service_account.kubernetes.email
-    oauth_scopes = [
+    machine_type    = "n2-custom-4-7168"
+    preemptible     = true
+    disk_size_gb    = 100
+    service_account = google_service_account.gke-node.email
+    oauth_scopes    = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
     workload_metadata_config {
       mode = "GKE_METADATA"
     }
-  }
-  upgrade_settings {
-    max_surge = 3
-    max_unavailable = 0
   }
 }
