@@ -1,8 +1,8 @@
 resource "google_container_node_pool" "core-n2-custom-4-7168-pre" {
   provider = google-beta
-  project = google_container_cluster.primary.project
-  cluster = google_container_cluster.primary.name
-  name = "core-n2-custom-4-7168-pre"
+  project  = google_container_cluster.primary.project
+  cluster  = google_container_cluster.primary.name
+  name     = "core-n2-custom-4-7168-pre"
   location = var.gcp_zone
 
   # Scaling
@@ -33,7 +33,8 @@ resource "google_container_node_pool" "core-n2-custom-4-7168-pre" {
     preemptible     = true
     disk_size_gb    = 100
     service_account = google_service_account.gke-node.email
-    oauth_scopes    = [
+
+    oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
     workload_metadata_config {

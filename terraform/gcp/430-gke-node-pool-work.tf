@@ -1,7 +1,7 @@
 resource "google_container_node_pool" "work-n2-custom-4-5120-pre" {
-  project = google_container_cluster.primary.project
-  cluster = google_container_cluster.primary.name
-  name = "work-n2-custom-4-5120-pre"
+  project  = google_container_cluster.primary.project
+  cluster  = google_container_cluster.primary.name
+  name     = "work-n2-custom-4-5120-pre"
   location = var.gcp_zone
 
   # Scaling
@@ -32,7 +32,8 @@ resource "google_container_node_pool" "work-n2-custom-4-5120-pre" {
     preemptible     = true
     disk_size_gb    = 100
     service_account = google_service_account.gke-node.email
-    oauth_scopes    = [
+
+    oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
     workload_metadata_config {
@@ -41,10 +42,12 @@ resource "google_container_node_pool" "work-n2-custom-4-5120-pre" {
     labels = {
       "kfirs.com/workload-nodes" = "true"
     }
-    taint = [ {
-      effect = "NO_EXECUTE"
-      key = "kfirs.com/workload-nodes"
-      value = "true"
-    } ]
+    taint = [
+      {
+        effect = "NO_EXECUTE"
+        key    = "kfirs.com/workload-nodes"
+        value  = "true"
+      }
+    ]
   }
 }
