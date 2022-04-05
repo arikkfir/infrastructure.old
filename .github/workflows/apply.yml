@@ -49,6 +49,7 @@ jobs:
           if [[ "${EVENT_NAME}" == "issue_comment" ]]; then
             if [[ "${{github.event.comment.body}}" == "/deploy production" ]]; then
               ENVIRONMENT="production"
+              URL="https://kfirs.com"
             else
               echo "Not a deployment comment" >&2
               exit 1 # TODO: is there a way to cancel the job, instead of failing it?
@@ -57,6 +58,7 @@ jobs:
             ENVIRONMENT="${BRANCH//\//-}"
             ENVIRONMENT="${BRANCH//./-}"
             ENVIRONMENT="${BRANCH//\?/-}"
+            URL="https://${ENVIRONMENT}.kfirs.com"
           else
             echo "Unsupported event: %{EVENT_NAME}" >&2
             exit 1
