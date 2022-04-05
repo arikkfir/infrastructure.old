@@ -10,16 +10,8 @@ on:
       - synchronize
       - opened
       - reopened
-  push:
-    branches: [ main ]
-    paths:
-      - .github/workflows/apply.yml
-      - kubernetes/**
-      - terraform/**
-
-concurrency:
-  cancel-in-progress: false
-  group: terraform/gcp2
+  issue_comment:
+    types: [ created ]
 
 defaults:
   run:
@@ -30,36 +22,52 @@ jobs:
   setup:
     name: Setup
     runs-on: ubuntu-20.04
+    if: github.event_name == 'pull_request'
     outputs:
-      branch: ${{ steps.env.outputs.branch }}
+      branch: ${{ steps.branch.outputs.branch }}
       environment: ${{ steps.env.outputs.environment }}
       log_url: ${{ steps.env.outputs.log_url }}
       url: ${{ steps.env.outputs.url }}
     steps:
-      - uses: rlespinasse/github-slug-action@v4
+      - uses: xt0rted/pull-request-comment-branch@v1
+        if: github.event_name == 'issue_comment'
+        id: pr-comment-branch
       - run: |+
-          if [[ "${{ github.event_name }}" == "push" ]]; then
-            BRANCH="${GITHUB_REF_NAME}"
-            if [[ "${BRANCH}" == "main" ]]; then
-              ENVIRONMENT="production"
-              URL="https://www.kfirs.com"
-            else
-              ENVIRONMENT="${GITHUB_REF_NAME_SLUG}"
-              URL="https://www.${ENVIRONMENT}.kfirs.com"
-            fi
-          elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          if [[ "${EVENT_NAME}" == "issue_comment" ]]; then
+            BRANCH="${{ steps.pr-comment-branch.outputs.head_ref }}"
+          elif [[ "${EVENT_NAME}" == "pull_request" ]]; then
             BRANCH="${GITHUB_HEAD_REF}"
-            ENVIRONMENT="${GITHUB_HEAD_REF_SLUG}"
-            URL="https://www.${ENVIRONMENT}.kfirs.com"
           else
             echo "Unsupported event type: ${{ github.event_name }}" >&2
             exit 1
           fi
           echo "::set-output name=branch::${BRANCH}"
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+        id: branch
+      - run: |+
+          if [[ "${EVENT_NAME}" == "issue_comment" ]]; then
+            if [[ "${{github.event.comment.body}}" == "/deploy production" ]]; then
+              ENVIRONMENT="production"
+            else
+              echo "Not a deployment comment" >&2
+              exit 1 # TODO: is there a way to cancel the job, instead of failing it?
+            fi
+          elif [[ "${EVENT_NAME}" == "pull_request" ]]; then
+            ENVIRONMENT="${BRANCH//\//-}"
+            ENVIRONMENT="${BRANCH//./-}"
+            ENVIRONMENT="${BRANCH//\?/-}"
+          else
+            echo "Unsupported event: %{EVENT_NAME}" >&2
+            exit 1
+          fi
           echo "::set-output name=environment::${ENVIRONMENT}"
           echo "::set-output name=log_url::https://github.com/arikkfir/infrastructure/actions/runs/${{github.run_id}}"
           echo "::set-output name=url::${URL}"
         id: env
+        env:
+          BRANCH: ${{ steps.branch.outputs.branch }}
+          EVENT_NAME: ${{ github.event_name }}
 
   plan-terraform-gcp:
     name: Build GCP Terraform plan
@@ -132,7 +140,6 @@ jobs:
 
   apply-terraform-gcp:
     name: Apply GCP Terraform plan
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [ setup, plan-terraform-gcp ]
     environment:
       name: ${{ needs.setup.outputs.environment }}
