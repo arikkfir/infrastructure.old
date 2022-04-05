@@ -5,6 +5,12 @@ resource "google_service_account" "gke-node" {
   display_name = "GKE nodes service account"
 }
 
+resource "google_service_account_iam_member" "gke-node-gha-arikkfir-infrastructure-iam-serviceAccountUser" {
+  service_account_id = google_service_account.gke-node.name
+  role               = "roles/iam.serviceAccountUser"
+  member             = "serviceAccount:${google_service_account.gha-arikkfir-infrastructure.email}"
+}
+
 resource "google_project_iam_member" "gke-node-logging-logWriter" {
   depends_on = [google_project_iam_member.gha-arikkfir-infrastructure-resourcemanager-projectIamAdmin]
   project    = google_project.project.project_id
