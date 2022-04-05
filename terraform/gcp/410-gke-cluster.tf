@@ -40,9 +40,6 @@ resource "google_container_cluster" "primary" {
   }
 
   # Operations
-  cluster_telemetry {
-    type = "ENABLED"
-  }
   logging_config {
     enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
   }
