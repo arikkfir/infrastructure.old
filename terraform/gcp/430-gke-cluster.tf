@@ -46,13 +46,6 @@ resource "google_container_cluster" "primary" {
   monitoring_config {
     enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
   }
-  resource_usage_export_config {
-    enable_network_egress_metering       = false
-    enable_resource_consumption_metering = true
-    bigquery_destination {
-      dataset_id = "cluster_resource_usage"
-    }
-  }
 
   # Security
   authenticator_groups_config {
