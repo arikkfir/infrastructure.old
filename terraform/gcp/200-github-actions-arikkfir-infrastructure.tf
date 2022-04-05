@@ -16,6 +16,12 @@ resource "google_project_iam_member" "gha-arikkfir-infrastructure-compute-networ
   member  = "serviceAccount:${google_service_account.gha-arikkfir-infrastructure.email}"
 }
 
+resource "google_project_iam_member" "gha-arikkfir-infrastructure-container-clusterAdmin" {
+  project = google_project.project.project_id
+  role    = "roles/container.clusterAdmin"
+  member  = "serviceAccount:${google_service_account.gha-arikkfir-infrastructure.email}"
+}
+
 resource "google_organization_iam_member" "kfirfamily-gha-arikkfir-infrastructure-iam-organizationRoleViewer" {
   org_id = data.google_organization.kfirfamily.org_id
   role   = "roles/iam.organizationRoleViewer"
