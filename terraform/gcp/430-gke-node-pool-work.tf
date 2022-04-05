@@ -1,7 +1,7 @@
 resource "google_container_node_pool" "work-n2-custom-4-5120-pre" {
-  project = google_container_cluster.primary.project
-  cluster = google_container_cluster.primary.name
-  name = "work-n2-custom-4-5120-pre"
+  project  = google_container_cluster.primary.project
+  cluster  = google_container_cluster.primary.name
+  name     = "work-n2-custom-4-5120-pre"
   location = var.gcp_zone
 
   # Scaling
@@ -18,14 +18,21 @@ resource "google_container_node_pool" "work-n2-custom-4-5120-pre" {
 
   # Operations
   management {
-    auto_repair = true
+    auto_repair  = true
     auto_upgrade = true
   }
+  upgrade_settings {
+    max_surge       = 3
+    max_unavailable = 0
+  }
+
+  # Node configuration
   node_config {
-    machine_type = "n2-custom-4-5120"
-    preemptible = true
-    disk_size_gb = 100
-    service_account = google_service_account.kubernetes.email
+    machine_type    = "n2-custom-4-5120"
+    preemptible     = true
+    disk_size_gb    = 100
+    service_account = google_service_account.gke-node.email
+
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
@@ -35,14 +42,12 @@ resource "google_container_node_pool" "work-n2-custom-4-5120-pre" {
     labels = {
       "kfirs.com/workload-nodes" = "true"
     }
-    taint = [ {
-      effect = "NO_EXECUTE"
-      key = "kfirs.com/workload-nodes"
-      value = "true"
-    } ]
-  }
-  upgrade_settings {
-    max_surge = 3
-    max_unavailable = 0
+    taint = [
+      {
+        effect = "NO_EXECUTE"
+        key    = "kfirs.com/workload-nodes"
+        value  = "true"
+      }
+    ]
   }
 }
