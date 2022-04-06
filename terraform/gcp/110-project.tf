@@ -58,13 +58,19 @@ resource "google_project_service" "apis" {
   disable_on_destroy         = false
 }
 
+data "google_compute_default_service_account" "default" {
+}
+
+resource "google_service_account_iam_member" "compute-default-account-cloudservices-iam-serviceAccountUser" {
+  service_account_id = data.google_compute_default_service_account.default.name
+  role               = "roles/iam.serviceAccountUser"
+  member             = "serviceAccount:${google_project.project.number}@cloudservices.gserviceaccount.com"
+}
+
 resource "google_storage_bucket" "arikkfir-devops" {
   name                        = "arikkfir-devops"
   location                    = "EU"
   project                     = google_project.project.project_id
   storage_class               = "MULTI_REGIONAL"
   uniform_bucket_level_access = true
-}
-
-data "google_compute_default_service_account" "default" {
 }
