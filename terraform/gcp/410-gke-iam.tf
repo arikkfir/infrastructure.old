@@ -12,7 +12,7 @@ resource "google_service_account_iam_member" "gke-node-gha-arikkfir-infrastructu
 }
 
 resource "google_service_account_iam_member" "compute-default-account-cloudservices-serviceAccountUser" {
-  service_account_id = "${google_project.project.number}-compute@developer.gserviceaccount.com"
+  service_account_id = data.google_compute_default_service_account.default.name
   role               = "roles/iam.serviceAccountUser"
   member             = "serviceAccount:${google_project.project.number}@cloudservices.gserviceaccount.com"
 }

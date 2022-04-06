@@ -65,3 +65,6 @@ resource "google_storage_bucket" "arikkfir-devops" {
   storage_class               = "MULTI_REGIONAL"
   uniform_bucket_level_access = true
 }
+
+data "google_compute_default_service_account" "default" {
+}
