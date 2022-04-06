@@ -11,6 +11,12 @@ resource "google_service_account_iam_member" "gke-node-gha-arikkfir-infrastructu
   member             = "serviceAccount:${google_service_account.gha-arikkfir-infrastructure.email}"
 }
 
+resource "google_service_account_iam_member" "compute-default-account-cloudservices-serviceAccountUser" {
+  service_account_id = "${google_project.project.number}-compute@developer.gserviceaccount.com"
+  role               = "roles/iam.serviceAccountUser"
+  member             = "serviceAccount:${google_project.project.number}@cloudservices.gserviceaccount.com"
+}
+
 resource "google_project_iam_member" "gke-node-logging-logWriter" {
   depends_on = [google_project_iam_member.gha-arikkfir-infrastructure-resourcemanager-projectIamAdmin]
   project    = google_project.project.project_id

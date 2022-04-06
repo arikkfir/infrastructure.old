@@ -1,7 +1,7 @@
 resource "google_compute_network" "gke" {
   depends_on = [
     google_project_service.apis,
-    google_project_iam_member.gha-arikkfir-infrastructure-compute-networkAdmin
+    google_project_iam_member.gha-arikkfir-infrastructure-compute-admin
   ]
   project                         = google_project.project.project_id
   name                            = "gke"
