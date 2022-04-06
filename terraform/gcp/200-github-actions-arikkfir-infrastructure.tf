@@ -10,9 +10,9 @@ resource "google_project_iam_member" "gha-arikkfir-infrastructure-browser" {
   member  = "serviceAccount:${google_service_account.gha-arikkfir-infrastructure.email}"
 }
 
-resource "google_project_iam_member" "gha-arikkfir-infrastructure-compute-networkAdmin" {
+resource "google_project_iam_member" "gha-arikkfir-infrastructure-compute-admin" {
   project = google_project.project.project_id
-  role    = "roles/compute.networkAdmin"
+  role    = "roles/compute.admin"
   member  = "serviceAccount:${google_service_account.gha-arikkfir-infrastructure.email}"
 }
 
