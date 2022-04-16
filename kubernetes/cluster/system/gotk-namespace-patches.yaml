@@ -1,3 +1,0 @@
-- op: replace
-  path: /metadata/annotations/cnrm.cloud.google.com~1project-id
-  value: arikkfir
