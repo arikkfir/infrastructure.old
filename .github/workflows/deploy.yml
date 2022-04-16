@@ -1,0 +1,117 @@
+name: Deploy
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/deploy.yml
+      - cloud/**
+    types:
+      - synchronize
+      - opened
+      - reopened
+
+defaults:
+  run:
+    shell: bash -euo pipefail {0}
+
+env:
+  GCP_REGION: europe-west3
+  GCP_ZONE: europe-west3-a
+  TERRAFORM_VERSION: 1.1.7
+  TF_IN_AUTOMATION: true
+  TF_VAR_gcp_region: europe-west3
+  TF_VAR_gcp_zone: europe-west3-a
+
+jobs:
+
+  verify-cloud-infrastructure:
+    name: Verify Cloud Infrastructure
+    runs-on: ubuntu-20.04
+    env:
+      TF_VAR_gcp_billing_account: ${{ secrets.GCP_BILLING_ACCOUNT_ID }}
+      TF_VAR_gcp_project: ${{ secrets.GCP_PROJECT_ID }}
+    defaults:
+      run:
+        working-directory: cloud
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v3
+      - uses: google-github-actions/auth@v0
+        with:
+          service_account: ${{ secrets.GCP_SA_NAME }}
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      - uses: google-github-actions/setup-gcloud@v0
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      - run: terraform fmt -check -recursive -no-color -diff
+        id: fmt
+      - run: terraform init -input=false -no-color
+      - run: terraform plan -input=false -lock-timeout=180s -no-color -out tfplan
+        id: plan
+      - run: tar cjvf tfplan.tar.bz2 .terraform .terraform.lock.hcl *.tf tfplan
+      - uses: actions/upload-artifact@v3
+        with:
+          name: tfplan
+          path: cloud/tfplan.tar.bz2
+          if-no-files-found: error
+          retention-days: 7
+      - uses: thollander/actions-comment-pull-request@v1
+        if: always()
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          message: |-
+            <details><summary>${{ steps.fmt.outcome == 'success' && '✅' || '❗️' }} Cloud Infrastructure Formatting</summary>
+            
+            ```diff
+            ${{ steps.fmt.outputs.stdout }}
+            ```
+            </details>
+
+            <details><summary>${{ steps.plan.outcome == 'success' && '✅' || '❗️' }} Cloud Infrastructure Plan</summary>
+            
+            ```HCL
+            ${{ steps.plan.outputs.stdout }}
+            ```
+            </details>
+
+  deploy-cloud-infrastructure:
+    name: Deploy Cloud Infrastructure
+    needs: [ verify-cloud-infrastructure ]
+    runs-on: ubuntu-20.04
+    environment:
+      name: production
+    concurrency:
+      group: production
+      cancel-in-progress: false
+    timeout-minutes: 60
+    steps:
+      - uses: google-github-actions/auth@v0
+        with:
+          service_account: ${{ secrets.GCP_SA_NAME }}
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      - uses: google-github-actions/setup-gcloud@v0
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      - uses: actions/download-artifact@v3
+        with:
+          name: tfplan
+      - run: mkdir -pv apply && tar xjvf tfplan.tar.bz2 -C apply
+      - run: terraform apply -input=false -lock-timeout=180s -auto-approve -no-color tfplan
+        working-directory: apply
+        id: apply
+        env:
+          TF_VAR_gcp_billing_account: ${{ secrets.GCP_BILLING_ACCOUNT_ID }}
+          TF_VAR_gcp_project: ${{ secrets.GCP_PROJECT_ID }}
+      - uses: thollander/actions-comment-pull-request@v1
+        if: always()
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          message: |-
+            <details><summary>${{ steps.apply.outcome == 'success' && '✅' || '❗️' }} Apply Cloud Infrastructure</summary>
+            
+            ```HCL
+            ${{ steps.apply.outputs.stdout }}
+            ```
+            </details>
