@@ -17,6 +17,7 @@ defaults:
 env:
   GCP_REGION: europe-west3
   GCP_ZONE: europe-west3-a
+  KUDE_VERSION: v0.0.1-alpha03
   TERRAFORM_VERSION: 1.1.7
   TF_IN_AUTOMATION: true
   TF_VAR_gcp_region: europe-west3
@@ -48,7 +49,7 @@ jobs:
         id: fmt
       - run: terraform init -input=false -no-color
       - run: terraform plan -input=false -lock-timeout=180s -no-color -out tfplan
-        id: plan
+        id: tfplan
       - run: tar cjvf tfplan.tar.bz2 .terraform .terraform.lock.hcl *.tf tfplan
       - uses: actions/upload-artifact@v3
         with:
@@ -68,10 +69,36 @@ jobs:
             ```
             </details>
 
-            <details><summary>${{ steps.plan.outcome == 'success' && '✅' || '❗️' }} Cloud Infrastructure Plan</summary>
+            <details><summary>${{ steps.tfplan.outcome == 'success' && '✅' || '❗️' }} Cloud Infrastructure Plan</summary>
             
             ```HCL
-            ${{ steps.plan.outputs.stdout }}
+            ${{ steps.tfplan.outputs.stdout }}
+            ```
+            </details>
+      - id: get-credentials
+        uses: google-github-actions/get-gke-credentials@v0
+        with:
+          cluster_name: primary
+          location: ${{ env.GCP_ZONE }}
+      - uses: ./.github/actions/setup-kude
+        with:
+          version: ${{ env.KUDE_VERSION }}
+      - run: |+
+          set -x
+          kude build | tee kude-output.yaml
+          echo "CLUSTER_YAML<<EOF" >> $GITHUB_ENV
+          cat kude-output.yaml >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+        working-directory: cluster
+      - uses: thollander/actions-comment-pull-request@v1
+        if: always()
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          message: |-
+            <details><summary>${{ steps.k8s-plan.outcome == 'success' && '✅' || '❗️' }} Preview Apps deployment</summary>
+            
+            ```
+            ${{ env.CLUSTER_YAML }}
             ```
             </details>
 
