@@ -83,7 +83,7 @@ jobs:
             <details><summary>${{ steps.fmt.outcome == 'success' && '✅' || '❗️' }} Terraform Formatting</summary>
             
             ```diff
-            ${{ steps.fmt.outputs.stdout }}
+            ${{ steps.fmt.outcome == 'success' && 'No issues found.' || steps.fmt.outputs.stdout }}
             ```
             </details>
 
