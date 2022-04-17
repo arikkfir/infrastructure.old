@@ -137,9 +137,9 @@ jobs:
           version: ${{ env.KUDE_VERSION }}
       - run: |+
           set -x
-          kude build | tee kude-output.yaml
+          kude build | kubectl apply --filename=- --grace-period=120 --timeout=120s | tee kubectl-output.yaml
           echo "CLUSTER_YAML<<EOF" >> $GITHUB_ENV
-          cat kude-output.yaml >> $GITHUB_ENV
+          cat kubectl-output.yaml >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
         working-directory: cluster
         id: k8sapply
