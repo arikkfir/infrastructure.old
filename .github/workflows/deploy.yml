@@ -70,15 +70,17 @@ jobs:
       - run: |+
           set -x
           kude build | tee kude-output.yaml
-          echo "CLUSTER_YAML<<EOF" >> $GITHUB_ENV
-          cat kude-output.yaml >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
         working-directory: cluster
         id: k8splan
+      - uses: actions/upload-artifact@v3
+        with:
+          name: kude
+          path: cluster/kude-output.yaml
       - uses: thollander/actions-comment-pull-request@v1
         if: always()
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          comment_includes: Terraform Formatting
           message: |-
             <details><summary>${{ steps.fmt.outcome == 'success' && '✅' || '❗️' }} Terraform Formatting</summary>
             
@@ -96,9 +98,7 @@ jobs:
             
             <details><summary>${{ steps.k8splan.outcome == 'success' && '✅' || '❗️' }} Kubernetes Manifests</summary>
             
-            ```
-            ${{ env.CLUSTER_YAML }}
-            ```
+            See artifact attached to job.
             </details>
 
   deploy:
@@ -136,13 +136,12 @@ jobs:
       - uses: ./.github/actions/setup-kude
         with:
           version: ${{ env.KUDE_VERSION }}
+      - uses: actions/download-artifact@v3
+        with:
+          name: kude
       - run: |+
           set -x
-          kude build | kubectl apply --filename=- --grace-period=120 --timeout=120s | tee kubectl-output.yaml
-          echo "CLUSTER_YAML<<EOF" >> $GITHUB_ENV
-          cat kubectl-output.yaml >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-        working-directory: cluster
+          kubectl apply --filename=- --grace-period=120 --timeout=120s < kude-output.yaml
         id: k8sapply
       - uses: thollander/actions-comment-pull-request@v1
         if: always()
@@ -158,7 +157,5 @@ jobs:
             
             <details><summary>${{ steps.k8sapply.outcome == 'success' && '✅' || '❗️' }} Apply Kubernetes</summary>
             
-            ```HCL
-            ${{ steps.k8sapply.outputs.stdout }}
-            ```
+            See job output.
             </details>
