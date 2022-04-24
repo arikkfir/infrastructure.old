@@ -80,7 +80,6 @@ jobs:
         if: always()
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          comment_includes: Terraform Formatting
           message: |-
             <details><summary>${{ steps.fmt.outcome == 'success' && '✅' || '❗️' }} Terraform Formatting</summary>
             
