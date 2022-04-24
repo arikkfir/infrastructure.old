@@ -1,0 +1,30 @@
+apiVersion: kude.kfirs.com/v1alpha1
+kind: Pipeline
+resources:
+  - gcp-iam-service-account.yaml
+pipeline:
+  - image: ghcr.io/arikkfir/kude/functions/helm
+    network: true
+    config:
+      helm-version: 3.8.1
+      args:
+        - template
+        - cert-manager
+        - cert-manager
+        - --create-namespace
+        - --include-crds
+        - --namespace=cert-manager
+        - --repo=https://charts.jetstack.io
+        - --version=1.8.0
+        - --values=/workspace/values.yaml
+    mounts:
+      - cert-manager-values.yaml:values.yaml
+  - image: ghcr.io/arikkfir/kude/functions/yq
+    config:
+      expr: |-
+        . |= with(
+          select(.apiVersion == "apps/v1" and
+                 .kind == "Deployment" and
+                 .metadata.name == "cert-manager");
+          .spec.template.spec.containers[0].ports[0].name = "metrics"
+        )
