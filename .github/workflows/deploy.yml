@@ -18,7 +18,7 @@ defaults:
 env:
   GCP_REGION: europe-west3
   GCP_ZONE: europe-west3-a
-  KUDE_VERSION: v0.0.1-alpha03
+  KUDE_VERSION: v0.0.1-alpha04
   TERRAFORM_VERSION: 1.1.7
   TF_IN_AUTOMATION: true
   TF_VAR_gcp_project: ${{ secrets.GCP_PROJECT_ID }}
