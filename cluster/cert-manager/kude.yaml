@@ -3,6 +3,9 @@ kind: Pipeline
 resources:
   - gcp-iam-service-account.yaml
 pipeline:
+  - image: ghcr.io/arikkfir/kude/functions/create-namespace
+    config:
+      name: cert-manager
   - image: ghcr.io/arikkfir/kude/functions/helm
     network: true
     config:
@@ -11,7 +14,6 @@ pipeline:
         - template
         - cert-manager
         - cert-manager
-        - --create-namespace
         - --include-crds
         - --namespace=cert-manager
         - --repo=https://charts.jetstack.io
