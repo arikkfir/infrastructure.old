@@ -25,5 +25,5 @@ pipeline:
           select(.apiVersion == "apps/v1" and
                  .kind == "DaemonSet" and
                  .metadata.labels.app == "csi-secrets-store-provider-gcp");
-          .spec.template.spec.tolerations += { "key": "kfirs.com/workload-nodes", "operator": "Exists" }
+          .spec.template.spec.tolerations = [{ "key": "kfirs.com/workload-nodes", "operator": "Exists" }]
         )
