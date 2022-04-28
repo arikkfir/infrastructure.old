@@ -2,6 +2,7 @@ apiVersion: kude.kfirs.com/v1alpha1
 kind: Pipeline
 resources:
   - gcp-iam-service-account.yaml
+  - pod-monitor.yaml
 pipeline:
   - image: ghcr.io/arikkfir/kude/functions/create-namespace
     config:
@@ -30,3 +31,6 @@ pipeline:
                  .metadata.name == "cert-manager");
           .spec.template.spec.containers[0].ports[0].name = "metrics"
         )
+  - image: ghcr.io/arikkfir/kude/functions/set-namespace
+    config:
+      namespace: cert-manager
