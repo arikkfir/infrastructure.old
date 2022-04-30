@@ -59,11 +59,6 @@ jobs:
           path: cloud-provider/tfplan.tar.bz2
           if-no-files-found: error
           retention-days: 7
-      - id: get-credentials
-        uses: google-github-actions/get-gke-credentials@v0
-        with:
-          cluster_name: primary
-          location: ${{ env.GCP_ZONE }}
       - uses: ./.github/actions/setup-kude
         with:
           version: ${{ env.KUDE_VERSION }}
