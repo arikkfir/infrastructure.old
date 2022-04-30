@@ -18,7 +18,7 @@ defaults:
 env:
   GCP_REGION: europe-west3
   GCP_ZONE: europe-west3-a
-  KUDE_VERSION: v0.0.1-alpha05
+  KUDE_VERSION: v0.0.1-alpha07
   TERRAFORM_VERSION: 1.1.7
   TF_IN_AUTOMATION: true
   TF_VAR_gcp_project: ${{ secrets.GCP_PROJECT_ID }}
@@ -140,7 +140,7 @@ jobs:
           name: kude
       - run: |+
           set -x
-          kubectl apply --filename=- --grace-period=120 --timeout=120s < kude-output.yaml
+          kubectl apply --filename=- --grace-period=1200 --timeout=1h < kude-output.yaml
         id: k8sapply
       - uses: thollander/actions-comment-pull-request@v1
         if: always()
