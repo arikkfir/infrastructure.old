@@ -104,9 +104,6 @@
       <SpecSource>
         <option name="pathOrUrl" value="https://github.com/bitnami-labs/sealed-secrets/raw/main/helm/sealed-secrets/crds/sealedsecret-crd.yaml" />
       </SpecSource>
-      <SpecSource>
-        <option name="pathOrUrl" value="$PROJECT_DIR$/kubernetes/references/monitoring.gke.io/podmonitors.monitoring.gke.io.yaml" />
-      </SpecSource>
     </specSources>
   </component>
 </project>
