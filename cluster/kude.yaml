@@ -2,7 +2,6 @@ apiVersion: kude.kfirs.com/v1alpha1
 kind: Pipeline
 resources:
   - cnrm
-  - csi
   - cert-manager
 pipeline:
   - image: ghcr.io/arikkfir/kude/functions/label
