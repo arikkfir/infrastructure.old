@@ -3,6 +3,7 @@ kind: Pipeline
 resources:
   - cnrm
   - cert-manager
+  - domains
 pipeline:
   - image: ghcr.io/arikkfir/kude/functions/label
     config:
