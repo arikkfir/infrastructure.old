@@ -37,6 +37,8 @@ resource "google_service_account_iam_member" "config-connector_workload_identity
 resource "google_project_iam_member" "config-connector" {
   for_each = toset([
     "roles/iam.serviceAccountAdmin",
+    "roles/logging.logWriter",
+    "roles/monitoring.metricWriter",
   ])
 
   project = data.google_project.project.project_id
