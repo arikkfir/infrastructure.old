@@ -1,7 +1,14 @@
+global:
+  leaderElection:
+    # default is "kube-system" which seems to prevent status checks from working
+    namespace: cert-manager
+
 installCRDs: true
+
 serviceAccount:
   annotations:
     iam.gke.io/gcp-service-account: cert-manager@arikkfir.iam.gserviceaccount.com
+
 resources:
   requests:
     cpu: 100m
@@ -9,10 +16,12 @@ resources:
   limits:
     cpu: 100m
     memory: 50Mi
+
 prometheus:
   enabled: true
   servicemonitor:
     enabled: false
+
 affinity:
   nodeAffinity:
     requiredDuringSchedulingIgnoredDuringExecution:
@@ -20,9 +29,11 @@ affinity:
         - matchExpressions:
             - key: kfirs.com/workload-nodes
               operator: Exists
+
 tolerations:
   - key: kfirs.com/workload-nodes
     operator: Exists
+
 webhook:
   resources:
     requests:
@@ -44,6 +55,7 @@ webhook:
   serviceAccount:
     annotations:
       iam.gke.io/gcp-service-account: cert-manager@arikkfir.iam.gserviceaccount.com
+
 cainjector:
   resources:
     requests:
@@ -65,6 +77,7 @@ cainjector:
   serviceAccount:
     annotations:
       iam.gke.io/gcp-service-account: cert-manager@arikkfir.iam.gserviceaccount.com
+
 startupapicheck:
   resources:
     requests:
