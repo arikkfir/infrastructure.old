@@ -1,5 +1,5 @@
+/.terraform
 /backup
-/etc
 .DS_Store
 *.json
-.kude
+*.auto.tfvars

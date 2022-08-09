@@ -4,6 +4,7 @@ resource "google_service_account" "config-connector" {
   display_name = "GKE Config Connector"
 }
 
+# This enables Workload Identity for the config-connector SA
 # TODO: infer the "cnrm-system/cnrm-controller-manager" value
 resource "google_service_account_iam_member" "config-connector_workload_identity" {
   service_account_id = google_service_account.config-connector.name
@@ -11,6 +12,7 @@ resource "google_service_account_iam_member" "config-connector_workload_identity
   member             = "serviceAccount:${data.google_project.project.project_id}.svc.id.goog[cnrm-system/cnrm-controller-manager]"
 }
 
+# Set of permissions that the config-connector SA needs
 resource "google_project_iam_member" "config-connector" {
   for_each = toset([
     "roles/iam.serviceAccountAdmin",

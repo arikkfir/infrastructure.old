@@ -4,8 +4,7 @@ on:
   pull_request:
     paths:
       - .github/workflows/deploy.yml
-      - cloud-provider/**
-      - cluster/**
+      - *.tf
     types:
       - synchronize
       - opened
@@ -18,7 +17,6 @@ defaults:
 env:
   GCP_REGION: europe-west3
   GCP_ZONE: europe-west3-a
-  KUDE_VERSION: v0.0.1-alpha10
   TERRAFORM_VERSION: 1.1.7
   TF_IN_AUTOMATION: true
   TF_VAR_gcp_project: ${{ secrets.GCP_PROJECT_ID }}
@@ -27,129 +25,20 @@ env:
 
 jobs:
 
-  plan:
-    name: Plan
+  tf-fmt:
+    name: Terraform Format Verification
     runs-on: ubuntu-20.04
-    env:
-      TF_VAR_gcp_billing_account: ${{ secrets.GCP_BILLING_ACCOUNT_ID }}
-    timeout-minutes: 60
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v3
-      - uses: google-github-actions/auth@v0
-        with:
-          service_account: ${{ secrets.GCP_SA_NAME }}
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-      - uses: google-github-actions/setup-gcloud@v0
       - uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
-      - run: terraform fmt -check -recursive -no-color -diff
-        working-directory: cloud-provider
-        id: fmt
-      - run: terraform init -input=false -no-color
-        working-directory: cloud-provider
-      - run: terraform plan -input=false -lock-timeout=180s -no-color -out tfplan
-        working-directory: cloud-provider
-        id: tfplan
-      - run: tar cjvf tfplan.tar.bz2 .terraform .terraform.lock.hcl *.tf tfplan
-        working-directory: cloud-provider
-      - uses: actions/upload-artifact@v3
-        with:
-          name: tfplan
-          path: cloud-provider/tfplan.tar.bz2
-          if-no-files-found: error
-          retention-days: 7
-      - uses: ./.github/actions/setup-kude
-        with:
-          version: ${{ env.KUDE_VERSION }}
-      - run: |+
-          set -x
-          kude build | tee kude-output.yaml
-        working-directory: cluster
-        id: k8splan
-      - uses: actions/upload-artifact@v3
-        with:
-          name: kude
-          path: cluster/kude-output.yaml
-      - uses: thollander/actions-comment-pull-request@v1
+      - run: terraform fmt -check -recursive -no-color -diff | tee tf-format.diff
+      - uses: marocchino/sticky-pull-request-comment@v2
         if: always()
         with:
+          header: tf-fmt
+          path: tf-format.diff
+          hide_and_recreate: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          message: |-
-            <details><summary>${{ steps.fmt.outcome == 'success' && '✅' || '❗️' }} Terraform Formatting</summary>
-            
-            ```diff
-            ${{ steps.fmt.outcome == 'success' && 'No issues found.' || steps.fmt.outputs.stdout }}
-            ```
-            </details>
-
-            <details><summary>${{ steps.tfplan.outcome == 'success' && '✅' || '❗️' }} Terraform Plan</summary>
-            
-            ```HCL
-            ${{ steps.tfplan.outputs.stdout }}
-            ```
-            </details>
-            
-            <details><summary>${{ steps.k8splan.outcome == 'success' && '✅' || '❗️' }} Kubernetes Manifests</summary>
-            
-            See artifact attached to job.
-            </details>
-
-  deploy:
-    name: Deploy
-    needs: plan
-    runs-on: ubuntu-20.04
-    environment:
-      name: production
-    concurrency:
-      group: production
-      cancel-in-progress: false
-    timeout-minutes: 60
-    steps:
-      - uses: actions/checkout@v3
-      - uses: google-github-actions/auth@v0
-        with:
-          service_account: ${{ secrets.GCP_SA_NAME }}
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-      - uses: google-github-actions/setup-gcloud@v0
-      - uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: ${{ env.TERRAFORM_VERSION }}
-      - uses: actions/download-artifact@v3
-        with:
-          name: tfplan
-      - run: mkdir -pv apply && tar xjvf tfplan.tar.bz2 -C apply
-      - run: terraform apply -input=false -lock-timeout=180s -auto-approve -no-color tfplan
-        working-directory: apply
-        id: apply
-      - id: get-credentials
-        uses: google-github-actions/get-gke-credentials@v0
-        with:
-          cluster_name: primary
-          location: ${{ env.GCP_ZONE }}
-      - uses: ./.github/actions/setup-kude
-        with:
-          version: ${{ env.KUDE_VERSION }}
-      - uses: actions/download-artifact@v3
-        with:
-          name: kude
-      - run: |+
-          set -x
-          kubectl apply --filename=- --grace-period=1200 --timeout=1h < kude-output.yaml
-        id: k8sapply
-      - uses: thollander/actions-comment-pull-request@v1
-        if: always()
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          message: |-
-            <details><summary>${{ steps.apply.outcome == 'success' && '✅' || '❗️' }} Apply Terraform</summary>
-            
-            ```HCL
-            ${{ steps.apply.outputs.stdout }}
-            ```
-            </details>
-            
-            <details><summary>${{ steps.k8sapply.outcome == 'success' && '✅' || '❗️' }} Apply Kubernetes</summary>
-            
-            See job output.
-            </details>
