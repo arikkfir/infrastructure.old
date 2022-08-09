@@ -34,7 +34,7 @@ jobs:
       - uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
-      - run: terraform fmt -check -recursive -no-color -diff | tee tf-format.diff
+      - run: terraform fmt -check -recursive -no-color -diff > tf-format.diff
       - uses: marocchino/sticky-pull-request-comment@v2
         if: always()
         with:
