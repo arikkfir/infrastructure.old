@@ -40,5 +40,5 @@ jobs:
         with:
           header: tf-fmt
           path: tf-format.diff
-          hide_and_recreate: true
+          recreate: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
