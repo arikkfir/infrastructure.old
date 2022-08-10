@@ -41,7 +41,7 @@ jobs:
         with:
           recreate: true
           message: |-
-            ### Exit code: ${{ steps.fmt.outputs.exitcode }}
+            ### ${{ steps.fmt.outcome == 'success' && '✅ Format valid' || '❗Format invalid️' }}
             #### Diff
             ```HCL
             ${{ steps.fmt.outputs.stdout }}
