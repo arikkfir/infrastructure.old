@@ -1,7 +1,7 @@
 terraform {
   required_version = ">=1.1.7"
   backend "gcs" {
-    bucket = "arikkfir-devops"
+    bucket    = "arikkfir-devops"
     prefix = "arikkfir/infrastructure"
   }
   required_providers {
