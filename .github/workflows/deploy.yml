@@ -34,11 +34,21 @@ jobs:
       - uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
-      - run: terraform fmt -check -recursive -no-color -diff > tf-format.diff
+      - run: terraform fmt -check -recursive -no-color -diff
+        id: fmt
       - uses: marocchino/sticky-pull-request-comment@v2
         if: always()
         with:
           header: tf-fmt
-          path: tf-format.diff
+          message: |-
+            ## Exit code: ${{ steps.plan.outputs.exitcode }}
+            #### Diff
+            ```HCL
+            ${{ steps.plan.outputs.stdout }}
+            ```
+            #### Messages
+            ```
+            ${{ steps.plan.outputs.stderr }}
+            ```
           recreate: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
