@@ -39,6 +39,7 @@ jobs:
       - uses: marocchino/sticky-pull-request-comment@v2
         if: always()
         with:
+          recreate: true
           message: |-
             ### Exit code: ${{ steps.fmt.outputs.exitcode }}
             #### Diff
