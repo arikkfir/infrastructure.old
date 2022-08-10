@@ -40,7 +40,7 @@ jobs:
         if: always()
         with:
           message: |-
-            ## Exit code: ${{ steps.fmt.outputs.exitcode }}
+            ### Exit code: ${{ steps.fmt.outputs.exitcode }}
             #### Diff
             ```HCL
             ${{ steps.fmt.outputs.stdout }}
