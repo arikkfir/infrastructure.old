@@ -41,14 +41,14 @@ jobs:
         with:
           header: tf-fmt
           message: |-
-            ## Exit code: ${{ steps.plan.outputs.exitcode }}
+            ## Exit code: ${{ steps.fmt.outputs.exitcode }}
             #### Diff
             ```HCL
-            ${{ steps.plan.outputs.stdout }}
+            ${{ steps.fmt.outputs.stdout }}
             ```
             #### Messages
             ```
-            ${{ steps.plan.outputs.stderr }}
+            ${{ steps.fmt.outputs.stderr }}
             ```
           recreate: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
