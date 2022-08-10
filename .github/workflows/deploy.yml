@@ -50,5 +50,6 @@ jobs:
             ```
             ${{ steps.fmt.outputs.stderr }}
             ```
-          recreate: true
+          hide_and_recreate: true
+          hide_classify: OUTDATED
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
