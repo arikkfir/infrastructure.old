@@ -39,7 +39,6 @@ jobs:
       - uses: marocchino/sticky-pull-request-comment@v2
         if: always()
         with:
-          header: tf-fmt
           message: |-
             ## Exit code: ${{ steps.fmt.outputs.exitcode }}
             #### Diff
@@ -50,6 +49,4 @@ jobs:
             ```
             ${{ steps.fmt.outputs.stderr }}
             ```
-          hide_and_recreate: true
-          hide_classify: OUTDATED
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
