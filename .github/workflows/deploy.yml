@@ -50,9 +50,8 @@ jobs:
           message: |-
             ❗Terraform format is invalid!
             ```HCL
-            ${{ steps.fmt.outputs.stdout }}
-            ---
             ${{ steps.fmt.outputs.stderr }}
+            ${{ steps.fmt.outputs.stdout }}
             ```
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
