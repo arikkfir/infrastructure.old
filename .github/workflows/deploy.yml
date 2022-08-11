@@ -40,7 +40,6 @@ jobs:
         if: steps.fmt.outcome == 'success'
         with:
           header: fmt
-          recreate: true
           message: |-
             👏👍 Terraform formatting is valid!
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -48,7 +47,6 @@ jobs:
         if: steps.fmt.outcome == 'failure'
         with:
           header: fmt
-          recreate: true
           message: |-
             ❗Terraform format is invalid!
             ```HCL
