@@ -37,17 +37,19 @@ jobs:
       - run: terraform fmt -check -recursive -no-color -diff
         id: fmt
       - uses: marocchino/sticky-pull-request-comment@v2
-        if: always()
+        if: steps.fmt.outcome == 'success'
         with:
           recreate: true
           message: |-
-            ### ${{ steps.fmt.outcome == 'success' && '✅ Format valid' || '❗Format invalid️' }}
-            #### Diff
+            👏👍 Terraform formatting is valid!
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: marocchino/sticky-pull-request-comment@v2
+        if: steps.fmt.outcome == 'failure'
+        with:
+          recreate: true
+          message: |-
+            ❗Terraform format is invalid!
             ```HCL
-            ${{ steps.fmt.outputs.stdout }}
-            ```
-            #### Messages
-            ```
             ${{ steps.fmt.outputs.stderr }}
             ```
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
