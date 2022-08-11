@@ -39,16 +39,18 @@ jobs:
       - uses: marocchino/sticky-pull-request-comment@v2
         if: steps.fmt.outcome == 'success'
         with:
+          header: fmt
           recreate: true
           message: |-
             👏👍 Terraform formatting is valid!
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: marocchino/sticky-pull-request-comment@v2
-        if: steps.fmt.outcome == 'failure'
+#        if: steps.fmt.outcome == 'failure'
         with:
+          header: fmt
           recreate: true
           message: |-
-            ❗Terraform format is invalid!
+            ❗Terraform format is invalid! (${{ steps.fmt.outcome }})
             ```HCL
             ${{ steps.fmt.outputs.stderr }}
             ```
