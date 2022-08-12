@@ -32,9 +32,11 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |-
-            const query = `query($id:String!) {
+            const query = `query($id:ID!) {
               nodes(ids: [$id]) {
-                number
+                ... on PullRequest {
+                  number
+                }
               }
             }`;
             console.log(await github.graphql(query, { id: context.payload.pull_request.node_id }))
