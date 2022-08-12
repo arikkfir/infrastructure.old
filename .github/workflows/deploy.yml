@@ -75,14 +75,11 @@ jobs:
           TF_VAR_gcp_project: ${{ secrets.GCP_PROJECT_ID }}
           TF_VAR_gcp_region: europe-west3
           TF_VAR_gcp_zone: europe-west3-a
+      - run: tar -c -j -v -f tfplan.tar.bz2 .terraform .terraform.lock.hcl *.tf tfplan
       - uses: actions/upload-artifact@v3
         with:
           name: plan
-          path: |-
-            .terraform
-            .terraform.lock.hcl
-            *.tf
-            tfplan
+          path: tfplan.tar.bz2
           if-no-files-found: error
           retention-days: 7
       - uses: marocchino/sticky-pull-request-comment@v2
@@ -116,7 +113,11 @@ jobs:
       name: production
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v3
+      - uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          recreate: true
+          message: ⌛️Deploying changes...
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
@@ -128,6 +129,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: plan
+      - run: tar xjvf tfplan.tar.bz2
       - run: terraform apply -input=false -lock-timeout=180s -auto-approve -no-color tfplan
         id: apply
       - uses: marocchino/sticky-pull-request-comment@v2
@@ -145,10 +147,5 @@ jobs:
         if: steps.apply.outcome == 'success'
         with:
           recreate: true
-          message: |-
-            ✅ Following changes have been applied
-            ```HCL
-            ${{ steps.apply.outputs.stderr }}
-            ${{ steps.apply.outputs.stdout }}
-            ```
+          message: ✅ Changes applied successfully!
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
