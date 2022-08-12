@@ -32,7 +32,7 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |-
-            const query = `query(id:String!) {
+            const query = `query($id:String!) {
               nodes(ids: [$id]) {
                 number
               }
