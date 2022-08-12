@@ -35,23 +35,6 @@ jobs:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
       - run: terraform fmt -check -recursive -no-color -diff
         id: fmt
-      - uses: marocchino/sticky-pull-request-comment@v2
-        if: steps.fmt.outcome == 'success'
-        with:
-          recreate: true
-          message: 👏 Terraform formatting is valid!
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: marocchino/sticky-pull-request-comment@v2
-        if: failure() && steps.fmt.outcome == 'failure'
-        with:
-          recreate: true
-          message: |-
-            ❗Terraform format is invalid!
-            ```HCL
-            ${{ steps.fmt.outputs.stderr }}
-            ${{ steps.fmt.outputs.stdout }}
-            ```
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   plan:
     name: Plan
@@ -59,11 +42,6 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 15
     steps:
-      - uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          recreate: true
-          message: ⌛Planning changes...
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/checkout@v3
       - uses: hashicorp/setup-terraform@v1
         with:
@@ -77,7 +55,6 @@ jobs:
       - run: terraform plan -input=false -lock-timeout=180s -no-color -out tfplan
         id: plan
         env:
-          TF_VAR_gcp_project: ${{ secrets.GCP_PROJECT_ID }}
           TF_VAR_gcp_region: europe-west3
           TF_VAR_gcp_zone: europe-west3-a
       - run: tar -c -j -v -f tfplan.tar.bz2 .terraform .terraform.lock.hcl *.tf tfplan
@@ -87,28 +64,6 @@ jobs:
           path: tfplan.tar.bz2
           if-no-files-found: error
           retention-days: 7
-      - uses: marocchino/sticky-pull-request-comment@v2
-        if: steps.plan.outcome == 'success'
-        with:
-          recreate: true
-          message: |-
-            ℹ Following changes will be applied
-            ```HCL
-            ${{ steps.plan.outputs.stderr }}
-            ${{ steps.plan.outputs.stdout }}
-            ```
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: marocchino/sticky-pull-request-comment@v2
-        if: failure() && steps.plan.outcome == 'failure'
-        with:
-          recreate: true
-          message: |-
-            ❗Terraform planning failed!
-            ```HCL
-            ${{ steps.plan.outputs.stderr }}
-            ${{ steps.plan.outputs.stdout }}
-            ```
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   apply:
     name: Apply
@@ -118,11 +73,6 @@ jobs:
       name: production
     timeout-minutes: 60
     steps:
-      - uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          recreate: true
-          message: ⌛️Deploying changes...
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: hashicorp/setup-terraform@v1
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
@@ -137,20 +87,3 @@ jobs:
       - run: tar xjvf tfplan.tar.bz2
       - run: terraform apply -input=false -lock-timeout=180s -auto-approve -no-color tfplan
         id: apply
-      - uses: marocchino/sticky-pull-request-comment@v2
-        if: failure() && steps.apply.outcome == 'failure'
-        with:
-          recreate: true
-          message: |-
-            ❗Terraform apply failed!
-            ```HCL
-            ${{ steps.apply.outputs.stderr }}
-            ${{ steps.apply.outputs.stdout }}
-            ```
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: marocchino/sticky-pull-request-comment@v2
-        if: steps.apply.outcome == 'success'
-        with:
-          recreate: true
-          message: ✅ Changes applied successfully!
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
