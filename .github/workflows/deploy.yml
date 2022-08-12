@@ -24,24 +24,6 @@ concurrency:
 
 jobs:
 
-  train:
-    name: Train
-    runs-on: ubuntu-20.04
-    timeout-minutes: 5
-    steps:
-      - uses: actions/github-script@v6
-        with:
-          script: |-
-            const query = `query($id:ID!) {
-              nodes(ids: [$id]) {
-                ... on PullRequest {
-                  number
-                }
-              }
-            }`;
-            console.log(await github.graphql(query, { id: context.payload.pull_request.node_id }))
-            throw new Error("failing on purpose")
-
   format:
     name: Verify Format
     needs: [train]
@@ -106,3 +88,26 @@ jobs:
       - run: tar xjvf tfplan.tar.bz2
       - run: terraform apply -input=false -lock-timeout=180s -auto-approve -no-color tfplan
         id: apply
+
+  merge:
+    name: Merge
+    needs: [apply]
+    runs-on: ubuntu-20.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/github-script@v6
+        with:
+          script: |+
+            const mutation = `mutation($prID: ID!, $commitHeadline: String!, $commitBody: String!) {
+              mergePullRequest(input: {
+                commitHeadline: $commitHeadline,
+                commitBody: $commitBody,
+                mergeMethod: SQUASH,
+                pullRequestId: $prID,
+              }) { clientMutationId }
+            }`;
+            await github.graphql(query, { 
+              prID: context.payload.pull_request.node_id,
+              commitHeadline: "",
+              commitBody: "",
+            })
