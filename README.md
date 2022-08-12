@@ -1,28 +1,15 @@
 # infrastructure
 
-This repository manages infrastructure all my infrastructure, including but not limited to our domains & pet projects.
+This repository manages Cloud infrastructure underlying my domains, pet projects & research.
 
-## Structure
+Since it is focused on the actual Cloud Provider (GCP) infrastructure, Terraform is the tool of choice, and this repository is composed mostly of Terraform files, applying the following main resources:
 
-The repository is divided into two three main sections:
+- GCP project settings
+- Necessary IAM permissions
+- Google Networking
+- Google Kubernetes Engine (GKE)
 
-- [ ] GitHub Infrastructure: things like repositories, configuration, etc.
-- [ ] Base Infrastructure: base GCP provisioning, requiring higher privileges (only applied manually).
-- [ ] Cloud Infrastructure: rest of the GCP infrastructure, such as projects, VPCs, GKE clusters, etc. Applied by CI/CD.
+## Roadmap
 
-### GitHub Infrastructure
-
-GitHub Infrastructure such as repositories & their configuration are managed by the 
-
-### Cloud Infrastructure
-
-#### Notes
-
-There is, however, one aspect of the GKE cluster which currently (as of Terraform Google provider 4.1.0) cannot be 
-managed by Terraform, and that's the Cluster Autoscaler profile. To use the correct profile (which prefers cost of 
-growth buffer), this command needs to be run:
-
-```bash
-$ gcloud container clusters update production --autoscaling-profile optimize-utilization
-```
-
+- GitHub Global settings
+- GitHub repositories
