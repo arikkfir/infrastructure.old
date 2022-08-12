@@ -15,7 +15,7 @@ defaults:
     shell: bash -euo pipefail {0}
 
 env:
-  TERRAFORM_VERSION: 1.1.7
+  TERRAFORM_VERSION: 1.2.7
   TF_IN_AUTOMATION: true
 
 concurrency:
