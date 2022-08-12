@@ -26,7 +26,6 @@ jobs:
 
   format:
     name: Verify Format
-    needs: [train]
     runs-on: ubuntu-20.04
     timeout-minutes: 5
     steps:
@@ -108,6 +107,6 @@ jobs:
             }`;
             await github.graphql(query, { 
               prID: context.payload.pull_request.node_id,
-              commitHeadline: "",
-              commitBody: "",
+              commitHeadline: context.payload.pull_request.title,
+              commitBody: context.payload.pull_request.body,
             })
