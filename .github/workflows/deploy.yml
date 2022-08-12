@@ -90,7 +90,7 @@ jobs:
     runs-on: ubuntu-20.04
     environment:
       name: production
-    timeout-minutes: 60
+    timeout-minutes: 120
     steps:
       - uses: hashicorp/setup-terraform@v1
         with:
