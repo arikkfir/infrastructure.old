@@ -18,10 +18,14 @@ env:
   TERRAFORM_VERSION: 1.1.7
   TF_IN_AUTOMATION: true
 
+concurrency:
+  group: production
+  cancel-in-progress: false
+
 jobs:
 
   format:
-    name: Terraform Format Verification
+    name: Verify Format
     runs-on: ubuntu-20.04
     timeout-minutes: 5
     steps:
@@ -34,14 +38,12 @@ jobs:
       - uses: marocchino/sticky-pull-request-comment@v2
         if: steps.fmt.outcome == 'success'
         with:
-          header: fmt
           recreate: true
           message: 👏 Terraform formatting is valid!
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: marocchino/sticky-pull-request-comment@v2
         if: failure() && steps.fmt.outcome == 'failure'
         with:
-          header: fmt
           recreate: true
           message: |-
             ❗Terraform format is invalid!
@@ -52,7 +54,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   plan:
-    name: Terraform Plan
+    name: Plan
     needs: [format]
     runs-on: ubuntu-20.04
     timeout-minutes: 15
@@ -86,25 +88,67 @@ jobs:
       - uses: marocchino/sticky-pull-request-comment@v2
         if: steps.plan.outcome == 'success'
         with:
-          header: plan
           recreate: true
           message: |-
             ℹ Following changes will be applied
             ```HCL
+            ${{ steps.plan.outputs.stderr }}
             ${{ steps.plan.outputs.stdout }}
             ```
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: marocchino/sticky-pull-request-comment@v2
         if: failure() && steps.plan.outcome == 'failure'
         with:
-          header: plan
           recreate: true
           message: |-
             ❗Terraform planning failed!
             ```HCL
-            - stderr --
             ${{ steps.plan.outputs.stderr }}
-            - stdout --
             ${{ steps.plan.outputs.stdout }}
+            ```
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  apply:
+    name: Apply
+    needs: [plan]
+    runs-on: ubuntu-20.04
+    environment:
+      name: production
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v3
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      - uses: google-github-actions/auth@v0
+        with:
+          service_account: ${{ secrets.GCP_SA_NAME }}
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      - uses: google-github-actions/setup-gcloud@v0
+      - uses: actions/download-artifact@v3
+        with:
+          name: plan
+      - run: terraform apply -input=false -lock-timeout=180s -auto-approve -no-color tfplan
+        id: apply
+      - uses: marocchino/sticky-pull-request-comment@v2
+        if: failure() && steps.apply.outcome == 'failure'
+        with:
+          recreate: true
+          message: |-
+            ❗Terraform apply failed!
+            ```HCL
+            ${{ steps.apply.outputs.stderr }}
+            ${{ steps.apply.outputs.stdout }}
+            ```
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: marocchino/sticky-pull-request-comment@v2
+        if: steps.apply.outcome == 'success'
+        with:
+          recreate: true
+          message: |-
+            ✅ Following changes have been applied
+            ```HCL
+            ${{ steps.apply.outputs.stderr }}
+            ${{ steps.apply.outputs.stdout }}
             ```
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
