@@ -105,7 +105,7 @@ jobs:
                 pullRequestId: $prID,
               }) { clientMutationId }
             }`;
-            await github.graphql(query, { 
+            await github.graphql(mutation, { 
               prID: context.payload.pull_request.node_id,
               commitHeadline: context.payload.pull_request.title,
               commitBody: context.payload.pull_request.body,
