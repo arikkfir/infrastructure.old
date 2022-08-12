@@ -36,7 +36,7 @@ jobs:
         with:
           header: fmt
           recreate: true
-          message: 👏👍 Terraform formatting is valid!
+          message: 👏 Terraform formatting is valid!
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: marocchino/sticky-pull-request-comment@v2
         if: failure() && steps.fmt.outcome == 'failure'
@@ -89,11 +89,8 @@ jobs:
           header: plan
           recreate: true
           message: |-
-            ℹ️Following changes will be applied
+            ℹ Following changes will be applied
             ```HCL
-            - stderr --
-            ${{ steps.plan.outputs.stderr }}
-            - stdout --
             ${{ steps.plan.outputs.stdout }}
             ```
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
