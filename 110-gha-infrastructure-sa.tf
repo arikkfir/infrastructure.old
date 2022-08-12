@@ -1,7 +1,6 @@
-resource "google_service_account" "gha-arikkfir-infrastructure" {
-  project      = data.google_project.project.project_id
-  account_id   = "gha-arikkfir-infrastructure"
-  display_name = "GitHub Actions: arikkfir/infrastructure"
+data "google_service_account" "gha-arikkfir-infrastructure" {
+  project    = data.google_project.project.project_id
+  account_id = "gha-arikkfir-infrastructure"
 }
 
 resource "google_organization_iam_member" "gha-arikkfir-infrastructure" {
@@ -12,7 +11,7 @@ resource "google_organization_iam_member" "gha-arikkfir-infrastructure" {
 
   org_id = data.google_organization.kfirfamily.org_id
   role   = each.key
-  member = "serviceAccount:${google_service_account.gha-arikkfir-infrastructure.email}"
+  member = "serviceAccount:${data.google_service_account.gha-arikkfir-infrastructure.email}"
 }
 
 resource "google_project_iam_member" "gha-arikkfir-infrastructure" {
@@ -28,7 +27,7 @@ resource "google_project_iam_member" "gha-arikkfir-infrastructure" {
 
   project = data.google_project.project.project_id
   role    = each.key
-  member  = "serviceAccount:${google_service_account.gha-arikkfir-infrastructure.email}"
+  member  = "serviceAccount:${data.google_service_account.gha-arikkfir-infrastructure.email}"
 }
 
 resource "google_storage_bucket_iam_member" "arikkfir-devops-gha-arikkfir-infrastructure" {
@@ -37,7 +36,7 @@ resource "google_storage_bucket_iam_member" "arikkfir-devops-gha-arikkfir-infras
     "roles/storage.objectAdmin",
   ])
 
-  bucket = google_storage_bucket.arikkfir-devops.name
+  bucket = data.google_storage_bucket.arikkfir-devops.name
   role   = each.key
-  member = "serviceAccount:${google_service_account.gha-arikkfir-infrastructure.email}"
+  member = "serviceAccount:${data.google_service_account.gha-arikkfir-infrastructure.email}"
 }

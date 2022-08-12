@@ -33,7 +33,6 @@ resource "google_container_node_pool" "core-n2-custom-4-7168-pre" {
     preemptible     = true
     disk_size_gb    = 100
     service_account = google_service_account.gke-node.email
-
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]

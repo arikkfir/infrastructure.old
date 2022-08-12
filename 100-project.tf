@@ -1,3 +1,31 @@
+variable "gcp_project" {
+  type        = string
+  description = "GCP project."
+  default     = "arikkfir"
+}
+
+variable "gcp_region" {
+  type        = string
+  description = "Region to place compute resources."
+}
+
+variable "gcp_zone" {
+  type        = string
+  description = "Zone to place compute resources."
+}
+
+data "google_organization" "kfirfamily" {
+  domain = "kfirfamily.com"
+}
+
+data "google_project" "project" {
+  project_id = var.gcp_project
+}
+
+data "google_storage_bucket" "arikkfir-devops" {
+  name = "arikkfir-devops"
+}
+
 resource "google_project_service" "apis" {
   for_each = toset([
     "artifactregistry.googleapis.com",
