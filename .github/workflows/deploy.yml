@@ -24,8 +24,20 @@ concurrency:
 
 jobs:
 
+  train:
+    name: Train
+    runs-on: ubuntu-20.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/github-script@v6
+        with:
+          script: |-
+            console.log(context.payload.pull_request)
+            throw new Error("failing on purpose")
+
   format:
     name: Verify Format
+    needs: [train]
     runs-on: ubuntu-20.04
     timeout-minutes: 5
     steps:
