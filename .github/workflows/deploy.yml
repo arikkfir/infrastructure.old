@@ -59,6 +59,11 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 15
     steps:
+      - uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          recreate: true
+          message: ⌛Planning changes...
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/checkout@v3
       - uses: hashicorp/setup-terraform@v1
         with:
