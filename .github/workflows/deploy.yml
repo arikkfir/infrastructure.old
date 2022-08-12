@@ -32,7 +32,12 @@ jobs:
       - uses: actions/github-script@v6
         with:
           script: |-
-            console.log(context.payload.pull_request)
+            const query = `query(id:String!) {
+              nodes(ids: [$id]) {
+                number
+              }
+            }`;
+            console.log(await github.graphql(query, { id: context.payload.pull_request.node_id }))
             throw new Error("failing on purpose")
 
   format:
