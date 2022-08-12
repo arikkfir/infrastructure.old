@@ -15,13 +15,8 @@ defaults:
     shell: bash -euo pipefail {0}
 
 env:
-  GCP_REGION: europe-west3
-  GCP_ZONE: europe-west3-a
   TERRAFORM_VERSION: 1.1.7
   TF_IN_AUTOMATION: true
-  TF_VAR_gcp_project: ${{ secrets.GCP_PROJECT_ID }}
-  TF_VAR_gcp_region: europe-west3
-  TF_VAR_gcp_zone: europe-west3-a
 
 jobs:
 
@@ -56,50 +51,63 @@ jobs:
             ```
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-#  plan:
-#    name: Terraform Format Verification
-#    needs: [format]
-#    runs-on: ubuntu-20.04
-#    timeout-minutes: 5
-#    steps:
-#      - uses: actions/checkout@v3
-#      - uses: hashicorp/setup-terraform@v1
-#        with:
-#          terraform_version: ${{ env.TERRAFORM_VERSION }}
-#      - uses: google-github-actions/auth@v0
-#        with:
-#          service_account: ${{ secrets.GCP_SA_NAME }}
-#          credentials_json: ${{ secrets.GCP_SA_KEY }}
-#      - uses: google-github-actions/setup-gcloud@v0
-#      - run: terraform init -input=false -no-color
-#        id: init
-#      - run: terraform plan -input=false -lock-timeout=180s -no-color -out tfplan
-#        id: plan
-#      - run: |+
-#          tar -c -j -v -f tfplan.tar.bz2 .terraform .terraform.lock.hcl *.tf tfplan
-#        working-directory: cloud-provider
-#      - uses: actions/upload-artifact@v3
-#        with:
-#          name: tf-plan
-#          path: cloud-provider/tfplan.tar.bz2
-#          if-no-files-found: error
-#          retention-days: 7
-#      - uses: marocchino/sticky-pull-request-comment@v2
-#        if: steps.fmt.outcome == 'success'
-#        with:
-#          header: fmt
-#          recreate: true
-#          message: |-
-#            👏👍 Terraform formatting is valid!
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#      - uses: marocchino/sticky-pull-request-comment@v2
-#        if: steps.fmt.outcome == 'failure'
-#        with:
-#          header: fmt
-#          recreate: true
-#          message: |-
-#            ❗Terraform format is invalid! (${{ steps.fmt.outcome }})
-#            ```HCL
-#            ${{ steps.fmt.outputs.stderr }}
-#            ```
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  plan:
+    name: Terraform Plan
+    needs: [format]
+    runs-on: ubuntu-20.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v3
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      - uses: google-github-actions/auth@v0
+        with:
+          service_account: ${{ secrets.GCP_SA_NAME }}
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      - uses: google-github-actions/setup-gcloud@v0
+      - run: terraform init -input=false -no-color
+      - run: terraform plan -input=false -lock-timeout=180s -no-color -out tfplan
+        id: plan
+        env:
+          TF_VAR_gcp_project: ${{ secrets.GCP_PROJECT_ID }}
+          TF_VAR_gcp_region: europe-west3
+          TF_VAR_gcp_zone: europe-west3-a
+      - uses: actions/upload-artifact@v3
+        with:
+          name: plan
+          path: |-
+            .terraform
+            .terraform.lock.hcl
+            *.tf
+            tfplan
+          if-no-files-found: error
+          retention-days: 7
+      - uses: marocchino/sticky-pull-request-comment@v2
+        if: steps.plan.outcome == 'success'
+        with:
+          header: plan
+          recreate: true
+          message: |-
+            ℹ️Following changes will be applied
+            ```HCL
+            - stderr --
+            ${{ steps.plan.outputs.stderr }}
+            - stdout --
+            ${{ steps.plan.outputs.stdout }}
+            ```
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: marocchino/sticky-pull-request-comment@v2
+        if: failure() && steps.plan.outcome == 'failure'
+        with:
+          header: plan
+          recreate: true
+          message: |-
+            ❗Terraform planning failed!
+            ```HCL
+            - stderr --
+            ${{ steps.plan.outputs.stderr }}
+            - stdout --
+            ${{ steps.plan.outputs.stdout }}
+            ```
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
