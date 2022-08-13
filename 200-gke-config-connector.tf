@@ -15,6 +15,7 @@ resource "google_service_account_iam_member" "config-connector_workload_identity
 # Set of permissions that the config-connector SA needs
 resource "google_project_iam_member" "config-connector" {
   for_each = toset([
+    "roles/dns.admin",
     "roles/iam.serviceAccountAdmin",
     "roles/logging.logWriter",
     "roles/monitoring.metricWriter",
