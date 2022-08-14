@@ -19,6 +19,7 @@ resource "google_project_iam_member" "config-connector" {
     "roles/iam.serviceAccountAdmin",
     "roles/logging.logWriter",
     "roles/monitoring.metricWriter",
+    "roles/resourcemanager.projectIamAdmin",
   ])
 
   project = data.google_project.project.project_id
