@@ -13,6 +13,7 @@ resource "google_service_account_iam_member" "gke-node_gha-arikkfir-infrastructu
 
 # Set of permissions that the gke-node SA needs
 resource "google_project_iam_member" "gke-node" {
+  # Consider using "roles/container.nodeServiceAccount" instead of "logWriter" and "metricWriter"
   for_each = toset([
     "roles/logging.logWriter",
     "roles/monitoring.metricWriter",
