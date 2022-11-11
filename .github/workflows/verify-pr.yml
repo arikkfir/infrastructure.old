@@ -1,12 +1,14 @@
-name: Deploy
+name: Verify PR
 
 on:
-  push:
-    branches:
-      - main
+  pull_request:
     paths:
       - .github/workflows/deploy.yml
       - "*.tf"
+    types:
+      - synchronize
+      - opened
+      - reopened
 
 defaults:
   run:
@@ -36,12 +38,9 @@ jobs:
 
   plan:
     name: Plan
-    needs: format
-    runs-on: ubuntu-latest
+    needs: [format]
+    runs-on: ubuntu-20.04
     timeout-minutes: 15
-#    permissions:
-#      contents: 'read'
-#      id-token: 'write'
     steps:
       - uses: actions/checkout@v3
       - uses: hashicorp/setup-terraform@v1
@@ -49,11 +48,9 @@ jobs:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
       - uses: google-github-actions/auth@v0
         with:
-          workload_identity_provider: 'projects/arikkfir/locations/global/workloadIdentityPools/github-actions/providers/default'
           service_account: ${{ secrets.GCP_SA_NAME }}
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
       - uses: google-github-actions/setup-gcloud@v0
-        with:
-          version: 409.0.0
       - run: terraform init -input=false -no-color
       - run: terraform plan -input=false -lock-timeout=180s -no-color -out tfplan
         id: plan
@@ -67,26 +64,3 @@ jobs:
           path: tfplan.tar.bz2
           if-no-files-found: error
           retention-days: 7
-
-#  apply:
-#    name: Apply
-#    needs: [plan]
-#    runs-on: ubuntu-20.04
-#    environment:
-#      name: production
-#    timeout-minutes: 120
-#    steps:
-#      - uses: hashicorp/setup-terraform@v1
-#        with:
-#          terraform_version: ${{ env.TERRAFORM_VERSION }}
-#      - uses: google-github-actions/auth@v0
-#        with:
-#          service_account: ${{ secrets.GCP_SA_NAME }}
-#          credentials_json: ${{ secrets.GCP_SA_KEY }}
-#      - uses: google-github-actions/setup-gcloud@v0
-#      - uses: actions/download-artifact@v3
-#        with:
-#          name: plan
-#      - run: tar xjvf tfplan.tar.bz2
-#      - run: terraform apply -input=false -lock-timeout=180s -auto-approve -no-color tfplan
-#        id: apply

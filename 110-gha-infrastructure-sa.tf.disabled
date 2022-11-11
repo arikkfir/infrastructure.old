@@ -1,8 +1,3 @@
-data "google_service_account" "gha-arikkfir-infrastructure" {
-  project    = data.google_project.project.project_id
-  account_id = "gha-arikkfir-infrastructure"
-}
-
 resource "google_organization_iam_member" "gha-arikkfir-infrastructure" {
   for_each = toset([
     "roles/iam.organizationRoleViewer",
