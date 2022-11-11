@@ -9,7 +9,7 @@ resource "google_iam_workload_identity_pool_provider" "default" {
   workload_identity_pool_provider_id = "default"
   description                        = "OIDC identity pool provider for GitHub Actions workflows."
   display_name                       = "Default"
-  attribute_mapping                  = {
+  attribute_mapping = {
     "attribute.aud"        = "assertion.aud"
     "attribute.actor"      = "assertion.actor"
     "google.subject"       = "assertion.sub"
