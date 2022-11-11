@@ -1,5 +1,4 @@
 /.terraform
 /backup
 .DS_Store
-*.json
 *.auto.tfvars
