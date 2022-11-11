@@ -55,6 +55,7 @@ jobs:
       - uses: google-github-actions/setup-gcloud@v1
         with:
           version: ${{ env.GCP_CLI_VERSION }}
+      - run: gcloud info
       - run: terraform init -input=false
       - run: terraform plan -input=false -lock-timeout=180s -out tfplan
         id: plan
