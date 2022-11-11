@@ -49,7 +49,7 @@ jobs:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
       - uses: google-github-actions/auth@v1
         with:
-          workload_identity_provider: 'projects/arikkfir/locations/global/workloadIdentityPools/github-actions/providers/default'
+          workload_identity_provider: 'projects/8909046976/locations/global/workloadIdentityPools/github-actions/providers/default'
           service_account: ${{ secrets.GCP_SA_NAME }}
       - uses: google-github-actions/setup-gcloud@v1
         with:
