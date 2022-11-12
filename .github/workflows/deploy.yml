@@ -79,7 +79,7 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: hashicorp/setup-terraform@v1
+      - uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
       - uses: google-github-actions/auth@v1
