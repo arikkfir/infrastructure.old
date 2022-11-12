@@ -78,6 +78,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    environment: production
     steps:
       - uses: hashicorp/setup-terraform@v2
         with:
@@ -95,3 +96,5 @@ jobs:
           version: ${{ env.GCP_CLI_VERSION }}
       - run: gcloud info
       - run: terraform apply -input=false -lock-timeout=180s -auto-approve tfplan
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
