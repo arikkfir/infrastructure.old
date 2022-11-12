@@ -5,6 +5,10 @@ terraform {
     prefix = "arikkfir/infrastructure"
   }
   required_providers {
+    github = {
+      source  = "integrations/github"
+      version = "= 5.8.0"
+    }
     google = {
       source  = "hashicorp/google"
       version = "= 4.43.0"
@@ -15,6 +19,8 @@ terraform {
     }
   }
 }
+
+provider "github" {}
 
 provider "google" {
   project = var.gcp_project
