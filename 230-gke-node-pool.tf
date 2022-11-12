@@ -1,4 +1,4 @@
-resource "google_container_node_pool" "n2-custom-4-7168-pre" {
+resource "google_container_node_pool" "n2-custom-4-7168" {
   project  = google_container_cluster.primary.project
   cluster  = google_container_cluster.primary.name
   name     = "n2-custom-4-7168"
@@ -7,8 +7,9 @@ resource "google_container_node_pool" "n2-custom-4-7168-pre" {
   # Scaling
   initial_node_count = 1
   autoscaling {
-    min_node_count = 0
-    max_node_count = 3
+    min_node_count  = 0
+    max_node_count  = 3
+    location_policy = "ANY"
   }
   lifecycle {
     ignore_changes = [
