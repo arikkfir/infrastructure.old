@@ -2,6 +2,7 @@ resource "google_container_cluster" "primary" {
   depends_on = [
     google_project_service.apis["compute.googleapis.com"],
     google_project_service.apis["container.googleapis.com"],
+    google_service_account_iam_member.gke-node_gha-arikkfir-infrastructure_iam_serviceAccountUser,
     google_service_account_iam_member.default-compute-gha-arikkfir-infrastructure-iam-serviceAccountUser,
   ]
 
@@ -16,9 +17,6 @@ resource "google_container_cluster" "primary" {
   }
 
   addons_config {
-    http_load_balancing {
-      disabled = true
-    }
     config_connector_config {
       enabled = true
     }
@@ -46,7 +44,7 @@ resource "google_container_cluster" "primary" {
     enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
   }
   monitoring_config {
-    enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
+    enable_components = ["SYSTEM_COMPONENTS", "APISERVER", "CONTROLLER_MANAGER", "SCHEDULER"]
   }
 
   # Security

@@ -14,3 +14,7 @@ data "google_service_account" "gha-arikkfir-infrastructure" {
   project    = data.google_project.project.project_id
   account_id = "gha-arikkfir-infrastructure"
 }
+
+data "google_compute_default_service_account" "default" {
+  project = data.google_project.project.project_id
+}
