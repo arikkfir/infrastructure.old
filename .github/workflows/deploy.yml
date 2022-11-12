@@ -75,6 +75,9 @@ jobs:
     needs: plan
     runs-on: ubuntu-latest
     timeout-minutes: 120
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: hashicorp/setup-terraform@v1
         with:
