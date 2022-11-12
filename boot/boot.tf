@@ -109,20 +109,18 @@ resource "google_organization_iam_member" "gha-arikkfir-infrastructure" {
   member = "serviceAccount:${google_service_account.gha-arikkfir-infrastructure.email}"
 }
 
-resource "google_project_iam_custom_role" "gha-arikkfir-infrastructure" {
-  role_id     = "gha.infrastructure"
-  title       = "GitHub Actions: arikkfir/infrastructure"
-  description = "Permissions assigned to GitHub Actions workflows running from the arikkfir/infrastructure repository."
-  permissions = [
-    "iam.serviceAccounts.get",
-    "serviceusage.services.list",
-    "storage.buckets.get",
-  ]
-}
-
 resource "google_project_iam_member" "gha-arikkfir-infrastructure" {
+  for_each = toset([
+    "roles/compute.networkAdmin",
+    "roles/compute.viewer",
+    "roles/container.admin",
+    "roles/iam.serviceAccountAdmin",
+    "roles/resourcemanager.projectIamAdmin",
+    "roles/serviceusage.serviceUsageAdmin",
+    "roles/storage.admin",
+  ])
   project = google_project.arikkfir.project_id
-  role    = google_project_iam_custom_role.gha-arikkfir-infrastructure.id
+  role    = each.key
   member  = "serviceAccount:${google_service_account.gha-arikkfir-infrastructure.email}"
 }
 
