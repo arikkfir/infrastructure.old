@@ -70,25 +70,25 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-#  apply:
-#    name: Apply
-#    needs: [plan]
-#    runs-on: ubuntu-20.04
-#    environment:
-#      name: production
-#    timeout-minutes: 120
-#    steps:
-#      - uses: hashicorp/setup-terraform@v1
-#        with:
-#          terraform_version: ${{ env.TERRAFORM_VERSION }}
-#      - uses: google-github-actions/auth@v0
-#        with:
-#          service_account: ${{ secrets.GCP_SA_NAME }}
-#          credentials_json: ${{ secrets.GCP_SA_KEY }}
-#      - uses: google-github-actions/setup-gcloud@v0
-#      - uses: actions/download-artifact@v3
-#        with:
-#          name: plan
-#      - run: tar xjvf tfplan.tar.bz2
-#      - run: terraform apply -input=false -lock-timeout=180s -auto-approve -no-color tfplan
-#        id: apply
+  apply:
+    name: Apply
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      - uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: ${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SA_NAME }}
+      - uses: google-github-actions/setup-gcloud@v1
+        with:
+          version: ${{ env.GCP_CLI_VERSION }}
+      - run: gcloud info
+      - uses: actions/download-artifact@v3
+        with:
+          name: plan
+      - run: tar xjvf tfplan.tar.bz2
+      - run: terraform apply -input=false -lock-timeout=180s -auto-approve tfplan
