@@ -16,7 +16,7 @@ locals {
         squash_merge_commit_title               = "PR_TITLE"
         squash_merge_commit_message             = "PR_BODY"
         merge_commit_title                      = "MERGE_MESSAGE"
-        merge_commit_message                    = "BLANK"
+        merge_commit_message                    = "PR_TITLE"
         delete_branch_on_merge                  = true
         has_downloads                           = false
         archived                                = false
