@@ -17,6 +17,8 @@ env:
   TF_IN_AUTOMATION: true
   GCP_WORKLOAD_IDENTITY_PROVIDER: projects/8909046976/locations/global/workloadIdentityPools/github-actions/providers/default
   GCP_CLI_VERSION: 409.0.0
+  GCP_REGION: europe-west3
+  GCP_ZONE: europe-west3-a
 
 concurrency:
   group: production
@@ -61,8 +63,8 @@ jobs:
         id: plan
         env:
           GITHUB_TOKEN: ${{ secrets.TF_GITHUB_TOKEN }}
-          TF_VAR_gcp_region: europe-west3
-          TF_VAR_gcp_zone: europe-west3-a
+          TF_VAR_gcp_region: ${{ env.GCP_REGION }}
+          TF_VAR_gcp_zone: ${{ env.GCP_ZONE }}
       - run: tar -c -j -v -f tfplan.tar.bz2 .terraform .terraform.lock.hcl *.tf tfplan
       - uses: actions/upload-artifact@v3
         with:
@@ -94,8 +96,14 @@ jobs:
           service_account: ${{ secrets.GCP_SA_NAME }}
       - uses: google-github-actions/setup-gcloud@v1
         with:
+          install_components: gke-gcloud-auth-plugin
           version: ${{ env.GCP_CLI_VERSION }}
       - run: gcloud info
       - run: terraform apply -input=false -lock-timeout=180s -auto-approve tfplan
         env:
           GITHUB_TOKEN: ${{ secrets.TF_GITHUB_TOKEN }}
+      - uses: google-github-actions/get-gke-credentials@v0
+        with:
+          cluster_name: primary
+          location: ${{ env.GCP_ZONE }}
+      - run: kubectl get namespaces
