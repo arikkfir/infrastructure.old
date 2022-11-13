@@ -59,3 +59,15 @@ resource "github_repository" "arikkfir" {
   ignore_vulnerability_alerts_during_read = each.value.ignore_vulnerability_alerts_during_read
   allow_update_branch                     = each.value.allow_update_branch
 }
+
+data "github_branch" "arikkfir-main" {
+  for_each   = local.repositories.arikkfir
+  repository = each.key
+  branch     = "main"
+}
+
+resource "github_branch_default" "arikkfir" {
+  for_each   = local.repositories.arikkfir
+  repository = github_repository.arikkfir[each.key].name
+  branch     = data.github_branch.arikkfir-main[each.key].branch
+}
