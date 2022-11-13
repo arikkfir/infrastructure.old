@@ -21,10 +21,12 @@ locals {
         has_downloads                           = false
         archived                                = false
         archive_on_destroy                      = true
-        topics                                  = ["gcp", "google-cloud", "gke", "iac", "infrastructure", "k8s", "kubernetes", "terraform"]
         vulnerability_alerts                    = true
         ignore_vulnerability_alerts_during_read = false
         allow_update_branch                     = true
+        topics = [
+          "gcp", "google-cloud", "gke", "iac", "infrastructure", "k8s", "kubernetes", "terraform"
+        ]
       }
     }
   }
