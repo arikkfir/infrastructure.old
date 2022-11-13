@@ -1,12 +1,14 @@
 locals {
   common_labels = {
-    bug         = { color = "d73a4a", description = "Something isn't working" }
-    docs        = { color = "0075ca", description = "Improvements or additions to documentation" }
-    duplicate   = { color = "cfd3d7", description = "This issue or pull request already exists" }
-    enhancement = { color = "a2eeef", description = "New feature or request" }
-    invalid     = { color = "e4e669", description = "This doesn't seem right" }
-    question    = { color = "d876e3", description = "Further information is requested" }
-    wontfix     = { color = "ffffff", description = "This will not be worked on" }
+    bug                = { color = "d73a4a", description = "Something isn't working" }
+    documentation      = { color = "0075ca", description = "Improvements or additions to documentation" }
+    duplicate          = { color = "cfd3d7", description = "This issue or pull request already exists" }
+    enhancement        = { color = "a2eeef", description = "New feature or request" }
+    "good first issue" = { color = "7057ff", description = "Good for newcomers" }
+    "help wanted"      = { color = "008672", description = "Extra attention is needed" }
+    invalid            = { color = "e4e669", description = "This doesn't seem right" }
+    question           = { color = "d876e3", description = "Further information is requested" }
+    wontfix            = { color = "ffffff", description = "This will not be worked on" }
   }
   arikkfir-repositories = {
     infrastructure = {
@@ -19,7 +21,7 @@ locals {
         bootstrap       = { color = "d73a4a", description = "Related to IaC bootstrapping code" }
         bug             = local.common_labels.bug
         configconnector = { color = "b7f5f6", description = "ConfigConnector related issues or improvements" }
-        docs            = local.common_labels.docs
+        documentation   = local.common_labels.documentation
         duplicate       = local.common_labels.duplicate
         enhancement     = local.common_labels.enhancement
         gke             = { color = "1D76DB", description = "GKE related issues or improvements" }
@@ -38,13 +40,15 @@ locals {
       has_downloads = false
       archived      = false
       labels = {
-        bug         = local.common_labels.bug
-        docs        = local.common_labels.docs
-        duplicate   = local.common_labels.duplicate
-        enhancement = local.common_labels.enhancement
-        invalid     = local.common_labels.invalid
-        question    = local.common_labels.question
-        wontfix     = local.common_labels.wontfix
+        bug                = local.common_labels.bug
+        documentation      = local.common_labels.documentation
+        duplicate          = local.common_labels.duplicate
+        enhancement        = local.common_labels.enhancement
+        "good first issue" = local.common_labels["good first issue"]
+        "help wanted"      = local.common_labels["help wanted"]
+        invalid            = local.common_labels.invalid
+        question           = local.common_labels.question
+        wontfix            = local.common_labels.wontfix
       }
       topics = [
         "delivery", "gcp", "google-cloud", "gke", "iac", "infrastructure", "k8s", "kubernetes"
