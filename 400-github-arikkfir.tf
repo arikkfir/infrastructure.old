@@ -8,6 +8,12 @@ locals {
         is_template   = false
         has_downloads = false
         archived      = false
+        main_branch_protection = {
+          required_status_checks = {
+            strict   = true
+            contexts = ["Apply", "Plan", "Verify Format"]
+          }
+        }
         topics = [
           "gcp", "google-cloud", "gke", "iac", "infrastructure", "k8s", "kubernetes", "terraform"
         ]
@@ -54,4 +60,30 @@ resource "github_branch_default" "arikkfir" {
   for_each   = local.repositories.arikkfir
   repository = github_repository.arikkfir[each.key].name
   branch     = data.github_branch.arikkfir-main[each.key].branch
+}
+
+resource "github_branch_protection" "arikkfir" {
+  for_each                        = local.repositories.arikkfir
+  repository_id                   = github_repository.arikkfir[each.key].node_id
+  pattern                         = "main"
+  enforce_admins                  = false
+  require_signed_commits          = false
+  required_linear_history         = true
+  require_conversation_resolution = true
+  allows_deletions                = false
+  allows_force_pushes             = false
+
+  required_status_checks {
+    strict   = each.value.main_branch_protection.required_status_checks.strict
+    contexts = each.value.main_branch_protection.required_status_checks.contexts
+  }
+
+  required_pull_request_reviews {
+    dismiss_stale_reviews           = true
+    restrict_dismissals             = false
+    dismissal_restrictions          = []
+    pull_request_bypassers          = []
+    require_code_owner_reviews      = false
+    required_approving_review_count = 0
+  }
 }
