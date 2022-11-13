@@ -1,29 +1,53 @@
 locals {
-  repositories = {
-    arikkfir = {
-      infrastructure = {
-        description   = "Infrastructure-as-Code for my infrastructure."
-        homepage_url  = "https://github.com/arikkfir"
-        visibility    = "public"
-        is_template   = false
-        has_downloads = false
-        archived      = false
-        main_branch_protection = {
-          required_status_checks = {
-            strict   = true
-            contexts = ["Apply", "Plan", "Verify Format"]
-          }
+  common_labels = {
+    bug         = { color = "d73a4a", description = "Something isn't working" }
+    docs        = { color = "0075ca", description = "Improvements or additions to documentation" }
+    duplicate   = { color = "cfd3d7", description = "This issue or pull request already exists" }
+    enhancement = { color = "a2eeef", description = "New feature or request" }
+    invalid     = { color = "e4e669", description = "This doesn't seem right" }
+    question    = { color = "d876e3", description = "Further information is requested" }
+    wontfix     = { color = "ffffff", description = "This will not be worked on" }
+  }
+  arikkfir-repositories = {
+    infrastructure = {
+      description   = "Infrastructure-as-Code for my infrastructure."
+      homepage_url  = "https://github.com/arikkfir"
+      visibility    = "public"
+      is_template   = false
+      has_downloads = false
+      archived      = false
+      main_branch_protection = {
+        required_status_checks = {
+          strict   = true
+          contexts = ["Apply", "Plan", "Verify Format"]
         }
-        topics = [
-          "gcp", "google-cloud", "gke", "iac", "infrastructure", "k8s", "kubernetes", "terraform"
-        ]
       }
+      labels = {
+        bootstrap       = { color = "d73a4a", description = "Related to IaC bootstrapping code" }
+        bug             = local.common_labels.bug
+        configconnector = { color = "b7f5f6", description = "ConfigConnector related issues or improvements" }
+        docs            = local.common_labels.docs
+        duplicate       = local.common_labels.duplicate
+        enhancement     = local.common_labels.enhancement
+        gke             = { color = "1D76DB", description = "GKE related issues or improvements" }
+        invalid         = local.common_labels.invalid
+        question        = local.common_labels.question
+        wontfix         = local.common_labels.wontfix
+      }
+      topics = [
+        "gcp", "google-cloud", "gke", "iac", "infrastructure", "k8s", "kubernetes", "terraform"
+      ]
     }
   }
+  arikkfir-labels = flatten([
+    for repoName, repo in local.arikkfir-repositories : [
+      for labelName, label in repo.labels : merge({ repoName = repoName, name = labelName }, label)
+    ]
+  ])
 }
 
 resource "github_repository" "arikkfir" {
-  for_each                                = local.repositories.arikkfir
+  for_each                                = local.arikkfir-repositories
   name                                    = each.key
   description                             = each.value.description
   homepage_url                            = each.value.homepage_url
@@ -51,19 +75,19 @@ resource "github_repository" "arikkfir" {
 }
 
 data "github_branch" "arikkfir-main" {
-  for_each   = local.repositories.arikkfir
+  for_each   = local.arikkfir-repositories
   repository = each.key
   branch     = "main"
 }
 
-resource "github_branch_default" "arikkfir" {
-  for_each   = local.repositories.arikkfir
+resource "github_branch_default" "arikkfir-main" {
+  for_each   = local.arikkfir-repositories
   repository = each.key
   branch     = data.github_branch.arikkfir-main[each.key].branch
 }
 
-resource "github_branch_protection" "arikkfir" {
-  for_each                        = local.repositories.arikkfir
+resource "github_branch_protection" "arikkfir-main" {
+  for_each                        = local.arikkfir-repositories
   repository_id                   = github_repository.arikkfir[each.key].node_id
   pattern                         = "main"
   enforce_admins                  = false
@@ -89,8 +113,9 @@ resource "github_branch_protection" "arikkfir" {
 }
 
 resource "github_issue_label" "arikkfir" {
-  for_each   = local.repositories.arikkfir
-  repository = each.key
-  name       = "Urgent"
-  color      = "FF0000"
+  for_each    = { for l in local.arikkfir-labels : format("arikkfir/%s:%s", l.repoName, l.name) => l }
+  repository  = each.value.repoName
+  name        = each.value.name
+  color       = each.value.color
+  description = each.value.description
 }
