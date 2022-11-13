@@ -106,7 +106,7 @@ jobs:
         with:
           cluster_name: primary
           location: ${{ env.GCP_ZONE }}
-      - uses: fluxcd/fluxctl-action@v1
+      - uses: fluxcd/fluxctl-action@master
       - run: flux bootstrap github --personal
           --owner=arikkfir
           --repository=infrastructure
