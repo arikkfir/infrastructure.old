@@ -106,4 +106,12 @@ jobs:
         with:
           cluster_name: primary
           location: ${{ env.GCP_ZONE }}
-      - run: kubectl get namespaces
+      - uses: fluxcd/fluxctl-action@v1
+      - run: flux bootstrap github --personal
+          --owner=arikkfir
+          --repository=infrastructure
+          --path=flux/clusters/primary
+          --author-email=flux@kfirfamily.com
+          --author-name=FluxCD
+          --branch=main
+          --commit-message-appendix='[ci skip]'
