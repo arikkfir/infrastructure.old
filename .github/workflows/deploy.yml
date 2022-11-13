@@ -106,12 +106,14 @@ jobs:
         with:
           cluster_name: primary
           location: ${{ env.GCP_ZONE }}
-      - uses: fluxcd/fluxctl-action@master
-      - run: fluxctl bootstrap github --personal
-          --owner=arikkfir
-          --repository=infrastructure
-          --path=flux/clusters/primary
-          --author-email=flux@kfirfamily.com
-          --author-name=FluxCD
-          --branch=main
-          --commit-message-appendix='[ci skip]'
+      - uses: fluxcd/flux2/action@main
+      - run: |
+          flux version --client
+          flux bootstrap github --personal \
+                                --owner=arikkfir \
+                                --repository=infrastructure \
+                                --path=flux/clusters/primary \
+                                --author-email=flux@kfirfamily.com \
+                                --author-name=FluxCD \
+                                --branch=main \
+                                --commit-message-appendix='[ci skip]'
