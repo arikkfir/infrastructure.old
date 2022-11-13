@@ -69,7 +69,6 @@ resource "github_repository" "arikkfir" {
   for_each                                = local.arikkfir-repositories
   name                                    = each.key
   description                             = each.value.description
-  homepage_url                            = each.value.homepage_url
   visibility                              = each.value.visibility
   has_issues                              = true
   has_projects                            = true
