@@ -46,6 +46,10 @@ locals {
   ])
 }
 
+data "github_user" "arikkfir" {
+  username = "arikkfir"
+}
+
 resource "github_repository" "arikkfir" {
   for_each                                = local.arikkfir-repositories
   name                                    = each.key
@@ -118,4 +122,17 @@ resource "github_issue_label" "arikkfir" {
   name        = each.value.name
   color       = each.value.color
   description = each.value.description
+}
+
+resource "github_repository_environment" "arikkfir-production" {
+  for_each    = local.arikkfir-repositories
+  environment = "production"
+  repository  = each.key
+  reviewers {
+    users = [data.github_user.arikkfir.id]
+  }
+  deployment_branch_policy {
+    protected_branches     = false
+    custom_branch_policies = true
+  }
 }
