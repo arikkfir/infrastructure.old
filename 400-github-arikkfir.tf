@@ -29,7 +29,7 @@ resource "github_repository" "arikkfir" {
   homepage_url                            = each.value.homepage_url
   visibility                              = each.value.visibility
   has_issues                              = true
-  has_projects                            = false
+  has_projects                            = true
   has_wiki                                = false
   is_template                             = each.value.is_template
   allow_merge_commit                      = true
@@ -58,7 +58,7 @@ data "github_branch" "arikkfir-main" {
 
 resource "github_branch_default" "arikkfir" {
   for_each   = local.repositories.arikkfir
-  repository = github_repository.arikkfir[each.key].name
+  repository = each.key
   branch     = data.github_branch.arikkfir-main[each.key].branch
 }
 
@@ -86,4 +86,11 @@ resource "github_branch_protection" "arikkfir" {
     require_code_owner_reviews      = false
     required_approving_review_count = 0
   }
+}
+
+resource "github_issue_label" "arikkfir" {
+  for_each   = local.repositories.arikkfir
+  repository = each.key
+  name       = "Urgent"
+  color      = "FF0000"
 }
