@@ -106,14 +106,14 @@ resource "github_branch_protection" "arikkfir-main" {
     contexts = each.value.main_branch_protection.required_status_checks.contexts
   }
 
-  required_pull_request_reviews {
-    dismiss_stale_reviews           = true
-    restrict_dismissals             = false
-    dismissal_restrictions          = []
-    pull_request_bypassers          = []
-    require_code_owner_reviews      = false
-    required_approving_review_count = 0
-  }
+  #  required_pull_request_reviews {
+  #    dismiss_stale_reviews           = true
+  #    restrict_dismissals             = false
+  #    dismissal_restrictions          = []
+  #    pull_request_bypassers          = []
+  #    require_code_owner_reviews      = false
+  #    required_approving_review_count = 0
+  #  }
 }
 
 resource "github_issue_label" "arikkfir" {
