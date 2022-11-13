@@ -38,16 +38,13 @@ locals {
       has_downloads = false
       archived      = false
       labels = {
-        bootstrap       = { color = "d73a4a", description = "Related to IaC bootstrapping code" }
-        bug             = local.common_labels.bug
-        configconnector = { color = "b7f5f6", description = "ConfigConnector related issues or improvements" }
-        docs            = local.common_labels.docs
-        duplicate       = local.common_labels.duplicate
-        enhancement     = local.common_labels.enhancement
-        gke             = { color = "1D76DB", description = "GKE related issues or improvements" }
-        invalid         = local.common_labels.invalid
-        question        = local.common_labels.question
-        wontfix         = local.common_labels.wontfix
+        bug         = local.common_labels.bug
+        docs        = local.common_labels.docs
+        duplicate   = local.common_labels.duplicate
+        enhancement = local.common_labels.enhancement
+        invalid     = local.common_labels.invalid
+        question    = local.common_labels.question
+        wontfix     = local.common_labels.wontfix
       }
       topics = [
         "delivery", "gcp", "google-cloud", "gke", "iac", "infrastructure", "k8s", "kubernetes"
