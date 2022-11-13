@@ -3,10 +3,10 @@ kind: Kustomization
 metadata:
   name: apps
   namespace: flux-system
-  spec:
-    interval: 1m0s
-    path: ./apps
-    prune: true
-    sourceRef:
-      kind: GitRepository
-      name: delivery
+spec:
+  interval: 1m0s
+  path: ./apps
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: delivery
