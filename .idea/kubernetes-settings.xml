@@ -101,9 +101,6 @@
       <SpecSource>
         <option name="pathOrUrl" value="https://github.com/traefik/traefik-helm-chart/raw/master/traefik/crds/traefikservices.yaml" />
       </SpecSource>
-      <SpecSource>
-        <option name="pathOrUrl" value="https://github.com/bitnami-labs/sealed-secrets/raw/main/helm/sealed-secrets/crds/sealedsecret-crd.yaml" />
-      </SpecSource>
     </specSources>
   </component>
 </project>
