@@ -118,4 +118,4 @@ jobs:
                                 --branch=main \
                                 --commit-message-appendix='[ci skip]'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TF_GITHUB_TOKEN }}
