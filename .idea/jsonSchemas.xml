@@ -3,6 +3,22 @@
   <component name="JsonSchemaMappingsProjectConfiguration">
     <state>
       <map>
+        <entry key="Devfile">
+          <value>
+            <SchemaInfo>
+              <option name="name" value="Devfile" />
+              <option name="relativePathToSchema" value="https://raw.githubusercontent.com/devfile/api/v2.2.0/schemas/latest/devfile.json" />
+              <option name="applicationDefined" value="true" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="devfile.yaml" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
         <entry key="GitHub Workflow">
           <value>
             <SchemaInfo>
