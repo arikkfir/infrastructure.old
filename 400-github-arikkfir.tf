@@ -11,7 +11,6 @@ locals {
   arikkfir-repositories = {
     infrastructure = {
       description   = "Infrastructure-as-Code for my infrastructure."
-      homepage_url  = "https://github.com/arikkfir"
       visibility    = "public"
       is_template   = false
       has_downloads = false
