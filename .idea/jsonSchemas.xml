@@ -30,6 +30,9 @@
                   <Item>
                     <option name="path" value=".github/workflows/deploy.yml" />
                   </Item>
+                  <Item>
+                    <option name="path" value=".github/workflows/update-kube-dns-autoscaler.yml" />
+                  </Item>
                 </list>
               </option>
             </SchemaInfo>
