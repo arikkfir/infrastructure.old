@@ -105,7 +105,8 @@ jobs:
           cluster_name: primary
           location: ${{ env.GCP_ZONE }}
       - uses: fluxcd/flux2/action@main
-      - run: |
+      - name: fluxcd bootstrap
+        run: |
           flux version --client
           flux bootstrap github --personal \
                                 --owner=arikkfir \
