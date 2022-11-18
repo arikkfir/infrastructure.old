@@ -124,7 +124,6 @@ jobs:
           [[ -n "${CURRENT_VALUE}" ]] || (echo "KubeDNS Autoscaler configuration lacks 'linear' key" && exit 1)
           
           NEW_VALUE=$(echo -n ${CURRENT_VALUE} | jq -c '.preventSinglePointFailure=false | tostring')
-          kubectl patch configmaps/kube-dns-autoscaler \
-                    --dry-run=client \
-                    --type=json \
-                    --patch='[{"op":"replace","path":"/data/linear","value":'${NEW_VALUE}'}]'
+          kubectl patch -n kube-system configmap/kube-dns-autoscaler \
+              --type=json \
+              --patch='[{"op":"replace","path":"/data/linear","value":'${NEW_VALUE}'}]'
