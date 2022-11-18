@@ -57,7 +57,6 @@ jobs:
       - uses: google-github-actions/setup-gcloud@v1
         with:
           version: ${{ env.GCP_CLI_VERSION }}
-      - run: gcloud info
       - run: terraform init -input=false
       - run: terraform plan -input=false -lock-timeout=180s -out tfplan
         id: plan
@@ -98,7 +97,6 @@ jobs:
         with:
           install_components: gke-gcloud-auth-plugin
           version: ${{ env.GCP_CLI_VERSION }}
-      - run: gcloud info
       - run: terraform apply -input=false -lock-timeout=180s -auto-approve tfplan
         env:
           GITHUB_TOKEN: ${{ secrets.TF_GITHUB_TOKEN }}
