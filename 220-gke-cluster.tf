@@ -20,6 +20,9 @@ resource "google_container_cluster" "primary" {
     config_connector_config {
       enabled = true
     }
+    http_load_balancing {
+      disabled = true
+    }
   }
 
   # Scale
