@@ -18,3 +18,12 @@ data "google_service_account" "gha-arikkfir-infrastructure" {
 data "google_compute_default_service_account" "default" {
   project = data.google_project.project.project_id
 }
+
+data "google_iam_workload_identity_pool" "github-actions" {
+  workload_identity_pool_id = "github-actions"
+}
+
+data "google_iam_workload_identity_pool_provider" "default" {
+  workload_identity_pool_id          = data.google_iam_workload_identity_pool.github-actions.workload_identity_pool_id
+  workload_identity_pool_provider_id = "default"
+}
