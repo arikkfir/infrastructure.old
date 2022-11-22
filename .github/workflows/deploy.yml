@@ -118,12 +118,3 @@ jobs:
                                 --commit-message-appendix='[ci skip]'
         env:
           GITHUB_TOKEN: ${{ secrets.TF_GITHUB_TOKEN }}
-      - name: disable "preventSinglePointFailure" in kube-dns-autoscaler
-        run: |
-          CURRENT_VALUE=$(kubectl get -n kube-system configmap/kube-dns-autoscaler --output=jsonpath="{.data.linear}")
-          [[ -n "${CURRENT_VALUE}" ]] || (echo "KubeDNS Autoscaler configuration lacks 'linear' key" && exit 1)
-          
-          NEW_VALUE=$(echo -n ${CURRENT_VALUE} | jq -c '.preventSinglePointFailure=false | tostring')
-          kubectl patch -n kube-system configmap/kube-dns-autoscaler \
-              --type=json \
-              --patch='[{"op":"replace","path":"/data/linear","value":'${NEW_VALUE}'}]'
