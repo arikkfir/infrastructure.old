@@ -20,10 +20,12 @@ data "google_compute_default_service_account" "default" {
 }
 
 data "google_iam_workload_identity_pool" "github-actions" {
+  provider                  = "google-beta"
   workload_identity_pool_id = "github-actions"
 }
 
 data "google_iam_workload_identity_pool_provider" "default" {
+  provider                           = "google-beta"
   workload_identity_pool_id          = data.google_iam_workload_identity_pool.github-actions.workload_identity_pool_id
   workload_identity_pool_provider_id = "default"
 }
