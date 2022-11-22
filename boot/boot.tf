@@ -115,6 +115,7 @@ resource "google_project_iam_member" "gha-arikkfir-infrastructure" {
     "roles/compute.viewer",
     "roles/container.admin",
     "roles/iam.serviceAccountAdmin",
+    "roles/iam.workloadIdentityPoolAdmin",
     "roles/resourcemanager.projectIamAdmin",
     "roles/serviceusage.serviceUsageAdmin",
     "roles/storage.admin",
