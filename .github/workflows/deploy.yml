@@ -108,6 +108,8 @@ jobs:
       - uses: fluxcd/flux2/action@main
       - name: fluxcd bootstrap
         run: |
+          echo "Sleeping for 1 minute, to allow the cluster to stabilize..."
+          sleep 60
           flux version --client
           flux bootstrap github --personal \
                                 --owner=arikkfir \
