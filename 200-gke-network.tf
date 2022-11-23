@@ -11,11 +11,12 @@ resource "google_compute_network" "gke" {
 }
 
 resource "google_compute_subnetwork" "gke-subnet" {
-  project       = data.google_project.project.project_id
-  name          = "gke-subnet-${var.gcp_region}"
-  network       = google_compute_network.gke.id
-  region        = var.gcp_region
-  ip_cidr_range = "10.100.0.0/16"
+  project                  = data.google_project.project.project_id
+  name                     = "gke-subnet-${var.gcp_region}"
+  network                  = google_compute_network.gke.id
+  region                   = var.gcp_region
+  ip_cidr_range            = "10.100.0.0/16"
+  private_ip_google_access = true
 
   secondary_ip_range {
     range_name    = "gke-pods"
