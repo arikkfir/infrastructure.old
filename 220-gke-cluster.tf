@@ -7,17 +7,27 @@ resource "google_container_cluster" "primary" {
     google_service_account_iam_member.default-compute-gha-arikkfir-infrastructure-iam-serviceAccountUser,
   ]
 
-  # Provisioning
-  provider           = google-beta
-  project            = data.google_project.project.project_id
-  location           = var.gcp_zone
-  name               = "primary"
-  description        = "Primary cluster."
-  min_master_version = "1.25.3-gke.800"
-  release_channel {
-    channel = "RAPID"
+  # PROVISIONING
+  ######################################################################################################################
+  provider    = google-beta
+  project     = data.google_project.project.project_id
+  location    = var.gcp_zone
+  name        = "primary"
+  description = "Primary cluster."
+  timeouts {
+    create = "30m"
+    update = "40m"
   }
 
+  # VERSIONING
+  ######################################################################################################################
+  min_master_version = "1.25.3-gke.800"
+  release_channel {
+    channel = "UNSPECIFIED"
+  }
+
+  # ADDONS
+  ######################################################################################################################
   addons_config {
     config_connector_config {
       enabled = true
@@ -27,24 +37,41 @@ resource "google_container_cluster" "primary" {
     }
   }
 
-  # Scale
+  # SCALING
+  ######################################################################################################################
+  initial_node_count = 1
+  node_version       = "1.25.3-gke.800"
+  node_config {
+    disk_size_gb = 50
+    disk_type    = "pd-standard"
+    machine_type = "n2-custom-4-7168"
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform"
+    ]
+    preemptible     = false
+    service_account = google_service_account.gke-node.email
+    workload_metadata_config {
+      mode = "GKE_METADATA"
+    }
+  }
   cluster_autoscaling {
     enabled             = false
     autoscaling_profile = "OPTIMIZE_UTILIZATION"
   }
-  initial_node_count       = 1
-  remove_default_node_pool = true
 
-  # Networking
-  network         = google_compute_network.gke.self_link
-  networking_mode = "VPC_NATIVE"
-  subnetwork      = google_compute_subnetwork.gke-subnet.self_link
+  # NETWORKING
+  ######################################################################################################################
+  network                  = google_compute_network.gke.self_link
+  networking_mode          = "VPC_NATIVE"
+  subnetwork               = google_compute_subnetwork.gke-subnet.self_link
+  enable_l4_ilb_subsetting = true
   ip_allocation_policy {
     cluster_secondary_range_name  = "gke-pods"
     services_secondary_range_name = "gke-services"
   }
 
-  # Operations
+  # OPERATIONS
+  ######################################################################################################################
   logging_config {
     enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
   }
@@ -54,7 +81,8 @@ resource "google_container_cluster" "primary" {
     }
   }
 
-  # Security
+  # SECURITY
+  ######################################################################################################################
   authenticator_groups_config {
     security_group = "gke-security-groups@${data.google_organization.kfirfamily.domain}"
   }
