@@ -111,8 +111,8 @@ jobs:
           flux version --client
           flux bootstrap github --personal \
                                 --owner=arikkfir \
-                                --repository=infrastructure \
-                                --path=flux/clusters/primary \
+                                --repository=delivery \
+                                --path=clusters/primary \
                                 --author-email=flux@kfirfamily.com \
                                 --author-name=FluxCD \
                                 --branch=main \
