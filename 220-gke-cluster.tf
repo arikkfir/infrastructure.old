@@ -61,10 +61,9 @@ resource "google_container_cluster" "primary" {
 
   # NETWORKING
   ######################################################################################################################
-  network                  = google_compute_network.gke.self_link
-  networking_mode          = "VPC_NATIVE"
-  subnetwork               = google_compute_subnetwork.gke-subnet.self_link
-  enable_l4_ilb_subsetting = true
+  network         = google_compute_network.gke.self_link
+  networking_mode = "VPC_NATIVE"
+  subnetwork      = google_compute_subnetwork.gke-subnet.self_link
   ip_allocation_policy {
     cluster_secondary_range_name  = "gke-pods"
     services_secondary_range_name = "gke-services"
