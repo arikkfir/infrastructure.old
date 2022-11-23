@@ -21,7 +21,7 @@ resource "google_container_cluster" "primary" {
 
   # VERSIONING
   ######################################################################################################################
-  min_master_version = "1.25.3-gke.800"
+  min_master_version = "1.24.7-gke.900"
   release_channel {
     channel = "UNSPECIFIED"
   }
@@ -40,7 +40,7 @@ resource "google_container_cluster" "primary" {
   # SCALING
   ######################################################################################################################
   initial_node_count = 1
-  node_version       = "1.25.3-gke.800"
+  node_version       = "1.24.7-gke.900"
   node_config {
     disk_size_gb = 50
     disk_type    = "pd-standard"
