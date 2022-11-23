@@ -3,6 +3,7 @@ resource "google_container_node_pool" "n2-custom-4-7168" {
   cluster  = google_container_cluster.primary.name
   name     = "n2-custom-4-7168"
   location = var.gcp_zone
+  version  = "1.25.3-gke.800"
 
   # Scaling
   initial_node_count = 1
@@ -20,7 +21,7 @@ resource "google_container_node_pool" "n2-custom-4-7168" {
   # Operations
   management {
     auto_repair  = true
-    auto_upgrade = true
+    auto_upgrade = false
   }
   upgrade_settings {
     max_surge       = 3

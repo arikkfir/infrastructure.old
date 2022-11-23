@@ -1,3 +1,4 @@
+# TODO: set cluster version explicitly
 resource "google_container_cluster" "primary" {
   depends_on = [
     google_project_service.apis["compute.googleapis.com"],
@@ -7,11 +8,12 @@ resource "google_container_cluster" "primary" {
   ]
 
   # Provisioning
-  provider    = google-beta
-  project     = data.google_project.project.project_id
-  location    = var.gcp_zone
-  name        = "primary"
-  description = "Primary cluster."
+  provider           = google-beta
+  project            = data.google_project.project.project_id
+  location           = var.gcp_zone
+  name               = "primary"
+  description        = "Primary cluster."
+  min_master_version = "1.25.3-gke.800"
   release_channel {
     channel = "RAPID"
   }
