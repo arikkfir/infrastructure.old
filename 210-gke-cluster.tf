@@ -74,9 +74,11 @@ resource "google_container_cluster" "primary" {
   release_channel {
     channel = "UNSPECIFIED"
   }
+  logging_service = "logging.googleapis.com/kubernetes"
   logging_config {
-    enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
+    enable_components = ["SYSTEM_COMPONENTS", "SCHEDULER", "WORKLOADS"]
   }
+  monitoring_service = "monitoring.googleapis.com/kubernetes"
   monitoring_config {
     managed_prometheus {
       enabled = true
