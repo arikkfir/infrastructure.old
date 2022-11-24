@@ -28,7 +28,7 @@ resource "google_container_node_pool" "workloads" {
     taint {
       key    = "gke.kfirs.com/purpose"
       value  = "workloads"
-      effect = "NoExecute"
+      effect = "NO_EXECUTE"
     }
   }
 
