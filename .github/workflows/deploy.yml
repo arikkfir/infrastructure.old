@@ -101,24 +101,24 @@ jobs:
       - run: terraform apply -input=false -lock-timeout=180s -auto-approve tfplan
         env:
           GITHUB_TOKEN: ${{ secrets.TF_GITHUB_TOKEN }}
-      - uses: google-github-actions/get-gke-credentials@v0
-        with:
-          cluster_name: primary
-          location: ${{ env.GCP_ZONE }}
-      - uses: fluxcd/flux2/action@main
-      - name: fluxcd bootstrap
-        run: |
-          echo "Sleeping for 1 minute, to allow the cluster to stabilize..."
-          sleep 60
-          flux version --client
-          flux bootstrap github --personal \
-                                --owner=arikkfir \
-                                --repository=delivery \
-                                --path=clusters/primary \
-                                --network-policy=false \
-                                --author-email=flux@kfirfamily.com \
-                                --author-name=FluxCD \
-                                --branch=main \
-                                --commit-message-appendix='[ci skip]'
-        env:
-          GITHUB_TOKEN: ${{ secrets.TF_GITHUB_TOKEN }}
+#      - uses: google-github-actions/get-gke-credentials@v0
+#        with:
+#          cluster_name: primary
+#          location: ${{ env.GCP_ZONE }}
+#      - uses: fluxcd/flux2/action@main
+#      - name: fluxcd bootstrap
+#        run: |
+#          echo "Sleeping for 1 minute, to allow the cluster to stabilize..."
+#          sleep 60
+#          flux version --client
+#          flux bootstrap github --personal \
+#                                --owner=arikkfir \
+#                                --repository=delivery \
+#                                --path=clusters/primary \
+#                                --network-policy=false \
+#                                --author-email=flux@kfirfamily.com \
+#                                --author-name=FluxCD \
+#                                --branch=main \
+#                                --commit-message-appendix='[ci skip]'
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.TF_GITHUB_TOKEN }}
