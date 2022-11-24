@@ -24,6 +24,9 @@ resource "google_container_node_pool" "system" {
     workload_metadata_config {
       mode = "GKE_METADATA"
     }
+    labels = {
+      "gke.kfirs.com/purpose" : "system"
+    }
   }
 
   # SCALING

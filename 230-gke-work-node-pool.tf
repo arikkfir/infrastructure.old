@@ -25,6 +25,9 @@ resource "google_container_node_pool" "workloads" {
     workload_metadata_config {
       mode = "GKE_METADATA"
     }
+    labels = {
+      "gke.kfirs.com/purpose" : "workloads"
+    }
     spot = true
     taint {
       key    = "gke.kfirs.com/purpose"
