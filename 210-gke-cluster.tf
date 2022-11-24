@@ -1,4 +1,21 @@
-# TODO: set cluster version explicitly
+data "google_container_engine_versions" "default" {
+  provider       = google-beta
+  location       = var.gcp_zone
+  version_prefix = "1.24."
+}
+
+resource "google_compute_network" "gke" {
+  depends_on = [
+    google_project_service.apis["compute.googleapis.com"],
+  ]
+
+  project                         = data.google_project.project.project_id
+  name                            = "gke"
+  description                     = "GKE VPC"
+  auto_create_subnetworks         = true
+  delete_default_routes_on_create = false
+}
+
 resource "google_container_cluster" "primary" {
   depends_on = [
     google_project_service.apis["compute.googleapis.com"],
@@ -10,20 +27,12 @@ resource "google_container_cluster" "primary" {
   # PROVISIONING
   ######################################################################################################################
   provider    = google-beta
-  project     = data.google_project.project.project_id
   location    = var.gcp_zone
   name        = "primary"
   description = "Primary cluster."
   timeouts {
-    create = "30m"
-    update = "40m"
-  }
-
-  # VERSIONING
-  ######################################################################################################################
-  min_master_version = "1.24.7-gke.900"
-  release_channel {
-    channel = "UNSPECIFIED"
+    create = "60m"
+    update = "60m"
   }
 
   # ADDONS
@@ -38,22 +47,11 @@ resource "google_container_cluster" "primary" {
   }
 
   # SCALING
+  # - must specify "initial_node_count" and "remove_default_node_pool" to enable external node pools
+  # - see: https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#remove_default_node_pool
   ######################################################################################################################
-  initial_node_count = 1
-  node_version       = "1.24.7-gke.900"
-  node_config {
-    disk_size_gb = 50
-    disk_type    = "pd-standard"
-    machine_type = "n2-custom-4-7168"
-    oauth_scopes = [
-      "https://www.googleapis.com/auth/cloud-platform"
-    ]
-    preemptible     = false
-    service_account = google_service_account.gke-node.email
-    workload_metadata_config {
-      mode = "GKE_METADATA"
-    }
-  }
+  initial_node_count       = 1
+  remove_default_node_pool = true
   cluster_autoscaling {
     enabled             = false
     autoscaling_profile = "OPTIMIZE_UTILIZATION"
@@ -63,14 +61,13 @@ resource "google_container_cluster" "primary" {
   ######################################################################################################################
   network         = google_compute_network.gke.self_link
   networking_mode = "VPC_NATIVE"
-  subnetwork      = google_compute_subnetwork.gke-subnet.self_link
-  ip_allocation_policy {
-    cluster_secondary_range_name  = "gke-pods"
-    services_secondary_range_name = "gke-services"
-  }
 
   # OPERATIONS
   ######################################################################################################################
+  min_master_version = data.google_container_engine_versions.default.latest_master_version
+  release_channel {
+    channel = "UNSPECIFIED"
+  }
   logging_config {
     enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
   }

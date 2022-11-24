@@ -18,8 +18,8 @@ env:
   TF_IN_AUTOMATION: true
   GCP_WORKLOAD_IDENTITY_PROVIDER: projects/8909046976/locations/global/workloadIdentityPools/github-actions/providers/default
   GCP_CLI_VERSION: 409.0.0
-  GCP_REGION: europe-west3
-  GCP_ZONE: europe-west3-a
+  GCP_REGION: me-west1
+  GCP_ZONE: me-west1-a
 
 concurrency:
   group: production
@@ -115,6 +115,7 @@ jobs:
                                 --owner=arikkfir \
                                 --repository=delivery \
                                 --path=clusters/primary \
+                                --network-policy=false \
                                 --author-email=flux@kfirfamily.com \
                                 --author-name=FluxCD \
                                 --branch=main \
