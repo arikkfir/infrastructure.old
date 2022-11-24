@@ -16,7 +16,7 @@ resource "google_container_node_pool" "system" {
   node_config {
     disk_size_gb = 100
     disk_type    = "pd-standard"
-    machine_type = "e2-standard-4"
+    machine_type = "n2-standard-2"
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
@@ -27,6 +27,7 @@ resource "google_container_node_pool" "system" {
     labels = {
       "gke.kfirs.com/purpose" : "system"
     }
+    spot = true
   }
 
   # SCALING
