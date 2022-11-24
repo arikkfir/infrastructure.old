@@ -1,6 +1,7 @@
 resource "google_container_node_pool" "workloads" {
   depends_on = [
     google_container_cluster.primary,
+    google_container_node_pool.system
   ]
 
   # PROVISIONING
