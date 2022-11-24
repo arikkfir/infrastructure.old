@@ -61,6 +61,12 @@ resource "google_container_cluster" "primary" {
   ######################################################################################################################
   network         = google_compute_network.gke.self_link
   networking_mode = "VPC_NATIVE"
+  ip_allocation_policy {
+    # previously used "10.110.0.0/17"
+    cluster_ipv4_cidr_block = ""
+    # previously used "10.110.128.0/17"
+    services_ipv4_cidr_block = ""
+  }
 
   # OPERATIONS
   ######################################################################################################################
