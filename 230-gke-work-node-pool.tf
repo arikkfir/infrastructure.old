@@ -44,8 +44,9 @@ resource "google_container_node_pool" "workloads" {
   ######################################################################################################################
   version = data.google_container_engine_versions.default.latest_node_version
   management {
-    auto_repair  = true
-    auto_upgrade = false
+    auto_repair     = true
+    auto_upgrade    = false
+    location_policy = "ANY"
   }
   upgrade_settings {
     max_surge       = 3

@@ -29,8 +29,9 @@ resource "google_container_node_pool" "system" {
   # SCALING
   ######################################################################################################################
   autoscaling {
-    max_node_count = 3
-    min_node_count = 1
+    max_node_count  = 3
+    min_node_count  = 1
+    location_policy = "ANY"
   }
 
   # OPERATIONS
