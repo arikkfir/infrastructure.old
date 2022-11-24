@@ -29,7 +29,7 @@ resource "google_container_node_pool" "system" {
   # SCALING
   ######################################################################################################################
   autoscaling {
-    max_node_count = 2
+    max_node_count = 3
     min_node_count = 1
   }
 
@@ -41,7 +41,7 @@ resource "google_container_node_pool" "system" {
     auto_upgrade = false
   }
   upgrade_settings {
-    max_surge       = 2
+    max_surge       = 3
     max_unavailable = 0
   }
 }
