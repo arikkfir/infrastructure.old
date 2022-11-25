@@ -27,7 +27,6 @@ resource "google_container_node_pool" "system" {
     labels = {
       "gke.kfirs.com/purpose" : "system"
     }
-    spot = true
   }
 
   # SCALING
