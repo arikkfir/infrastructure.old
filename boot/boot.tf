@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">=1.3.4"
+  required_version = ">=1.4.2"
   backend "gcs" {
     bucket = "arikkfir-devops"
     prefix = "arikkfir/infrastructure/boot"
@@ -7,11 +7,11 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = "= 4.43.0"
+      version = "= 4.59.0"
     }
     google-beta = {
       source  = "hashicorp/google-beta"
-      version = "= 4.43.0"
+      version = "= 4.59.0"
     }
   }
 }
@@ -46,7 +46,7 @@ variable "gcp_zone" {
 
 resource "google_project" "arikkfir" {
   org_id          = "468825984716"
-  billing_account = "01F6CD-4EDAB8-6D4B05"
+  billing_account = "015F98-305E8D-24864D"
   project_id      = "arikkfir"
   name            = "arikkfir"
 }
