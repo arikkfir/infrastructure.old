@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">=1.3.4"
+  required_version = ">=1.4.2"
   backend "gcs" {
     bucket = "arikkfir-devops"
     prefix = "arikkfir/infrastructure"
@@ -7,15 +7,15 @@ terraform {
   required_providers {
     github = {
       source  = "integrations/github"
-      version = "= 5.8.0"
+      version = "= 5.19.0"
     }
     google = {
       source  = "hashicorp/google"
-      version = "= 4.43.0"
+      version = "= 4.59.0"
     }
     google-beta = {
       source  = "hashicorp/google-beta"
-      version = "= 4.43.0"
+      version = "= 4.59.0"
     }
   }
 }

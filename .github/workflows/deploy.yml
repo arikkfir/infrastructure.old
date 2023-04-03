@@ -14,7 +14,7 @@ defaults:
     shell: bash -euo pipefail {0}
 
 env:
-  TERRAFORM_VERSION: 1.3.4
+  TERRAFORM_VERSION: 1.4.2
   TF_IN_AUTOMATION: true
   GCP_WORKLOAD_IDENTITY_PROVIDER: projects/8909046976/locations/global/workloadIdentityPools/github-actions/providers/default
   GCP_CLI_VERSION: 409.0.0
@@ -23,7 +23,7 @@ env:
 
 concurrency:
   group: production
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
 

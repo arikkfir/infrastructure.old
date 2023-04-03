@@ -1,7 +1,7 @@
 data "google_container_engine_versions" "default" {
   provider       = google-beta
   location       = var.gcp_zone
-  version_prefix = "1.24."
+  version_prefix = "1.26."
 }
 
 resource "google_compute_network" "gke" {
@@ -38,6 +38,7 @@ resource "google_container_cluster" "primary" {
   # ADDONS
   ######################################################################################################################
   addons_config {
+    //noinspection HCLUnknownBlockType
     config_connector_config {
       enabled = true
     }

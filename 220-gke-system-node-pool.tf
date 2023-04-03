@@ -24,6 +24,7 @@ resource "google_container_node_pool" "system" {
     workload_metadata_config {
       mode = "GKE_METADATA"
     }
+    spot = true
     labels = {
       "gke.kfirs.com/purpose" : "system"
     }
@@ -42,10 +43,19 @@ resource "google_container_node_pool" "system" {
   version = data.google_container_engine_versions.default.latest_node_version
   management {
     auto_repair  = true
-    auto_upgrade = false
+    auto_upgrade = true
   }
   upgrade_settings {
     max_surge       = 3
     max_unavailable = 0
+  }
+
+  # LIFECYCLE
+  ######################################################################################################################
+  lifecycle {
+    ignore_changes = [
+      # see https://github.com/hashicorp/terraform-provider-google/issues/6901#issuecomment-667369691
+      initial_node_count,
+    ]
   }
 }
