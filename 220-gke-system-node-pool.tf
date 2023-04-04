@@ -16,7 +16,7 @@ resource "google_container_node_pool" "system" {
   node_config {
     disk_size_gb = 100
     disk_type    = "pd-standard"
-    machine_type = "n2-standard-4"
+    machine_type = "e2-standard-8"
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
@@ -33,14 +33,14 @@ resource "google_container_node_pool" "system" {
   # SCALING
   ######################################################################################################################
   autoscaling {
-    max_node_count  = 3
+    max_node_count  = 2
     min_node_count  = 1
     location_policy = "ANY"
   }
 
   # OPERATIONS
   ######################################################################################################################
-  version = data.google_container_engine_versions.default.latest_node_version
+  #  version = data.google_container_engine_versions.default.latest_node_version
   management {
     auto_repair  = true
     auto_upgrade = true

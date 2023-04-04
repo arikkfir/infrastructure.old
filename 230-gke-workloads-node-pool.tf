@@ -17,7 +17,7 @@ resource "google_container_node_pool" "workloads" {
   node_config {
     disk_size_gb = 100
     disk_type    = "pd-standard"
-    machine_type = "n2-standard-4"
+    machine_type = "e2-standard-8"
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
@@ -29,6 +29,7 @@ resource "google_container_node_pool" "workloads" {
       "gke.kfirs.com/purpose" : "workloads"
     }
     spot = true
+    //noinspection HCLUnknownBlockType
     taint {
       key    = "gke.kfirs.com/purpose"
       value  = "workloads"
@@ -49,7 +50,7 @@ resource "google_container_node_pool" "workloads" {
   version = data.google_container_engine_versions.default.latest_node_version
   management {
     auto_repair  = true
-    auto_upgrade = false
+    auto_upgrade = true
   }
   upgrade_settings {
     max_surge       = 3

@@ -19,7 +19,7 @@ env:
   GCP_WORKLOAD_IDENTITY_PROVIDER: projects/8909046976/locations/global/workloadIdentityPools/github-actions/providers/default
   GCP_CLI_VERSION: 409.0.0
   GCP_REGION: me-west1
-  GCP_ZONE: me-west1-a
+  GCP_ZONE: me-west1-b
 
 concurrency:
   group: production
@@ -105,20 +105,8 @@ jobs:
         with:
           cluster_name: primary
           location: ${{ env.GCP_ZONE }}
-      - uses: fluxcd/flux2/action@main
-      - name: fluxcd bootstrap
-        run: |
-          echo "Sleeping for 1 minute, to allow the cluster to stabilize..."
-          sleep 60
-          flux version --client
-          flux bootstrap github --personal \
-                                --owner=arikkfir \
-                                --repository=delivery \
-                                --path=clusters/primary \
-                                --network-policy=false \
-                                --author-email=flux@kfirfamily.com \
-                                --author-name=FluxCD \
-                                --branch=main \
-                                --commit-message-appendix='[ci skip]'
-        env:
-          GITHUB_TOKEN: ${{ secrets.TF_GITHUB_TOKEN }}
+#      - run: |
+#          kubectl create namespace argocd
+#          kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/core-install.yaml
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.TF_GITHUB_TOKEN }}

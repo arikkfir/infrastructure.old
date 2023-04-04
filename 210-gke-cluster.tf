@@ -71,9 +71,8 @@ resource "google_container_cluster" "primary" {
 
   # OPERATIONS
   ######################################################################################################################
-  min_master_version = data.google_container_engine_versions.default.latest_master_version
   release_channel {
-    channel = "UNSPECIFIED"
+    channel = "RAPID"
   }
   logging_config {
     enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
