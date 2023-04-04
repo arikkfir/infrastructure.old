@@ -1,9 +1,3 @@
-data "google_container_engine_versions" "default" {
-  provider       = google-beta
-  location       = var.gcp_zone
-  version_prefix = "1.26."
-}
-
 resource "google_compute_network" "gke" {
   depends_on = [
     google_project_service.apis["compute.googleapis.com"],
@@ -16,7 +10,7 @@ resource "google_compute_network" "gke" {
   delete_default_routes_on_create = false
 }
 
-resource "google_container_cluster" "primary" {
+resource "google_container_cluster" "main" {
   depends_on = [
     google_project_service.apis["compute.googleapis.com"],
     google_project_service.apis["container.googleapis.com"],
@@ -28,8 +22,8 @@ resource "google_container_cluster" "primary" {
   ######################################################################################################################
   provider    = google-beta
   location    = var.gcp_zone
-  name        = "primary"
-  description = "Primary cluster."
+  name        = "main"
+  description = "Main cluster."
   timeouts {
     create = "60m"
     update = "60m"
@@ -48,11 +42,27 @@ resource "google_container_cluster" "primary" {
   }
 
   # SCALING
-  # - must specify "initial_node_count" and "remove_default_node_pool" to enable external node pools
-  # - see: https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster#remove_default_node_pool
+  # It appears that unless I keep the default node pool, cluster does not function properly; see case 44318169.
+  # Therefore, I'm keeping the default node pool as the system/core node pool, and adding a new one for my workloads.
   ######################################################################################################################
   initial_node_count       = 1
-  remove_default_node_pool = true
+  remove_default_node_pool = false
+  node_config {
+    disk_size_gb = 100
+    disk_type    = "pd-standard"
+    machine_type = "e2-standard-8"
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform"
+    ]
+    service_account = google_service_account.gke-node.email
+    workload_metadata_config {
+      mode = "GKE_METADATA"
+    }
+    spot = true
+    labels = {
+      "gke.kfirs.com/purpose" : "system"
+    }
+  }
   cluster_autoscaling {
     enabled             = false
     autoscaling_profile = "OPTIMIZE_UTILIZATION"

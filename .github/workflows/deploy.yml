@@ -103,10 +103,20 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.TF_GITHUB_TOKEN }}
       - uses: google-github-actions/get-gke-credentials@v0
         with:
-          cluster_name: primary
+          cluster_name: main
           location: ${{ env.GCP_ZONE }}
-#      - run: |
-#          kubectl create namespace argocd
-#          kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/core-install.yaml
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.TF_GITHUB_TOKEN }}
+      - uses: fluxcd/flux2/action@main
+      - name: fluxcd bootstrap
+        run: |
+          flux version --client
+          flux bootstrap github --personal \
+                                --owner=arikkfir \
+                                --repository=delivery \
+                                --path=clusters/primary \
+                                --network-policy=false \
+                                --author-email=flux@kfirfamily.com \
+                                --author-name=FluxCD \
+                                --branch=main \
+                                --commit-message-appendix='[ci skip]'
+        env:
+          GITHUB_TOKEN: ${{ secrets.TF_GITHUB_TOKEN }}

@@ -36,6 +36,6 @@ jobs:
           version: ${{ env.GCP_CLI_VERSION }}
       - uses: google-github-actions/get-gke-credentials@v0
         with:
-          cluster_name: primary
+          cluster_name: main
           location: ${{ env.GCP_ZONE }}
       - run: kubectl get pods --all-namespaces | grep -i shutdown | awk '{print $1, $2}' | xargs -n2 kubectl delete pod -n

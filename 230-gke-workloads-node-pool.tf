@@ -1,13 +1,8 @@
 resource "google_container_node_pool" "workloads" {
-  depends_on = [
-    google_container_cluster.primary,
-    google_container_node_pool.system
-  ]
-
   # PROVISIONING
   ######################################################################################################################
   provider = google-beta
-  cluster  = google_container_cluster.primary.name
+  cluster  = google_container_cluster.main.name
   name     = "workloads"
   location = var.gcp_zone
 
@@ -47,7 +42,6 @@ resource "google_container_node_pool" "workloads" {
 
   # OPERATIONS
   ######################################################################################################################
-  version = data.google_container_engine_versions.default.latest_node_version
   management {
     auto_repair  = true
     auto_upgrade = true
