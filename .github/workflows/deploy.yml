@@ -112,7 +112,7 @@ jobs:
           flux bootstrap github --personal \
                                 --owner=arikkfir \
                                 --repository=delivery \
-                                --path=clusters/primary \
+                                --path=clusters/main \
                                 --network-policy=false \
                                 --author-email=flux@kfirfamily.com \
                                 --author-name=FluxCD \
