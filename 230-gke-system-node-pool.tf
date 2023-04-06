@@ -1,9 +1,9 @@
-resource "google_container_node_pool" "workloads" {
+resource "google_container_node_pool" "system" {
   # PROVISIONING
   ######################################################################################################################
   provider = google-beta
   cluster  = google_container_cluster.main.name
-  name     = "workloads"
+  name     = "system"
   location = var.gcp_zone
 
   # NODES
@@ -12,7 +12,7 @@ resource "google_container_node_pool" "workloads" {
   node_config {
     disk_size_gb = 100
     disk_type    = "pd-standard"
-    machine_type = "e2-standard-4"
+    machine_type = "e2-standard-8"
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform"
     ]
@@ -21,22 +21,16 @@ resource "google_container_node_pool" "workloads" {
       mode = "GKE_METADATA"
     }
     labels = {
-      "gke.kfirs.com/purpose" : "workloads"
+      "gke.kfirs.com/purpose" : "system"
     }
     spot = true
-    //noinspection HCLUnknownBlockType
-    taint {
-      key    = "gke.kfirs.com/purpose"
-      value  = "workloads"
-      effect = "NO_EXECUTE"
-    }
   }
 
   # SCALING
   ######################################################################################################################
   autoscaling {
     max_node_count  = 3
-    min_node_count  = 0
+    min_node_count  = 1
     location_policy = "ANY"
   }
 

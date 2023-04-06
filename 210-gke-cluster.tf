@@ -46,23 +46,7 @@ resource "google_container_cluster" "main" {
   # Therefore, I'm keeping the default node pool as the system/core node pool, and adding a new one for my workloads.
   ######################################################################################################################
   initial_node_count       = 1
-  remove_default_node_pool = false
-  node_config {
-    disk_size_gb = 100
-    disk_type    = "pd-standard"
-    machine_type = "e2-standard-8"
-    oauth_scopes = [
-      "https://www.googleapis.com/auth/cloud-platform"
-    ]
-    service_account = google_service_account.gke-node.email
-    workload_metadata_config {
-      mode = "GKE_METADATA"
-    }
-    spot = true
-    labels = {
-      "gke.kfirs.com/purpose" : "system"
-    }
-  }
+  remove_default_node_pool = true
   cluster_autoscaling {
     enabled             = false
     autoscaling_profile = "OPTIMIZE_UTILIZATION"
@@ -82,7 +66,7 @@ resource "google_container_cluster" "main" {
   # OPERATIONS
   ######################################################################################################################
   release_channel {
-    channel = "RAPID"
+    channel = "STABLE"
   }
   logging_config {
     enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]
