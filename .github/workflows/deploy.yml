@@ -103,33 +103,7 @@ jobs:
         with:
           cluster_name: ${{ steps.apply.outputs.gke-cluster-name }}
           location: ${{ steps.apply.outputs.gke-cluster-location }}
-      - run: |
-          for ns in $(kubectl get ns -o=jsonpath='{.items[*].metadata.name}'); do
-            for d in $(kubectl get deploy -n ${ns} -ojsonpath='{.items[*].metadata.name}'); do
-              kubectl wait -n ${ns} --for=condition=Available=True deployment ${d} --timeout=0
-            done
-            for d in $(kubectl get statefulset -n ${ns} -ojsonpath='{.items[*].metadata.name}'); do
-              REPLICAS=$(kubectl get statefulset -n ${ns} ${d} -ojsonpath='{.status.replicas}')
-              AVAILABLE_REPLICAS=$(kubectl get statefulset -n ${ns} ${d} -ojsonpath='{.status.availableReplicas}')
-              READY_REPLICAS=$(kubectl get statefulset -n ${ns} ${d} -ojsonpath='{.status.readyReplicas}')
-              if [[ ${REPLICAS} -ne ${AVAILABLE_REPLICAS} || ${REPLICAS} -ne ${READY_REPLICAS} ]]; then
-                echo "StatefulSet ${ns}/${d} has ${REPLICAS} replicas but only ${AVAILABLE_REPLICAS} available, and ${READY_REPLICAS} ready, replicas"
-                sleep 1
-                continue
-              fi
-              echo "statefulsets.apps/${d} is ready (${ns})"
-            done
-            for d in $(kubectl get daemonset -n ${ns} -ojsonpath='{.items[*].metadata.name}'); do
-              CURRENT_SCHEDULED=$(kubectl get daemonset -n ${ns} ${d} -ojsonpath='{.status.currentNumberScheduled}')
-              DESIRED_SCHEDULED=$(kubectl get daemonset -n ${ns} ${d} -ojsonpath='{.status.desiredNumberScheduled}')
-              if [[ ${CURRENT_SCHEDULED} -ne ${DESIRED_SCHEDULED} ]]; then
-                echo "DaemonSet ${ns}/${d} has ${CURRENT_SCHEDULED} replicas but desires ${DESIRED_SCHEDULED} replicas"
-                sleep 1
-                continue
-              fi
-              echo "daemonsets.apps/${d} is ready (${ns})"
-            done
-          done
+      - run: ./.github/scripts/k8s-wait-for-stabilization.sh
         timeout-minutes: 60
 
   apply-delivery-deploy-key:
