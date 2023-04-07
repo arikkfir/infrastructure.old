@@ -1,7 +1,6 @@
 resource "google_compute_network" "gke" {
   depends_on = [
     google_project_service.apis["compute.googleapis.com"],
-    github_repository_deploy_key.argocd_delivery_deploy_key,
   ]
 
   project                         = data.google_project.project.project_id
