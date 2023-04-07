@@ -154,6 +154,9 @@ jobs:
     name: Apply ArgoCD
     needs: [apply-infrastructure, stabilize-gke, apply-delivery-deploy-key]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
     steps:
       - uses: actions/checkout@v3
       - uses: google-github-actions/auth@v1
