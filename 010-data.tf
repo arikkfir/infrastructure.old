@@ -29,3 +29,7 @@ data "google_iam_workload_identity_pool_provider" "default" {
   workload_identity_pool_id          = data.google_iam_workload_identity_pool.github-actions.workload_identity_pool_id
   workload_identity_pool_provider_id = "default"
 }
+
+data "google_compute_zones" "region" {
+  region = var.gcp_region
+}

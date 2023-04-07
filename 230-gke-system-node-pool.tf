@@ -8,7 +8,7 @@ resource "google_container_node_pool" "system" {
 
   # NODES
   ######################################################################################################################
-  node_locations = [var.gcp_region]
+  node_locations = data.google_compute_zones.region.names
   node_config {
     disk_size_gb = 100
     disk_type    = "pd-standard"
