@@ -20,7 +20,7 @@ resource "google_container_cluster" "main" {
   # PROVISIONING
   ######################################################################################################################
   provider    = google-beta
-  location    = var.gcp_zone
+  location    = var.gcp_region
   name        = "main"
   description = "Main cluster."
   timeouts {

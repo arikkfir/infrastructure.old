@@ -37,9 +37,3 @@ variable "gcp_region" {
   description = "Region to place compute resources."
   default     = "me-west1"
 }
-
-variable "gcp_zone" {
-  type        = string
-  description = "Zone to place zonal resources."
-  default     = "me-west1-a"
-}

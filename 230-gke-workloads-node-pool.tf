@@ -4,11 +4,11 @@ resource "google_container_node_pool" "workloads" {
   provider = google-beta
   cluster  = google_container_cluster.main.name
   name     = "workloads"
-  location = var.gcp_zone
+  location = var.gcp_region
 
   # NODES
   ######################################################################################################################
-  node_locations = [var.gcp_zone]
+  node_locations = [var.gcp_region]
   node_config {
     disk_size_gb = 100
     disk_type    = "pd-standard"
@@ -35,9 +35,11 @@ resource "google_container_node_pool" "workloads" {
   # SCALING
   ######################################################################################################################
   autoscaling {
-    max_node_count  = 3
-    min_node_count  = 0
-    location_policy = "ANY"
+    min_node_count       = 0
+    max_node_count       = 2
+    total_min_node_count = 0
+    total_max_node_count = 3
+    location_policy      = "ANY"
   }
 
   # OPERATIONS
