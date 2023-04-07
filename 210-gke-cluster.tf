@@ -43,8 +43,7 @@ resource "google_container_cluster" "main" {
 
   # NETWORKING
   ######################################################################################################################
-  network         = google_compute_network.gke.self_link
-  networking_mode = "VPC_NATIVE"
+  network = google_compute_network.gke.self_link
 
   # OPERATIONS
   ######################################################################################################################
