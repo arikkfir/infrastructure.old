@@ -132,7 +132,6 @@ jobs:
     permissions:
       contents: write
       id-token: write
-    environment: production
     steps:
       - run: |
           gh api -H "Accept: application/vnd.github+json" \
