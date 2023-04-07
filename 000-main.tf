@@ -5,10 +5,6 @@ terraform {
     prefix = "arikkfir/infrastructure"
   }
   required_providers {
-    github = {
-      source  = "integrations/github"
-      version = "= 5.19.0"
-    }
     google = {
       source  = "hashicorp/google"
       version = "= 4.59.0"
@@ -19,8 +15,6 @@ terraform {
     }
   }
 }
-
-provider "github" {}
 
 provider "google" {
   project = var.gcp_project
@@ -48,9 +42,4 @@ variable "gcp_zone" {
   type        = string
   description = "Zone to place zonal resources."
   default     = "me-west1-a"
-}
-
-variable "argocd_delivery_deploy_key" {
-  type        = string
-  description = "Readonly SSH key used as a Deploy key in the delivery repository."
 }

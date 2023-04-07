@@ -58,9 +58,6 @@ jobs:
           version: ${{ env.GCP_CLI_VERSION }}
       - run: terraform init -input=false
       - run: terraform plan -input=false -lock-timeout=180s -out tfplan
-        id: plan
-        env:
-          TF_VAR_argocd_delivery_deploy_key: ${{ vars.DELIVERY_REPO_DEPLOY_PUBLIC_KEY }}
       - run: tar -c -j -v -f tfplan.tar.bz2 .terraform .terraform.lock.hcl *.tf tfplan
       - uses: actions/upload-artifact@v3
         with:
@@ -96,10 +93,26 @@ jobs:
           version: ${{ env.GCP_CLI_VERSION }}
       - run: |
           terraform apply -input=false -lock-timeout=180s -auto-approve tfplan
-          echo "gke-cluster-name=$(terraform output -raw gke_cluster_name)" >> $GITHUB_OUTPUT
-          echo "gke-cluster-location=$(terraform output -raw gke_cluster_location)" >> $GITHUB_OUTPUT
+          terraform output -raw gke_cluster_name > gke_cluster_name.txt
+          terraform output -raw gke_cluster_location > gke_cluster_location.txt
+          echo "gke-cluster-name=$(cat gke_cluster_name.txt)" >> $GITHUB_OUTPUT
+          echo "gke-cluster-location=$(cat gke_cluster_location.txt)" >> $GITHUB_OUTPUT
         id: apply
+      - run: |
+          gh api -H "Accept: application/vnd.github+json" \
+                 -H "X-GitHub-Api-Version: 2022-11-28" \
+                 /repos/arikkfir/delivery/keys|jq '.[]|select(.title=="ArgoCD")' > argocd_deploy_key.json
+          if [[ "$(cat argocd_deploy_key.json)" == "" ]]; then
+            gh api -H "Accept: application/vnd.github+json" \
+                   -H "X-GitHub-Api-Version: 2022-11-28" \
+                   --method POST \
+                   /repos/arikkfir/delivery/keys \
+                   -f title="ArgoCD" \
+                   -F key="${ARGOCD_DEPLOY_PUB_KEY}" \
+                   -F read_only=true
+          fi
         env:
+          ARGOCD_DEPLOY_PUB_KEY: ${{ vars.DELIVERY_REPO_DEPLOY_PUBLIC_KEY }}
           GITHUB_TOKEN: ${{ secrets.TF_GITHUB_TOKEN }}
       - uses: google-github-actions/get-gke-credentials@v0
         with:
