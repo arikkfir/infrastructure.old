@@ -66,7 +66,7 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-  apply-terraform:
+  apply-infrastructure:
     name: Apply Terraform
     needs: plan-terraform
     runs-on: ubuntu-latest
@@ -75,9 +75,6 @@ jobs:
       contents: write
       id-token: write
     environment: production
-    outputs:
-      gke-cluster-name: ${{ steps.apply.outputs.gke-cluster-name }}
-      gke-cluster-location: ${{ steps.apply.outputs.gke-cluster-location }}
     steps:
       - uses: hashicorp/setup-terraform@v2
         with:
@@ -102,55 +99,10 @@ jobs:
           echo "gke-cluster-name=$(cat gke_cluster_name.txt)" >> $GITHUB_OUTPUT
           echo "gke-cluster-location=$(cat gke_cluster_location.txt)" >> $GITHUB_OUTPUT
         id: apply
-
-  delivery-deploy-key:
-    name: Delivery Deploy Key
-    needs: plan-terraform
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      id-token: write
-    environment: production
-    steps:
-      - run: |
-          gh api -H "Accept: application/vnd.github+json" \
-                 -H "X-GitHub-Api-Version: 2022-11-28" \
-                 /repos/arikkfir/delivery/keys|jq '.[]|select(.title=="ArgoCD")' > argocd_deploy_key.json
-          if [[ "$(cat argocd_deploy_key.json)" == "" ]]; then
-            gh api -H "Accept: application/vnd.github+json" \
-                   -H "X-GitHub-Api-Version: 2022-11-28" \
-                   --method POST \
-                   /repos/arikkfir/delivery/keys \
-                   -f title="ArgoCD" \
-                   -F key="${ARGOCD_DEPLOY_PUB_KEY}" \
-                   -F read_only=true
-          fi
-        env:
-          ARGOCD_DEPLOY_PUB_KEY: ${{ vars.DELIVERY_REPO_DEPLOY_PUBLIC_KEY }}
-          GITHUB_TOKEN: ${{ secrets.TF_GITHUB_TOKEN }}
-
-  stabilize-gke:
-    name: Stabilize GKE
-    needs: apply-terraform
-    runs-on: ubuntu-latest
-    timeout-minutes: 120
-    permissions:
-      contents: write
-      id-token: write
-    environment: production
-    steps:
-      - uses: google-github-actions/auth@v1
-        with:
-          workload_identity_provider: ${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.GCP_SA_NAME }}
-      - uses: google-github-actions/setup-gcloud@v1
-        with:
-          install_components: gke-gcloud-auth-plugin
-          version: ${{ env.GCP_CLI_VERSION }}
       - uses: google-github-actions/get-gke-credentials@v0
         with:
-          cluster_name: ${{ needs.apply-terraform.outputs.gke-cluster-name }}
-          location: ${{ needs.apply-terraform.outputs.gke-cluster-location }}
+          cluster_name: ${{ steps.apply.outputs.gke-cluster-name }}
+          location: ${{ steps.apply.outputs.gke-cluster-location }}
       - run: |
           for ns in $(kubectl get ns -o=jsonpath='{.items[*].metadata.name}'); do
             for d in $(kubectl get deploy -n ${ns} -ojsonpath='{.items[*].metadata.name}'); do
@@ -178,18 +130,51 @@ jobs:
               echo "daemonsets.apps/${d} is ready (${ns})"
             done
           done
+        timeout-minutes: 60
 
-#      - run: kubectl apply -k ./argocd
-#      - run: kubectl config set-context --current --namespace=argocd
-#      - run: kubectl wait --for=condition=Available=True --timeout=300s statefulset -l app.kubernetes.io/part-of=argocd
-#      - run: kubectl wait --for=condition=Available=True --timeout=300s deployment -l app.kubernetes.io/part-of=argocd
-#      - run: kubectl wait --for=condition=Available=True --timeout=300s deployment -l app.kubernetes.io/part-of=argocd-applicationset
-#      - run: |
-#          if [[ $(kubectl get secret | grep argocd-initial-admin-secret | wc -l | tr -d ' ') == "1" ]]; then
-#            argocd --port-forward admin initial-password -n argocd > argocd-password.txt
-#            cat argocd-password.txt | argocd --port-forward login --username admin --password - --insecure
-#            cat argocd-password.txt | argocd account update-password --current-password - --new-password "${ARGOCD_PASSWORD}"
-#            kubectl delete secret argocd-initial-admin-secret
-#          fi
-#        env:
-#          ARGOCD_PASSWORD: ${{ secrets.ARGOCD_PASSWORD }}
+  apply-delivery-deploy-key:
+    name: Apply Deploy-key to Delivery repository
+    needs: apply-infrastructure
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+    environment: production
+    steps:
+      - run: |
+          gh api -H "Accept: application/vnd.github+json" \
+                 -H "X-GitHub-Api-Version: 2022-11-28" \
+                 /repos/arikkfir/delivery/keys|jq '.[]|select(.title=="ArgoCD")' > argocd_deploy_key.json
+          if [[ "$(cat argocd_deploy_key.json)" == "" ]]; then
+            gh api -H "Accept: application/vnd.github+json" \
+                   -H "X-GitHub-Api-Version: 2022-11-28" \
+                   --method POST \
+                   /repos/arikkfir/delivery/keys \
+                   -f title="ArgoCD" \
+                   -F key="${ARGOCD_DEPLOY_PUB_KEY}" \
+                   -F read_only=true
+          fi
+        env:
+          ARGOCD_DEPLOY_PUB_KEY: ${{ vars.DELIVERY_REPO_DEPLOY_PUBLIC_KEY }}
+          GITHUB_TOKEN: ${{ secrets.TF_GITHUB_TOKEN }}
+
+  apply-argocd:
+    name: Apply ArgoCD
+    needs: apply-delivery-deploy-key
+    runs-on: ubuntu-latest
+    steps:
+      - run: kubectl apply -k ./argocd/server
+      - run: kubectl config set-context --current --namespace=argocd
+      - run: kubectl wait --for=condition=Available=True --timeout=300s statefulset -l app.kubernetes.io/part-of=argocd
+      - run: kubectl wait --for=condition=Available=True --timeout=300s deployment -l app.kubernetes.io/part-of=argocd
+      - run: kubectl wait --for=condition=Available=True --timeout=300s deployment -l app.kubernetes.io/part-of=argocd-applicationset
+      - run: |
+          if [[ $(kubectl get secret | grep argocd-initial-admin-secret | wc -l | tr -d ' ') == "1" ]]; then
+            argocd --port-forward admin initial-password -n argocd > argocd-password.txt
+            cat argocd-password.txt | argocd --port-forward login --username admin --password - --insecure
+            cat argocd-password.txt | argocd account update-password --current-password - --new-password "${ARGOCD_PASSWORD}"
+            kubectl delete secret argocd-initial-admin-secret
+          fi
+        env:
+          ARGOCD_PASSWORD: ${{ secrets.ARGOCD_PASSWORD }}
+      - run: kubectl apply -f ./argocd/application.yaml

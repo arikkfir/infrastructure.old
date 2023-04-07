@@ -7,7 +7,7 @@ data:
   controller.repo.server.strict.tls: "false"
   controller.log.format: "json"
 
-  server.insecure: "false"
+  server.insecure: "true"
   server.log.format: "json"
   server.repo.server.plaintext: "true"
   server.repo.server.strict.tls: "false"

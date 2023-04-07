@@ -15,5 +15,3 @@ patches:
       kind: ConfigMap
       name: argocd-cmd-params-cm
     path: argocd-cmd-params-cm-patch.yaml
-
-# TODO: add an Application CRD file for ArgoCD itself, pointing to this directory
