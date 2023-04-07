@@ -16,4 +16,5 @@ spec:
   syncPolicy:
     automated:
       prune: true
+      allowEmpty: false
       selfHeal: false # TODO: check if UI shows drift instead
