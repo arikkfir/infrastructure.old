@@ -62,7 +62,7 @@ jobs:
         id: plan
         env:
           TF_VAR_gcp_region: ${{ env.GCP_REGION }}
-          TF_VAR_argocd_delivery_deploy_key: ${{ env.DELIVERY_REPO_DEPLOY_PUBLIC_KEY }}
+          TF_VAR_argocd_delivery_deploy_key: ${{ vars.DELIVERY_REPO_DEPLOY_PUBLIC_KEY }}
       - run: tar -c -j -v -f tfplan.tar.bz2 .terraform .terraform.lock.hcl *.tf tfplan
       - uses: actions/upload-artifact@v3
         with:
