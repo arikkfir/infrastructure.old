@@ -12,6 +12,11 @@ resource "google_service_account_iam_member" "gke-node_gha-arikkfir-infrastructu
   role               = "roles/iam.serviceAccountUser"
   member             = "serviceAccount:${data.google_service_account.gha-arikkfir-infrastructure.email}"
 }
+resource "google_service_account_iam_member" "default-compute-gha-arikkfir-infrastructure-iam-serviceAccountUser" {
+  service_account_id = data.google_compute_default_service_account.default.name
+  role               = "roles/iam.serviceAccountUser"
+  member             = "serviceAccount:${data.google_service_account.gha-arikkfir-infrastructure.email}"
+}
 
 # Set of permissions that the gke-node SA needs
 resource "google_project_iam_member" "gke-node" {
