@@ -76,8 +76,8 @@ jobs:
       id-token: write
     environment: production
     outputs:
-      gke_cluster_name: ${{ steps.apply.outputs.gke_cluster_name }}
-      gke_cluster_region: ${{ steps.apply.outputs.gke_cluster_location }}
+      gke-cluster-name: ${{ steps.apply.outputs.gke_cluster_name }}
+      gke-cluster-location: ${{ steps.apply.outputs.gke_cluster_location }}
     steps:
       - uses: hashicorp/setup-terraform@v2
         with:
