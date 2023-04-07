@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- namespace.yaml
+- https://github.com/argoproj/argo-cd//manifests/cluster-install?ref=v2.6.7&timeout=300s
+
+patches:
+  - target:
+      kind: ConfigMap
+      name: argocd-cm
+    path: argocd-cm-patch.yaml
+  - target:
+      kind: ConfigMap
+      name: argocd-cmd-params-cm
+    path: argocd-cmd-params-cm-patch.yaml
+
+# TODO: add an Application CRD file for ArgoCD itself, pointing to this directory

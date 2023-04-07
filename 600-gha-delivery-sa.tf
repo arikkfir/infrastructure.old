@@ -19,3 +19,10 @@ resource "google_project_iam_member" "gha-arikkfir-delivery" {
   role    = each.key
   member  = "serviceAccount:${google_service_account.gha-arikkfir-delivery.email}"
 }
+
+resource "github_repository_deploy_key" "argocd_delivery_deploy_key" {
+  title      = "ArgoCD"
+  repository = "delivery"
+  key        = var.argocd_delivery_deploy_key
+  read_only  = true
+}

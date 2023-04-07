@@ -1,6 +1,7 @@
 resource "google_compute_network" "gke" {
   depends_on = [
     google_project_service.apis["compute.googleapis.com"],
+    github_repository_deploy_key.argocd_delivery_deploy_key,
   ]
 
   project                         = data.google_project.project.project_id
@@ -14,16 +15,15 @@ resource "google_container_cluster" "main" {
   depends_on = [
     google_project_service.apis["compute.googleapis.com"],
     google_project_service.apis["container.googleapis.com"],
-    google_service_account_iam_member.gke-node_gha-arikkfir-infrastructure_iam_serviceAccountUser,
-    google_service_account_iam_member.default-compute-gha-arikkfir-infrastructure-iam-serviceAccountUser,
   ]
 
   # PROVISIONING
   ######################################################################################################################
-  provider    = google-beta
-  location    = var.gcp_zone
-  name        = "main"
-  description = "Main cluster."
+  provider         = google-beta
+  location         = var.gcp_region
+  name             = "main"
+  description      = "Main cluster."
+  enable_autopilot = true
   timeouts {
     create = "60m"
     update = "60m"
@@ -42,31 +42,20 @@ resource "google_container_cluster" "main" {
   }
 
   # SCALING
-  # It appears that unless I keep the default node pool, cluster does not function properly; see case 44318169.
-  # Therefore, I'm keeping the default node pool as the system/core node pool, and adding a new one for my workloads.
   ######################################################################################################################
-  initial_node_count       = 1
-  remove_default_node_pool = true
   cluster_autoscaling {
-    enabled             = false
-    autoscaling_profile = "OPTIMIZE_UTILIZATION"
+    enabled = true
   }
 
   # NETWORKING
   ######################################################################################################################
   network         = google_compute_network.gke.self_link
   networking_mode = "VPC_NATIVE"
-  ip_allocation_policy {
-    # previously used "10.110.0.0/17"
-    cluster_ipv4_cidr_block = ""
-    # previously used "10.110.128.0/17"
-    services_ipv4_cidr_block = ""
-  }
 
   # OPERATIONS
   ######################################################################################################################
   release_channel {
-    channel = "STABLE"
+    channel = "RAPID"
   }
   logging_config {
     enable_components = ["SYSTEM_COMPONENTS", "WORKLOADS"]

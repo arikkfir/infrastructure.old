@@ -11,7 +11,7 @@ on:
 
 defaults:
   run:
-    shell: bash -euo pipefail {0}
+    shell: bash -exuo pipefail {0}
 
 env:
   TERRAFORM_VERSION: 1.4.2
@@ -104,19 +104,18 @@ jobs:
       - uses: google-github-actions/get-gke-credentials@v0
         with:
           cluster_name: main
-          location: ${{ env.GCP_ZONE }}
-      - uses: fluxcd/flux2/action@main
-      - name: fluxcd bootstrap
-        run: |
-          flux version --client
-          flux bootstrap github --personal \
-                                --owner=arikkfir \
-                                --repository=delivery \
-                                --path=clusters/main \
-                                --network-policy=false \
-                                --author-email=flux@kfirfamily.com \
-                                --author-name=FluxCD \
-                                --branch=main \
-                                --commit-message-appendix='[ci skip]'
+          location: ${{ env.GCP_REGION }}
+      - run: kubectl apply -k ./argocd
+      - run: kubectl config set-context --current --namespace=argocd
+      - run: kubectl wait --for=condition=Available=True --timeout=300s statefulset -l app.kubernetes.io/part-of=argocd
+      - run: kubectl wait --for=condition=Available=True --timeout=300s deployment -l app.kubernetes.io/part-of=argocd
+      - run: kubectl wait --for=condition=Available=True --timeout=300s deployment -l app.kubernetes.io/part-of=argocd-applicationset
+      - run: |
+          if [[ $(kubectl get secret | grep argocd-initial-admin-secret | wc -l | tr -d ' ') == "1" ]]; then
+            argocd --port-forward admin initial-password -n argocd > argocd-password.txt
+            cat argocd-password.txt | argocd --port-forward login --username admin --password - --insecure
+            cat argocd-password.txt | argocd account update-password --current-password - --new-password "${ARGOCD_PASSWORD}"
+            kubectl delete secret argocd-initial-admin-secret
+          fi
         env:
-          GITHUB_TOKEN: ${{ secrets.TF_GITHUB_TOKEN }}
+          ARGOCD_PASSWORD: ${{ secrets.ARGOCD_PASSWORD }}

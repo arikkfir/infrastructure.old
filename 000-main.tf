@@ -49,3 +49,8 @@ variable "gcp_zone" {
   type        = string
   description = "Zone to place compute resources."
 }
+
+variable "argocd_delivery_deploy_key" {
+  type        = string
+  description = "Readonly SSH key used as a Deploy key in the delivery repository."
+}
