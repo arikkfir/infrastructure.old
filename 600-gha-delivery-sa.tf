@@ -1,3 +1,5 @@
+# TODO: do we need this anymore? (given ArgoCD will sync delivery repo)
+
 resource "google_service_account" "gha-arikkfir-delivery" {
   project      = data.google_project.project.project_id
   account_id   = "gha-arikkfir-delivery"
