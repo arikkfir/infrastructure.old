@@ -21,3 +21,5 @@ data:
   dexserver.disable.tls: "true"
 
   applicationsetcontroller.log.format: "json"
+
+  application.namespaces: "*"
