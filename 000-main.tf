@@ -41,6 +41,13 @@ variable "gcp_project" {
 variable "gcp_region" {
   type        = string
   description = "Region to place compute resources."
+  default     = "me-west1"
+}
+
+variable "gcp_zone" {
+  type        = string
+  description = "Zone to place zonal resources."
+  default     = "me-west1-a"
 }
 
 variable "argocd_delivery_deploy_key" {

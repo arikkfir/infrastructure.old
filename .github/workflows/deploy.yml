@@ -18,7 +18,6 @@ env:
   TF_IN_AUTOMATION: true
   GCP_WORKLOAD_IDENTITY_PROVIDER: projects/8909046976/locations/global/workloadIdentityPools/github-actions/providers/default
   GCP_CLI_VERSION: 409.0.0
-  GCP_REGION: me-west1
 
 concurrency:
   group: production
@@ -61,7 +60,6 @@ jobs:
       - run: terraform plan -input=false -lock-timeout=180s -out tfplan
         id: plan
         env:
-          TF_VAR_gcp_region: ${{ env.GCP_REGION }}
           TF_VAR_argocd_delivery_deploy_key: ${{ vars.DELIVERY_REPO_DEPLOY_PUBLIC_KEY }}
       - run: tar -c -j -v -f tfplan.tar.bz2 .terraform .terraform.lock.hcl *.tf tfplan
       - uses: actions/upload-artifact@v3
@@ -96,24 +94,57 @@ jobs:
         with:
           install_components: gke-gcloud-auth-plugin
           version: ${{ env.GCP_CLI_VERSION }}
-      - run: terraform apply -input=false -lock-timeout=180s -auto-approve tfplan
+      - run: |
+          terraform apply -input=false -lock-timeout=180s -auto-approve tfplan
+          echo "gke-cluster-name=$(terraform output -raw gke_cluster_name)" >> $GITHUB_OUTPUT
+          echo "gke-cluster-location=$(terraform output -raw gke_cluster_location)" >> $GITHUB_OUTPUT
+        id: apply
         env:
           GITHUB_TOKEN: ${{ secrets.TF_GITHUB_TOKEN }}
       - uses: google-github-actions/get-gke-credentials@v0
         with:
-          cluster_name: main
-          location: ${{ env.GCP_REGION }}
-      - run: kubectl apply -k ./argocd
-      - run: kubectl config set-context --current --namespace=argocd
-      - run: kubectl wait --for=condition=Available=True --timeout=300s statefulset -l app.kubernetes.io/part-of=argocd
-      - run: kubectl wait --for=condition=Available=True --timeout=300s deployment -l app.kubernetes.io/part-of=argocd
-      - run: kubectl wait --for=condition=Available=True --timeout=300s deployment -l app.kubernetes.io/part-of=argocd-applicationset
+          cluster_name: ${{ steps.apply.outputs.gke-cluster-name }}
+          location: ${{ steps.apply.outputs.gke-cluster-location }}
       - run: |
-          if [[ $(kubectl get secret | grep argocd-initial-admin-secret | wc -l | tr -d ' ') == "1" ]]; then
-            argocd --port-forward admin initial-password -n argocd > argocd-password.txt
-            cat argocd-password.txt | argocd --port-forward login --username admin --password - --insecure
-            cat argocd-password.txt | argocd account update-password --current-password - --new-password "${ARGOCD_PASSWORD}"
-            kubectl delete secret argocd-initial-admin-secret
-          fi
-        env:
-          ARGOCD_PASSWORD: ${{ secrets.ARGOCD_PASSWORD }}
+          for ns in $(kubectl get ns -o=jsonpath='{.items[*].metadata.name}'); do
+            for d in $(kubectl get deploy -n ${ns} -ojsonpath='{.items[*].metadata.name}'); do
+              kubectl wait -n ${ns} --for=condition=Available=True deployment ${d} --timeout=0
+            done
+            for d in $(kubectl get statefulset -n ${ns} -ojsonpath='{.items[*].metadata.name}'); do
+              REPLICAS=$(kubectl get statefulset -n ${ns} ${d} -ojsonpath='{.status.replicas}')
+              AVAILABLE_REPLICAS=$(kubectl get statefulset -n ${ns} ${d} -ojsonpath='{.status.availableReplicas}')
+              READY_REPLICAS=$(kubectl get statefulset -n ${ns} ${d} -ojsonpath='{.status.readyReplicas}')
+              if [[ ${REPLICAS} -ne ${AVAILABLE_REPLICAS} || ${REPLICAS} -ne ${READY_REPLICAS} ]]; then
+                echo "StatefulSet ${ns}/${d} has ${REPLICAS} replicas but only ${AVAILABLE_REPLICAS} available, and ${READY_REPLICAS} ready, replicas"
+                sleep 1
+                continue
+              fi
+              echo "statefulsets.apps/${d} is ready (${ns})"
+            done
+            for d in $(kubectl get daemonset -n ${ns} -ojsonpath='{.items[*].metadata.name}'); do
+              CURRENT_SCHEDULED=$(kubectl get daemonset -n ${ns} ${d} -ojsonpath='{.status.currentNumberScheduled}')
+              DESIRED_SCHEDULED=$(kubectl get daemonset -n ${ns} ${d} -ojsonpath='{.status.desiredNumberScheduled}')
+              if [[ ${CURRENT_SCHEDULED} -ne ${DESIRED_SCHEDULED} ]]; then
+                echo "DaemonSet ${ns}/${d} has ${CURRENT_SCHEDULED} replicas but desires ${DESIRED_SCHEDULED} replicas"
+                sleep 1
+                continue
+              fi
+              echo "daemonsets.apps/${d} is ready (${ns})"
+            done
+          done
+        timeout-minutes: 10
+
+#      - run: kubectl apply -k ./argocd
+#      - run: kubectl config set-context --current --namespace=argocd
+#      - run: kubectl wait --for=condition=Available=True --timeout=300s statefulset -l app.kubernetes.io/part-of=argocd
+#      - run: kubectl wait --for=condition=Available=True --timeout=300s deployment -l app.kubernetes.io/part-of=argocd
+#      - run: kubectl wait --for=condition=Available=True --timeout=300s deployment -l app.kubernetes.io/part-of=argocd-applicationset
+#      - run: |
+#          if [[ $(kubectl get secret | grep argocd-initial-admin-secret | wc -l | tr -d ' ') == "1" ]]; then
+#            argocd --port-forward admin initial-password -n argocd > argocd-password.txt
+#            cat argocd-password.txt | argocd --port-forward login --username admin --password - --insecure
+#            cat argocd-password.txt | argocd account update-password --current-password - --new-password "${ARGOCD_PASSWORD}"
+#            kubectl delete secret argocd-initial-admin-secret
+#          fi
+#        env:
+#          ARGOCD_PASSWORD: ${{ secrets.ARGOCD_PASSWORD }}
