@@ -66,7 +66,4 @@ resource "google_container_cluster" "main" {
   authenticator_groups_config {
     security_group = "gke-security-groups@${data.google_organization.kfirfamily.domain}"
   }
-  workload_identity_config {
-    workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
-  }
 }
