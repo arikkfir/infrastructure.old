@@ -44,6 +44,8 @@ resource "google_container_cluster" "main" {
   # NETWORKING
   ######################################################################################################################
   network = google_compute_network.gke.self_link
+  # This is needed due to https://github.com/hashicorp/terraform-provider-google/issues/10782
+  ip_allocation_policy {}
 
   # OPERATIONS
   ######################################################################################################################
