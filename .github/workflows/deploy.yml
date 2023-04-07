@@ -61,7 +61,6 @@ jobs:
       - run: terraform plan -input=false -lock-timeout=180s -out tfplan
         id: plan
         env:
-          GITHUB_TOKEN: ${{ secrets.TF_GITHUB_TOKEN }}
           TF_VAR_gcp_region: ${{ env.GCP_REGION }}
       - run: tar -c -j -v -f tfplan.tar.bz2 .terraform .terraform.lock.hcl *.tf tfplan
       - uses: actions/upload-artifact@v3
