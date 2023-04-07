@@ -75,6 +75,9 @@ jobs:
       contents: write
       id-token: write
     environment: production
+    outputs:
+      gke_cluster_name: ${{ steps.apply.outputs.gke_cluster_name }}
+      gke_cluster_region: ${{ steps.apply.outputs.gke_cluster_location }}
     steps:
       - uses: hashicorp/setup-terraform@v2
         with:
@@ -94,16 +97,32 @@ jobs:
           version: ${{ env.GCP_CLI_VERSION }}
       - run: |
           terraform apply -input=false -lock-timeout=180s -auto-approve tfplan
-          terraform output -raw gke_cluster_name > gke_cluster_name.txt
-          terraform output -raw gke_cluster_location > gke_cluster_location.txt
-          echo "gke-cluster-name=$(cat gke_cluster_name.txt)" >> $GITHUB_OUTPUT
-          echo "gke-cluster-location=$(cat gke_cluster_location.txt)" >> $GITHUB_OUTPUT
+          echo "gke-cluster-name=$(terraform output -raw gke_cluster_name)" >> $GITHUB_OUTPUT
+          echo "gke-cluster-location=$(terraform output -raw gke_cluster_location)" >> $GITHUB_OUTPUT
         id: apply
+
+  stabilize-gke:
+    name: Wait for GKE to stabilize
+    needs: apply-infrastructure
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: ${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SA_NAME }}
+      - uses: google-github-actions/setup-gcloud@v1
+        with:
+          version: ${{ env.GCP_CLI_VERSION }}
       - uses: google-github-actions/get-gke-credentials@v0
         with:
-          cluster_name: ${{ steps.apply.outputs.gke-cluster-name }}
-          location: ${{ steps.apply.outputs.gke-cluster-location }}
-      - run: ./.github/scripts/k8s-wait-for-stabilization.sh
+          cluster_name: ${{ needs.apply-infrastructure.outputs.gke-cluster-name }}
+          location: ${{ needs.apply-infrastructure.outputs.gke-cluster-location }}
+      - run: .github/scripts/k8s-wait-for-stabilization.sh
         timeout-minutes: 60
 
   apply-delivery-deploy-key:
@@ -134,7 +153,7 @@ jobs:
 
   apply-argocd:
     name: Apply ArgoCD
-    needs: apply-delivery-deploy-key
+    needs: [stabilize-gke, apply-delivery-deploy-key]
     runs-on: ubuntu-latest
     steps:
       - run: kubectl apply -k ./argocd/server
