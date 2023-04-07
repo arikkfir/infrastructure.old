@@ -19,7 +19,6 @@ env:
   GCP_WORKLOAD_IDENTITY_PROVIDER: projects/8909046976/locations/global/workloadIdentityPools/github-actions/providers/default
   GCP_CLI_VERSION: 409.0.0
   GCP_REGION: me-west1
-  GCP_ZONE: me-west1-b
 
 concurrency:
   group: production
@@ -64,7 +63,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.TF_GITHUB_TOKEN }}
           TF_VAR_gcp_region: ${{ env.GCP_REGION }}
-          TF_VAR_gcp_zone: ${{ env.GCP_ZONE }}
       - run: tar -c -j -v -f tfplan.tar.bz2 .terraform .terraform.lock.hcl *.tf tfplan
       - uses: actions/upload-artifact@v3
         with:

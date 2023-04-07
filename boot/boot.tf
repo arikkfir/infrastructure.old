@@ -19,13 +19,11 @@ terraform {
 provider "google" {
   project = var.gcp_project
   region  = var.gcp_region
-  zone    = var.gcp_zone
 }
 
 provider "google-beta" {
   project = var.gcp_project
   region  = var.gcp_region
-  zone    = var.gcp_zone
 }
 
 variable "gcp_project" {
@@ -37,11 +35,6 @@ variable "gcp_project" {
 variable "gcp_region" {
   type        = string
   description = "Region to place compute resources."
-}
-
-variable "gcp_zone" {
-  type        = string
-  description = "Zone to place compute resources."
 }
 
 resource "google_project" "arikkfir" {

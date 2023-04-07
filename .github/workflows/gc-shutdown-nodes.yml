@@ -11,7 +11,7 @@ defaults:
 env:
   GCP_WORKLOAD_IDENTITY_PROVIDER: projects/8909046976/locations/global/workloadIdentityPools/github-actions/providers/default
   GCP_CLI_VERSION: 409.0.0
-  GCP_ZONE: me-west1-b
+  GCP_REGION: me-west1
 
 concurrency:
   group: production
@@ -37,5 +37,5 @@ jobs:
       - uses: google-github-actions/get-gke-credentials@v0
         with:
           cluster_name: main
-          location: ${{ env.GCP_ZONE }}
+          location: ${{ env.GCP_REGION }}
       - run: kubectl get pods --all-namespaces | grep -i shutdown | awk '{print $1, $2}' | xargs -n2 kubectl delete pod -n
