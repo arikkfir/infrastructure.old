@@ -152,12 +152,25 @@ jobs:
 
   apply-argocd:
     name: Apply ArgoCD
-    needs: [stabilize-gke, apply-delivery-deploy-key]
+    needs: [apply-infrastructure, stabilize-gke, apply-delivery-deploy-key]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
+      - uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: ${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SA_NAME }}
+      - uses: google-github-actions/setup-gcloud@v1
+        with:
+          version: ${{ env.GCP_CLI_VERSION }}
+      - uses: google-github-actions/get-gke-credentials@v0
+        with:
+          cluster_name: ${{ needs.apply-infrastructure.outputs.gke-cluster-name }}
+          location: ${{ needs.apply-infrastructure.outputs.gke-cluster-location }}
       - run: kubectl apply -k ./argocd/server
       - run: kubectl config set-context --current --namespace=argocd
-      - run: kubectl wait --for=condition=Available=True --timeout=300s statefulset -l app.kubernetes.io/part-of=argocd
+      - run: kubectl wait --for=jsonpath='{.status.availableReplicas}'=1 --timeout=0 statefulset -l app.kubernetes.io/part-of=argocd
+      - run: kubectl wait --for=jsonpath='{.status.readyReplicas}'=1 --timeout=0 statefulset -l app.kubernetes.io/part-of=argocd
       - run: kubectl wait --for=condition=Available=True --timeout=300s deployment -l app.kubernetes.io/part-of=argocd
       - run: kubectl wait --for=condition=Available=True --timeout=300s deployment -l app.kubernetes.io/part-of=argocd-applicationset
       - run: |
