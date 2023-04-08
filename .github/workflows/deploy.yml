@@ -1,5 +1,5 @@
 name: Deploy
-πon:
+on:
   push:
     branches:
       - main
