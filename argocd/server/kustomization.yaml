@@ -16,3 +16,37 @@ patches:
       kind: ConfigMap
       name: argocd-cmd-params-cm
     path: argocd-cmd-params-cm-patch.yaml
+  - target:
+      kind: Deployment
+    patch: |
+      - op: add
+        path: /spec/template/spec/nodeSelector
+        value:
+          gke.kfirs.com/purpose: workloads
+  - target:
+      kind: Deployment
+    patch: |
+      - op: add
+        path: /spec/template/spec/tolerations
+        value:
+          - effect: NoExecute
+            key: gke.kfirs.com/purpose
+            operator: Equal
+            value: workloads
+  - target:
+      kind: StatefulSet
+    patch: |
+      - op: add
+        path: /spec/template/spec/nodeSelector
+        value:
+          gke.kfirs.com/purpose: workloads
+  - target:
+      kind: StatefulSet
+    patch: |
+      - op: add
+        path: /spec/template/spec/tolerations
+        value:
+          - effect: NoExecute
+            key: gke.kfirs.com/purpose
+            operator: Equal
+            value: workloads
