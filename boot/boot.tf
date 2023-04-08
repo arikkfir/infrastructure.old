@@ -18,12 +18,10 @@ terraform {
 
 provider "google" {
   project = var.gcp_project
-  region  = var.gcp_region
 }
 
 provider "google-beta" {
   project = var.gcp_project
-  region  = var.gcp_region
 }
 
 variable "gcp_project" {
@@ -32,16 +30,11 @@ variable "gcp_project" {
   default     = "arikkfir"
 }
 
-variable "gcp_region" {
-  type        = string
-  description = "Region to place compute resources."
-}
-
-resource "google_project" "arikkfir" {
+resource "google_project" "main" {
   org_id          = "468825984716"
   billing_account = "015F98-305E8D-24864D"
-  project_id      = "arikkfir"
-  name            = "arikkfir"
+  project_id      = var.gcp_project
+  name            = var.gcp_project
 }
 
 data "google_organization" "kfirfamily" {
@@ -113,7 +106,7 @@ resource "google_project_iam_member" "gha-arikkfir-infrastructure" {
     "roles/serviceusage.serviceUsageAdmin",
     "roles/storage.admin",
   ])
-  project = google_project.arikkfir.project_id
+  project = google_project.main.project_id
   role    = each.key
   member  = "serviceAccount:${google_service_account.gha-arikkfir-infrastructure.email}"
 }

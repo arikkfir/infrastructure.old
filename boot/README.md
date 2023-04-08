@@ -18,5 +18,5 @@ infrastructure is maintained in the outer module, not here.
 
 ```bash
 $ terraform init
-$ terraform apply -var gcp_region=XXX
+$ terraform apply
 ```
