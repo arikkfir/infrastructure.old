@@ -104,7 +104,7 @@ jobs:
     name: Wait for GKE to stabilize
     needs: apply-infrastructure
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 140
     permissions:
       contents: read
       id-token: write
@@ -121,6 +121,8 @@ jobs:
         with:
           cluster_name: ${{ needs.apply-infrastructure.outputs.gke-cluster-name }}
           location: ${{ needs.apply-infrastructure.outputs.gke-cluster-location }}
+      - run: .github/scripts/k8s-wait-for-stabilization.sh
+        timeout-minutes: 60
       - run: .github/scripts/k8s-wait-for-stabilization.sh
         timeout-minutes: 60
 
