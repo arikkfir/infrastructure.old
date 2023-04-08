@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# TODO: consider using -e and -x flags
 set -uo pipefail
 
 for ns in $(kubectl get ns -o=jsonpath='{.items[*].metadata.name}'); do
