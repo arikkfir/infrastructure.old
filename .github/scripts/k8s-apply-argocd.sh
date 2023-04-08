@@ -41,9 +41,11 @@ done
 set -e
 
 if [[ $(kubectl get secret | grep -c "argocd-initial-admin-secret") == "1" ]]; then
-  argocd --port-forward admin initial-password -n argocd > argocd-password.txt
-  argocd --port-forward login --username admin --password - --insecure < argocd-password.txt
-  argocd account update-password --current-password - --new-password "${ARGOCD_PASSWORD}" < argocd-password.txt
+  # TODO: another way to do this is to add the new ArgoCD password to the file (in a 2nd line after the initial one) so command reads 2 lines from file
+  kubectl config set-context --current --namespace argocd
+  argocd --port-forward admin --plaintext initial-password > argocd-password.txt
+  argocd --port-forward login --plaintext --username admin --password - < argocd-password.txt
+  argocd account update-password --plaintext --current-password - --new-password "${ARGOCD_PASSWORD}" < argocd-password.txt
   kubectl delete secret argocd-initial-admin-secret
 fi
 
