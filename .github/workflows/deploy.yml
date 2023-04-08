@@ -156,9 +156,8 @@ jobs:
           cluster_name: ${{ needs.apply-infrastructure.outputs.gke-cluster-name }}
           location: ${{ needs.apply-infrastructure.outputs.gke-cluster-location }}
       - run: |
-          curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-          sudo install -m 555 argocd /usr/local/bin/argocd
-          rm -fv argocd
+          curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+          chmod +x /usr/local/bin/argocd
       - run: .github/scripts/k8s-apply-argocd.sh
         env:
           ARGOCD_PASSWORD: ${{ secrets.ARGOCD_PASSWORD }}
