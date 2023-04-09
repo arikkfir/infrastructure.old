@@ -11,8 +11,7 @@ kubectl wait --for=condition=Available=True --timeout=30m deployment -l app.kube
 
 if [[ $(kubectl get secret | grep -c "argocd-initial-admin-secret") == "1" ]]; then
   # TODO: another way to do this is to add the new ArgoCD password to the file (in a 2nd line after the initial one) so command reads 2 lines from file
-  INITIAL_PWD=$(argocd --port-forward admin --plaintext initial-password | tr -d '\n')
-  cat "${INITIAL_PWD}"
+  INITIAL_PWD=$(kubectl get secret argocd-initial-admin-secret -oyaml|yq '.data.password'|base64 -d)
   argocd --port-forward login --plaintext --username admin --password "${INITIAL_PWD}"
   argocd --port-forward account update-password --plaintext --current-password "${INITIAL_PWD}" --new-password "${ARGOCD_PASSWORD}"
   kubectl delete secret argocd-initial-admin-secret
