@@ -5,8 +5,7 @@ on:
       - main
     paths:
       - .github/workflows/deploy-arikkfir-primary.yml
-      - .github/scripts/k8s-apply-argocd.sh
-      - argocd/**
+      - .github/scripts/*.sh
       - arikkfir-primary/**
   workflow_dispatch:
 
