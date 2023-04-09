@@ -84,14 +84,15 @@ resource "google_container_cluster" "main" {
 
   # ADDONS
   ######################################################################################################################
-  #  addons_config {
-  #    config_connector_config {
-  #      TODO: enabled = true
-  #    }
-  #    http_load_balancing {
-  #      TODO: disabled = true
-  #    }
-  #  }
+  addons_config {
+    //noinspection HCLUnknownBlockType
+    config_connector_config {
+      enabled = true
+    }
+    #    http_load_balancing {
+    #      TODO: disabled = true
+    #    }
+  }
 
   # SYSTEM NODE POOL
   ######################################################################################################################
