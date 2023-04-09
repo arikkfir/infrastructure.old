@@ -3,7 +3,7 @@ data "google_organization" "kfirfamily" {
 }
 
 data "google_project" "project" {
-  project_id = var.gcp_project
+  project_id = "arikkfir"
 }
 
 data "google_storage_bucket" "arikkfir-devops" {
