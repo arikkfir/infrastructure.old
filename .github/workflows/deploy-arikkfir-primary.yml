@@ -104,35 +104,9 @@ jobs:
           echo "gke-cluster-location=$(terraform output -raw gke_cluster_location)" >> $GITHUB_OUTPUT
         id: apply
 
-  stabilize-gke:
-    name: Wait for GKE to stabilize
-    needs: apply-infrastructure
-    runs-on: ubuntu-latest
-    timeout-minutes: 140
-    permissions:
-      contents: read
-      id-token: write
-    steps:
-      - uses: actions/checkout@v3
-      - uses: google-github-actions/auth@v1
-        with:
-          workload_identity_provider: ${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ env.GCP_SERVICE_ACCOUNT }}
-      - uses: google-github-actions/setup-gcloud@v1
-        with:
-          version: ${{ env.GCP_CLI_VERSION }}
-      - uses: google-github-actions/get-gke-credentials@v0
-        with:
-          cluster_name: ${{ needs.apply-infrastructure.outputs.gke-cluster-name }}
-          location: ${{ needs.apply-infrastructure.outputs.gke-cluster-location }}
-#      - run: .github/scripts/k8s-wait-for-stabilization.sh
-#        timeout-minutes: 60
-#      - run: .github/scripts/k8s-wait-for-stabilization.sh
-#        timeout-minutes: 60
-
   apply-argocd:
     name: Apply ArgoCD
-    needs: [apply-infrastructure, stabilize-gke]
+    needs: apply-infrastructure
     runs-on: ubuntu-latest
     permissions:
       id-token: write

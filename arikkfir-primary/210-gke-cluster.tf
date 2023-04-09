@@ -93,7 +93,7 @@ resource "google_container_cluster" "main" {
   #    }
   #  }
 
-  # DEFAULT NODE POOL
+  # SYSTEM NODE POOL
   ######################################################################################################################
   node_pool {
     name           = "default-pool"
@@ -134,6 +134,55 @@ resource "google_container_cluster" "main" {
       }
     }
     # TODO: separate system & workload node pools (via taints; check if that causes our cluster instabilities)
+  }
+
+  # WORKLOADS NODE POOL
+  ######################################################################################################################
+  node_pool {
+    name           = "e2-standard-4-workloads"
+    node_locations = [local.gcp_zone_a]
+
+    # SCALING
+    ######################################################################################################################
+    autoscaling {
+      total_min_node_count = 0
+      total_max_node_count = 3
+      location_policy      = "ANY"
+    }
+
+    # OPERATIONS
+    ######################################################################################################################
+    management {
+      auto_repair  = true
+      auto_upgrade = true
+    }
+    upgrade_settings {
+      max_surge       = 3
+      max_unavailable = 0
+    }
+
+    # NODE CONFIG
+    ######################################################################################################################
+    node_config {
+      disk_size_gb = 100
+      disk_type    = "pd-standard"
+      machine_type = "e2-standard-4"
+      oauth_scopes = [
+        "https://www.googleapis.com/auth/cloud-platform",
+      ]
+      service_account = data.google_compute_default_service_account.default.email
+      spot            = true
+      workload_metadata_config {
+        mode = "GKE_METADATA"
+      }
+      taint = [
+        {
+          key    = "gke.kfirs.com/purpose"
+          value  = "workloads"
+          effect = "NO_EXECUTE"
+        },
+      ]
+    }
   }
 }
 
