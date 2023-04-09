@@ -23,7 +23,7 @@ env:
   GCP_CLI_VERSION: 409.0.0
 
 concurrency:
-  group: production
+  group: production-arikkfir-primary
   cancel-in-progress: false
 
 jobs:
@@ -38,6 +38,7 @@ jobs:
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
       - run: terraform fmt -check -recursive -no-color -diff
+        working-directory: arikkfir-primary
 
   plan-terraform:
     name: Plan Terraform
@@ -59,12 +60,15 @@ jobs:
         with:
           version: ${{ env.GCP_CLI_VERSION }}
       - run: terraform init -input=false
+        working-directory: arikkfir-primary
       - run: terraform plan -input=false -lock-timeout=180s -out tfplan
+        working-directory: arikkfir-primary
       - run: tar -c -j -v -f tfplan.tar.bz2 .terraform .terraform.lock.hcl *.tf tfplan
+        working-directory: arikkfir-primary
       - uses: actions/upload-artifact@v3
         with:
           name: plan
-          path: tfplan.tar.bz2
+          path: arikkfir-primary/tfplan.tar.bz2
           if-no-files-found: error
           retention-days: 1
 
