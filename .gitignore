@@ -1,4 +1,4 @@
-/.terraform
 /backup
 .DS_Store
 *.auto.tfvars
+/tmp

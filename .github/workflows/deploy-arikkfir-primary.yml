@@ -1,0 +1,155 @@
+name: Deploy arikkfir-primary
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/deploy-arikkfir-primary.yml
+      - argocd/**
+      - arikkfir-primary/**
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash -exuo pipefail {0}
+
+env:
+  TERRAFORM_VERSION: 1.4.2
+  TF_IN_AUTOMATION: true
+  GCP_PROJECT: arikkfir-primary
+  GCP_PROJECT_ID: 539496846645
+  GCP_SERVICE_ACCOUNT: gha-arikkfir-infrastructure@arikkfir-primary.iam.gserviceaccount.com
+  GCP_WORKLOAD_IDENTITY_PROVIDER: projects/539496846645/locations/global/workloadIdentityPools/github-actions/providers/default
+  GCP_CLI_VERSION: 409.0.0
+
+concurrency:
+  group: production
+  cancel-in-progress: false
+
+jobs:
+
+  format:
+    name: Verify Format
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v3
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      - run: terraform fmt -check -recursive -no-color -diff
+
+  plan-terraform:
+    name: Plan Terraform
+    needs: format
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      - uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: ${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.GCP_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@v1
+        with:
+          version: ${{ env.GCP_CLI_VERSION }}
+      - run: terraform init -input=false
+      - run: terraform plan -input=false -lock-timeout=180s -out tfplan
+      - run: tar -c -j -v -f tfplan.tar.bz2 .terraform .terraform.lock.hcl *.tf tfplan
+      - uses: actions/upload-artifact@v3
+        with:
+          name: plan
+          path: tfplan.tar.bz2
+          if-no-files-found: error
+          retention-days: 1
+
+  apply-infrastructure:
+    name: Apply Terraform
+    needs: plan-terraform
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      id-token: write
+    environment: production
+    outputs:
+      gke-cluster-name: ${{ steps.apply.outputs.gke-cluster-name }}
+      gke-cluster-location: ${{ steps.apply.outputs.gke-cluster-location }}
+    steps:
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+          terraform_wrapper: false
+      - uses: actions/download-artifact@v3
+        with:
+          name: plan
+      - run: tar xjvf tfplan.tar.bz2
+      - uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: ${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.GCP_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@v1
+        with:
+          install_components: gke-gcloud-auth-plugin
+          version: ${{ env.GCP_CLI_VERSION }}
+      - run: |
+          terraform apply -input=false -lock-timeout=180s -auto-approve tfplan
+          echo "gke-cluster-name=$(terraform output -raw gke_cluster_name)" >> $GITHUB_OUTPUT
+          echo "gke-cluster-location=$(terraform output -raw gke_cluster_location)" >> $GITHUB_OUTPUT
+        id: apply
+
+  stabilize-gke:
+    name: Wait for GKE to stabilize
+    needs: apply-infrastructure
+    runs-on: ubuntu-latest
+    timeout-minutes: 140
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: ${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.GCP_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@v1
+        with:
+          version: ${{ env.GCP_CLI_VERSION }}
+      - uses: google-github-actions/get-gke-credentials@v0
+        with:
+          cluster_name: ${{ needs.apply-infrastructure.outputs.gke-cluster-name }}
+          location: ${{ needs.apply-infrastructure.outputs.gke-cluster-location }}
+      - run: .github/scripts/k8s-wait-for-stabilization.sh
+        timeout-minutes: 60
+      - run: .github/scripts/k8s-wait-for-stabilization.sh
+        timeout-minutes: 60
+
+  apply-argocd:
+    name: Apply ArgoCD
+    needs: [apply-infrastructure, stabilize-gke]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v3
+      - uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: ${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.GCP_SERVICE_ACCOUNT }}
+      - uses: google-github-actions/setup-gcloud@v1
+        with:
+          version: ${{ env.GCP_CLI_VERSION }}
+      - uses: google-github-actions/get-gke-credentials@v0
+        with:
+          cluster_name: ${{ needs.apply-infrastructure.outputs.gke-cluster-name }}
+          location: ${{ needs.apply-infrastructure.outputs.gke-cluster-location }}
+      - run: |
+          curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+          chmod +x /usr/local/bin/argocd
+      - run: .github/scripts/k8s-apply-argocd.sh
+        env:
+          ARGOCD_PASSWORD: ${{ secrets.ARGOCD_PASSWORD }}

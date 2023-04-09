@@ -2,7 +2,7 @@ terraform {
   required_version = ">=1.4.2"
   backend "gcs" {
     bucket = "arikkfir-devops"
-    prefix = "arikkfir/infrastructure"
+    prefix = "arikkfir/infrastructure/arikkfir"
   }
   required_providers {
     google = {
@@ -17,19 +17,13 @@ terraform {
 }
 
 provider "google" {
-  project = var.gcp_project
+  project = "arikkfir"
   region  = var.gcp_region
 }
 
 provider "google-beta" {
-  project = var.gcp_project
+  project = "arikkfir"
   region  = var.gcp_region
-}
-
-variable "gcp_project" {
-  type        = string
-  description = "GCP project."
-  default     = "arikkfir"
 }
 
 variable "gcp_region" {
