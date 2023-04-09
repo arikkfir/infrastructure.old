@@ -123,11 +123,9 @@ resource "google_container_cluster" "main" {
     node_config {
       disk_size_gb = 100
       disk_type    = "pd-standard"
-      labels = [
-        {
-          "gke.kfirs.com/purpose" : "system"
-        }
-      ]
+      labels = {
+        "gke.kfirs.com/purpose" : "system"
+      }
       machine_type = "e2-standard-4"
       oauth_scopes = [
         "https://www.googleapis.com/auth/cloud-platform",
@@ -171,11 +169,9 @@ resource "google_container_cluster" "main" {
     node_config {
       disk_size_gb = 100
       disk_type    = "pd-standard"
-      labels = [
-        {
-          "gke.kfirs.com/purpose" : "workloads"
-        }
-      ]
+      labels = {
+        "gke.kfirs.com/purpose" : "workloads"
+      }
       machine_type = "e2-standard-4"
       oauth_scopes = [
         "https://www.googleapis.com/auth/cloud-platform",
