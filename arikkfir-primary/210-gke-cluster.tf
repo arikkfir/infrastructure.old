@@ -22,8 +22,6 @@ resource "google_container_cluster" "main" {
     google_project_service.apis["storage-api.googleapis.com"],
     google_project_service.apis["storage-component.googleapis.com"],
     google_service_account_iam_member.default-compute-gha-arikkfir-infrastructure-iam-serviceAccountUser,
-    google_service_account_iam_member.config-connector_workload_identity,
-    google_project_iam_member.config-connector,
   ]
 
   # PROVISIONING
