@@ -17,4 +17,4 @@ if [[ $(kubectl get secret | grep -c "argocd-initial-admin-secret") == "1" ]]; t
   kubectl delete secret argocd-initial-admin-secret
 fi
 
-kubectl apply -f './argocd/applications/*.yaml'
+kubectl apply -f './argocd/applications/*.yaml' --timeout=30m
