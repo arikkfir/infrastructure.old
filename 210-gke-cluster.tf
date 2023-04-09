@@ -76,6 +76,11 @@ resource "google_container_cluster" "main" {
       enabled = true
     }
   }
+  maintenance_policy {
+    daily_maintenance_window {
+      start_time = "06:00"
+    }
+  }
 
   # SECURITY
   ######################################################################################################################
