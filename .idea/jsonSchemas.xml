@@ -33,6 +33,12 @@
                   <Item>
                     <option name="path" value=".github/workflows/update-kube-dns-autoscaler.yml" />
                   </Item>
+                  <Item>
+                    <option name="path" value=".github/workflows/deploy-arikkfir.yml" />
+                  </Item>
+                  <Item>
+                    <option name="path" value=".github/workflows/deploy-arikkfir-primary.yml" />
+                  </Item>
                 </list>
               </option>
             </SchemaInfo>
