@@ -16,8 +16,6 @@ defaults:
 env:
   TERRAFORM_VERSION: 1.4.2
   TF_IN_AUTOMATION: true
-  GCP_PROJECT: arikkfir-primary
-  GCP_PROJECT_ID: 539496846645
   GCP_SERVICE_ACCOUNT: gha-arikkfir-infrastructure@arikkfir-primary.iam.gserviceaccount.com
   GCP_WORKLOAD_IDENTITY_PROVIDER: projects/539496846645/locations/global/workloadIdentityPools/github-actions/providers/default
   GCP_CLI_VERSION: 409.0.0
