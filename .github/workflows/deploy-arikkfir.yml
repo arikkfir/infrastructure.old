@@ -1,11 +1,12 @@
-name: Deploy
+name: Deploy arikkfir
 on:
   push:
     branches:
       - main
     paths:
-      - .github/workflows/deploy.yml
-      - "*.tf"
+      - .github/workflows/deploy-arikkfir.yml
+      - argocd/**
+      - arikkfir/**
   workflow_dispatch:
 
 defaults:
@@ -15,6 +16,9 @@ defaults:
 env:
   TERRAFORM_VERSION: 1.4.2
   TF_IN_AUTOMATION: true
+  GCP_PROJECT: arikkfir
+  GCP_PROJECT_ID: 8909046976
+  GCP_SERVICE_ACCOUNT: gha-arikkfir-infrastructure@arikkfir.iam.gserviceaccount.com
   GCP_WORKLOAD_IDENTITY_PROVIDER: projects/8909046976/locations/global/workloadIdentityPools/github-actions/providers/default
   GCP_CLI_VERSION: 409.0.0
 
@@ -41,7 +45,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
-      contents: read
       id-token: write
     steps:
       - uses: actions/checkout@v3
@@ -51,7 +54,7 @@ jobs:
       - uses: google-github-actions/auth@v1
         with:
           workload_identity_provider: ${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.GCP_SA_NAME }}
+          service_account: ${{ env.GCP_SERVICE_ACCOUNT }}
       - uses: google-github-actions/setup-gcloud@v1
         with:
           version: ${{ env.GCP_CLI_VERSION }}
@@ -71,7 +74,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     permissions:
-      contents: write
       id-token: write
     environment: production
     outputs:
@@ -89,7 +91,7 @@ jobs:
       - uses: google-github-actions/auth@v1
         with:
           workload_identity_provider: ${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.GCP_SA_NAME }}
+          service_account: ${{ env.GCP_SERVICE_ACCOUNT }}
       - uses: google-github-actions/setup-gcloud@v1
         with:
           install_components: gke-gcloud-auth-plugin
@@ -113,7 +115,7 @@ jobs:
       - uses: google-github-actions/auth@v1
         with:
           workload_identity_provider: ${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.GCP_SA_NAME }}
+          service_account: ${{ env.GCP_SERVICE_ACCOUNT }}
       - uses: google-github-actions/setup-gcloud@v1
         with:
           version: ${{ env.GCP_CLI_VERSION }}
@@ -126,30 +128,18 @@ jobs:
       - run: .github/scripts/k8s-wait-for-stabilization.sh
         timeout-minutes: 60
 
-  apply-delivery-deploy-key:
-    name: Apply Deploy-key to Delivery repository
-    needs: apply-infrastructure
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - run: .github/scripts/gh-setup-delivery-deploy-key.sh
-        env:
-          ARGOCD_DEPLOY_PUB_KEY: ${{ vars.DELIVERY_REPO_DEPLOY_PUBLIC_KEY }}
-          GITHUB_TOKEN: ${{ secrets.TF_GITHUB_TOKEN }}
-
   apply-argocd:
     name: Apply ArgoCD
-    needs: [apply-infrastructure, stabilize-gke, apply-delivery-deploy-key]
+    needs: [apply-infrastructure, stabilize-gke]
     runs-on: ubuntu-latest
     permissions:
-      contents: write
       id-token: write
     steps:
       - uses: actions/checkout@v3
       - uses: google-github-actions/auth@v1
         with:
           workload_identity_provider: ${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.GCP_SA_NAME }}
+          service_account: ${{ env.GCP_SERVICE_ACCOUNT }}
       - uses: google-github-actions/setup-gcloud@v1
         with:
           version: ${{ env.GCP_CLI_VERSION }}
