@@ -39,6 +39,7 @@ resource "google_container_cluster" "main" {
   ######################################################################################################################
   network         = data.google_compute_network.default.self_link
   networking_mode = "VPC_NATIVE"
+  ip_allocation_policy {}
 
   # SCALING
   ######################################################################################################################
