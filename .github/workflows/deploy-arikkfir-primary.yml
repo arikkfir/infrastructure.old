@@ -125,10 +125,10 @@ jobs:
         with:
           cluster_name: ${{ needs.apply-infrastructure.outputs.gke-cluster-name }}
           location: ${{ needs.apply-infrastructure.outputs.gke-cluster-location }}
-      - run: .github/scripts/k8s-wait-for-stabilization.sh
-        timeout-minutes: 60
-      - run: .github/scripts/k8s-wait-for-stabilization.sh
-        timeout-minutes: 60
+#      - run: .github/scripts/k8s-wait-for-stabilization.sh
+#        timeout-minutes: 60
+#      - run: .github/scripts/k8s-wait-for-stabilization.sh
+#        timeout-minutes: 60
 
   apply-argocd:
     name: Apply ArgoCD
