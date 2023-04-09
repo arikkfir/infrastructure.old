@@ -79,7 +79,7 @@ jobs:
     timeout-minutes: 120
     permissions:
       id-token: write
-    environment: production
+    environment: arikkfir-primary
     outputs:
       gke-cluster-name: ${{ steps.apply.outputs.gke-cluster-name }}
       gke-cluster-location: ${{ steps.apply.outputs.gke-cluster-location }}
