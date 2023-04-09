@@ -65,7 +65,7 @@ resource "google_project_iam_member" "gha-arikkfir-primary-infrastructure" {
   member  = "serviceAccount:${google_service_account.gha-arikkfir-primary-infrastructure.email}"
 }
 
-resource "google_storage_bucket_iam_member" "arikkfir-devops-gha-arikkfir-primary-infrastructure" {
+resource "google_storage_bucket_iam_member" "arikkfir-devops-gha-arikkfir-primary-infrastructure-objectAdmin" {
   bucket = data.google_storage_bucket.arikkfir-devops.name
   role   = "roles/storage.objectAdmin"
   member = "serviceAccount:${google_service_account.gha-arikkfir-primary-infrastructure.email}"

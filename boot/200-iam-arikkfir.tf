@@ -65,7 +65,15 @@ resource "google_project_iam_member" "gha-arikkfir-infrastructure" {
   member  = "serviceAccount:${google_service_account.gha-arikkfir-infrastructure.email}"
 }
 
-resource "google_storage_bucket_iam_member" "arikkfir-devops-gha-arikkfir-infrastructure" {
+# This must be done manually here, since the infrastructure SA in "arikkfir-primary" only gets "storageAdmin" in its own
+# project, but not in the "arikkfir" project, which is the parent of "arikkfir-devops".
+resource "google_project_iam_member" "gha-arikkfir-infrastructure-primary-storageAdmin" {
+  project = google_project.arikkfir.project_id
+  role    = "roles/storage.admin"
+  member  = "serviceAccount:${google_service_account.gha-arikkfir-primary-infrastructure.email}"
+}
+
+resource "google_storage_bucket_iam_member" "arikkfir-devops-gha-arikkfir-infrastructure-objectAdmin" {
   bucket = data.google_storage_bucket.arikkfir-devops.name
   role   = "roles/storage.objectAdmin"
   member = "serviceAccount:${google_service_account.gha-arikkfir-infrastructure.email}"
