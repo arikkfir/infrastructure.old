@@ -39,7 +39,7 @@ jobs:
         with:
           terraform_version: ${{ env.TERRAFORM_VERSION }}
       - run: terraform fmt -check -recursive -no-color -diff
-        working-directory: arikkfir-primary
+        working-directory: terraform/arikkfir-primary
 
   plan-terraform:
     name: Plan Terraform
