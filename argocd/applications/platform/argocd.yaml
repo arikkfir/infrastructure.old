@@ -13,7 +13,7 @@ spec:
   destination:
     namespace: argocd
     server: https://kubernetes.default.svc
-  project: argocd/platform
+  project: platform
   syncPolicy:
     automated:
       prune: true
