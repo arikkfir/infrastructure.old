@@ -1,0 +1,22 @@
+kind: AppProject
+apiVersion: argoproj.io/v1alpha1
+metadata:
+  name: platform
+  namespace: argocd
+spec:
+  description: Platform project, aggregating cluster platform components.
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: "*"
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  orphanedResources:
+    warn: true
+  sourceRepos:
+    - https://github.com/arikkfir/delivery.git
+  sourceNamespaces:
+    - '*'

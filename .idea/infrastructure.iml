@@ -4,10 +4,8 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$">
-      <excludeFolder url="file://$MODULE_DIR$/terraform/.terraform" />
-      <excludeFolder url="file://$MODULE_DIR$/backup" />
-      <excludeFolder url="file://$MODULE_DIR$/boot/.terraform" />
-      <excludeFolder url="file://$MODULE_DIR$/.terraform" />
+      <excludeFolder url="file://$MODULE_DIR$/terraform/arikkfir-primary/.terraform" />
+      <excludeFolder url="file://$MODULE_DIR$/terraform/boot/.terraform" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -1,21 +1,21 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: config-connector
-  namespace: kube-system
+  name: argocd-server
+  namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   source:
-    repoURL: https://github.com/arikkfir/delivery.git
-    path: platform/config-connector
+    repoURL: https://github.com/arikkfir/infrastructure.git
+    path: argocd/server
     targetRevision: HEAD
   destination:
-    namespace: kube-system
+    namespace: argocd
     server: https://kubernetes.default.svc
-  project: default
+  project: argocd/platform
   syncPolicy:
     automated:
       prune: true
       allowEmpty: false
-      selfHeal: true
+      selfHeal: false # TODO: check if UI shows drift instead
