@@ -159,7 +159,7 @@ jobs:
       - run: kubectl apply -f './argocd/projects/*.yaml' --timeout=30m
 
   apply-argocd-apps:
-    name: Apply ArgoCD Projects
+    name: Apply ArgoCD Applications
     needs: [apply-infrastructure, apply-argocd-projects]
     runs-on: ubuntu-latest
     steps:
