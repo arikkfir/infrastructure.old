@@ -7,6 +7,9 @@ resources:
 - argocd-server-rbac-clusterrole.yaml
 - argocd-server-rbac-clusterrolebinding.yaml
 
+commonLabels:
+  app.kubernetes.io/instance: argocd
+
 patches:
   - target:
       kind: ConfigMap
