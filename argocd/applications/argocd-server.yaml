@@ -18,4 +18,4 @@ spec:
     automated:
       prune: true
       allowEmpty: false
-      selfHeal: false # TODO: check if UI shows drift instead
+      selfHeal: true

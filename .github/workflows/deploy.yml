@@ -157,6 +157,7 @@ jobs:
           cluster_name: ${{ needs.apply-infrastructure.outputs.gke-cluster-name }}
           location: ${{ needs.apply-infrastructure.outputs.gke-cluster-location }}
       - run: kubectl apply -f './argocd/projects/*.yaml' --timeout=30m
+      - run: kubectl delete -n argocd AppProject default
 
   apply-argocd-apps:
     name: Apply ArgoCD Applications
@@ -175,4 +176,4 @@ jobs:
         with:
           cluster_name: ${{ needs.apply-infrastructure.outputs.gke-cluster-name }}
           location: ${{ needs.apply-infrastructure.outputs.gke-cluster-location }}
-      - run: kubectl apply -f './argocd/applications/platform/*.yaml' --timeout=30m
+      - run: kubectl apply -f './argocd/applications/argocd-server.yaml' --timeout=30m
