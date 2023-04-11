@@ -4,8 +4,7 @@ namespace: argocd
 resources:
 - namespace.yaml
 - https://github.com/argoproj/argo-cd//manifests/cluster-install?ref=v2.6.7&timeout=300s
-- argocd-server-rbac-clusterrole.yaml
-- argocd-server-rbac-clusterrolebinding.yaml
+- argocd-server-rbac-apps.yaml
 
 commonLabels:
   app.kubernetes.io/instance: argocd
