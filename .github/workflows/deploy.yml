@@ -151,10 +151,9 @@ jobs:
   apply-argocd-resources:
     name: Apply ArgoCD Applications
     needs: [apply-infrastructure, apply-argocd-server]
-    if: |
-      always() 
-        && jobs.apply-infrastructure.result == 'success' 
-        && (jobs.apply-argocd-server.result == 'success' || jobs.apply-argocd-server.result == 'skipped')
+    if: always() 
+      && needs.apply-infrastructure.result == 'success' 
+      && (needs.apply-argocd-server.result == 'success' || needs.apply-argocd-server.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
