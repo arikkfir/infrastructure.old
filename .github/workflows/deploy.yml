@@ -169,4 +169,4 @@ jobs:
           location: ${{ needs.apply-infrastructure.outputs.gke-cluster-location }}
       - run: |
           kubectl apply -f './argocd/projects/*.yaml' --timeout=30m
-          #kubectl apply -f './argocd/applications/argocd-server.yaml' --timeout=30m
+          kubectl apply -f './argocd/applications/argocd-server.yaml' --timeout=30m
