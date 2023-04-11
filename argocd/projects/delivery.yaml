@@ -17,6 +17,7 @@ spec:
   orphanedResources:
     warn: true
   sourceRepos:
+    - https://github.com/arikkfir/infrastructure.git
     - https://github.com/arikkfir/delivery.git
   sourceNamespaces:
     - '*'
