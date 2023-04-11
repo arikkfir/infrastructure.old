@@ -105,8 +105,8 @@ jobs:
         id: apply-terraform
       - uses: google-github-actions/get-gke-credentials@v0
         with:
-          cluster_name: ${{ needs.apply-infrastructure.outputs.gke-cluster-name }}
-          location: ${{ needs.apply-infrastructure.outputs.gke-cluster-location }}
+          cluster_name: ${{ steps.apply-infrastructure.outputs.gke-cluster-name }}
+          location: ${{ steps.apply-infrastructure.outputs.gke-cluster-location }}
       - run: |
           if kubectl get namespace argocd; then
             echo "argocd-installed=true" >> "$GITHUB_OUTPUT"
