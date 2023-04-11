@@ -7,5 +7,5 @@ data:
   statusbadge.enabled: "true" # Use as: <statusbadge.url>api/badge?name=myapp&revision=true
   statusbadge.url: "https://cd-status.apps.argocd.kfirs.io/"
   users.anonymous.enabled: "false"
-  application.resourceTrackingMethod: "annotation+label"
+  application.resourceTrackingMethod: "annotation"
   timeout.reconciliation: "300s"
