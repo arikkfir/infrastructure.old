@@ -1,13 +1,13 @@
 kind: AppProject
 apiVersion: argoproj.io/v1alpha1
 metadata:
-  name: platform
+  name: delivery
   namespace: argocd
 spec:
-  description: Platform applications.
+  description: Continuous Delivery project.
   destinations:
     - server: https://kubernetes.default.svc
-      namespace: "!env-*,*"
+      namespace: "*"
   namespaceResourceWhitelist:
     - group: '*'
       kind: '*'
@@ -19,5 +19,4 @@ spec:
   sourceRepos:
     - https://github.com/arikkfir/delivery.git
   sourceNamespaces:
-    - '!env-*'
     - '*'
