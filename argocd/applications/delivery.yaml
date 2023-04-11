@@ -8,6 +8,7 @@ metadata:
 spec:
   source:
     repoURL: https://github.com/arikkfir/delivery.git
+    path: ""
     directory:
       recurse: false # individual apps will recurse into their own directories
   destination:
