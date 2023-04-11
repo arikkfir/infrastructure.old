@@ -12,7 +12,7 @@ spec:
       recurse: false # individual apps will recurse into their own directories
   destination:
     server: https://kubernetes.default.svc
-  project: platform
+  project: delivery
   syncPolicy:
     automated:
       prune: false
