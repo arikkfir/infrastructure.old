@@ -22,7 +22,7 @@ resource "google_project_service" "apis" {
     "storage-api.googleapis.com",
     "storage-component.googleapis.com",
   ])
-  project                    = data.google_project.project.project_id
+  project                    = data.google_project.arikkfir-primary.project_id
   service                    = each.key
   disable_dependent_services = false
   disable_on_destroy         = false

@@ -79,7 +79,7 @@ resource "google_container_cluster" "main" {
     security_group = "gke-security-groups@${data.google_organization.kfirfamily.domain}"
   }
   workload_identity_config {
-    workload_pool = "${data.google_project.project.project_id}.svc.id.goog"
+    workload_pool = "${data.google_project.arikkfir-primary.project_id}.svc.id.goog"
   }
 
   # ADDONS
@@ -131,7 +131,7 @@ resource "google_container_cluster" "main" {
       oauth_scopes = [
         "https://www.googleapis.com/auth/cloud-platform",
       ]
-      service_account = data.google_compute_default_service_account.default.email
+      service_account = data.google_compute_default_service_account.arikkfir-primary.email
       spot            = true
       workload_metadata_config {
         mode = "GKE_METADATA"
@@ -177,7 +177,7 @@ resource "google_container_cluster" "main" {
       oauth_scopes = [
         "https://www.googleapis.com/auth/cloud-platform",
       ]
-      service_account = data.google_compute_default_service_account.default.email
+      service_account = data.google_compute_default_service_account.arikkfir-primary.email
       spot            = true
       workload_metadata_config {
         mode = "GKE_METADATA"

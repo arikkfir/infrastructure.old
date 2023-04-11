@@ -2,7 +2,11 @@ data "google_organization" "kfirfamily" {
   domain = "kfirfamily.com"
 }
 
-data "google_project" "project" {
+data "google_project" "arikkfir" {
+  project_id = "arikkfir-primary"
+}
+
+data "google_project" "arikkfir-primary" {
   project_id = "arikkfir-primary"
 }
 
@@ -11,12 +15,12 @@ data "google_storage_bucket" "arikkfir-devops" {
 }
 
 data "google_service_account" "gha-arikkfir-infrastructure" {
-  project    = data.google_project.project.project_id
+  project    = data.google_project.arikkfir-primary.project_id
   account_id = "gha-arikkfir-infrastructure"
 }
 
-data "google_compute_default_service_account" "default" {
-  project = data.google_project.project.project_id
+data "google_compute_default_service_account" "arikkfir-primary" {
+  project = data.google_project.arikkfir-primary.project_id
 }
 
 data "google_iam_workload_identity_pool" "github-actions" {
