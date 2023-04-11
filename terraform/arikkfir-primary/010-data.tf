@@ -3,7 +3,7 @@ data "google_organization" "kfirfamily" {
 }
 
 data "google_project" "arikkfir" {
-  project_id = "arikkfir-primary"
+  project_id = "arikkfir"
 }
 
 data "google_project" "arikkfir-primary" {
