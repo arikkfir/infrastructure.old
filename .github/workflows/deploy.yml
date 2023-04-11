@@ -5,6 +5,7 @@ on:
       - main
     paths:
       - .github/workflows/deploy.yml
+      - argocd/projects/*.yaml
       - argocd/applications/*.yaml
       - terraform/arikkfir-primary/**
   workflow_dispatch:
