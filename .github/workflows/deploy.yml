@@ -79,8 +79,9 @@ jobs:
     timeout-minutes: 120
     environment: production
     outputs:
-      gke-cluster-name: ${{ steps.apply.outputs.gke-cluster-name }}
-      gke-cluster-location: ${{ steps.apply.outputs.gke-cluster-location }}
+      gke-cluster-name: ${{ steps.apply-terraform.outputs.gke-cluster-name }}
+      gke-cluster-location: ${{ steps.apply-terraform.outputs.gke-cluster-location }}
+      argocd-installed: ${{ steps.check-argocd.outputs.argocd-installed }}
     steps:
       - uses: hashicorp/setup-terraform@v2
         with:
@@ -102,12 +103,20 @@ jobs:
           terraform apply -input=false -lock-timeout=180s -auto-approve tfplan
           echo "gke-cluster-name=$(terraform output -raw gke_cluster_name)" >> $GITHUB_OUTPUT
           echo "gke-cluster-location=$(terraform output -raw gke_cluster_location)" >> $GITHUB_OUTPUT
-        id: apply
+        id: apply-terraform
+      - run: |
+          if kubectl get namespace argocd; then
+            echo "argocd-installed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "argocd-installed=false" >> "$GITHUB_OUTPUT"
+          fi
+        id: check-argocd
 
   apply-argocd-server:
     name: Apply ArgoCD Server
     needs: apply-infrastructure
     runs-on: ubuntu-latest
+    if: needs.apply-infrastructure.outputs.argocd-installed == 'false'
     steps:
       - uses: actions/checkout@v3
       - uses: google-github-actions/auth@v1
@@ -121,48 +130,30 @@ jobs:
         with:
           cluster_name: ${{ needs.apply-infrastructure.outputs.gke-cluster-name }}
           location: ${{ needs.apply-infrastructure.outputs.gke-cluster-location }}
-      - run: kubectl apply -k ./argocd/server
-      - run: kubectl config set-context --current --namespace=argocd
-      - run: kubectl wait --for=jsonpath='{.status.availableReplicas}'=1 --timeout=30m statefulset -l app.kubernetes.io/part-of=argocd
-      - run: kubectl wait --for=jsonpath='{.status.readyReplicas}'=1 --timeout=30m statefulset -l app.kubernetes.io/part-of=argocd
-      - run: kubectl wait --for=condition=Available=True --timeout=30m deployment -l app.kubernetes.io/part-of=argocd
-      - run: kubectl wait --for=condition=Available=True --timeout=30m deployment -l app.kubernetes.io/part-of=argocd-applicationset
       - run: |
           curl -sSL -o /usr/local/bin/argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
           chmod +x /usr/local/bin/argocd
       - run: |
-          if [[ $(kubectl get secret | grep -c "argocd-initial-admin-secret") == "1" ]]; then
-            INITIAL_PWD=$(kubectl get secret argocd-initial-admin-secret -oyaml|yq '.data.password'|base64 -d)
-            argocd --port-forward login --plaintext --username admin --password "${INITIAL_PWD}"
-            argocd --port-forward account update-password --plaintext --current-password "${INITIAL_PWD}" --new-password "${ARGOCD_PASSWORD}"
-            kubectl delete secret argocd-initial-admin-secret
-          fi
+          kubectl apply -k ./argocd/server
+          kubectl config set-context --current --namespace=argocd
+          kubectl wait --for=jsonpath='{.status.availableReplicas}'=1 --timeout=30m statefulset -l app.kubernetes.io/part-of=argocd
+          kubectl wait --for=jsonpath='{.status.readyReplicas}'=1 --timeout=30m statefulset -l app.kubernetes.io/part-of=argocd
+          kubectl wait --for=condition=Available=True --timeout=30m deployment -l app.kubernetes.io/part-of=argocd
+          kubectl wait --for=condition=Available=True --timeout=30m deployment -l app.kubernetes.io/part-of=argocd-applicationset
+
+          INITIAL_PWD=$(kubectl get secret argocd-initial-admin-secret -oyaml|yq '.data.password'|base64 -d)
+          argocd --port-forward login --plaintext --username admin --password "${INITIAL_PWD}"
+          argocd --port-forward account update-password --plaintext --current-password "${INITIAL_PWD}" --new-password "${ARGOCD_PASSWORD}"
+          kubectl delete secret argocd-initial-admin-secret
         env:
           ARGOCD_PASSWORD: ${{ secrets.ARGOCD_PASSWORD }}
 
-  apply-argocd-projects:
-    name: Apply ArgoCD Projects
-    needs: [apply-infrastructure, apply-argocd-server]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: google-github-actions/auth@v1
-        with:
-          workload_identity_provider: ${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ env.GCP_SERVICE_ACCOUNT }}
-      - uses: google-github-actions/setup-gcloud@v1
-        with:
-          version: ${{ env.GCP_CLI_VERSION }}
-      - uses: google-github-actions/get-gke-credentials@v0
-        with:
-          cluster_name: ${{ needs.apply-infrastructure.outputs.gke-cluster-name }}
-          location: ${{ needs.apply-infrastructure.outputs.gke-cluster-location }}
-      - run: kubectl apply -f './argocd/projects/*.yaml' --timeout=30m
-      - run: kubectl delete -n argocd AppProject default
-
-  apply-argocd-apps:
+  apply-argocd-resources:
     name: Apply ArgoCD Applications
-    needs: [apply-infrastructure, apply-argocd-projects]
+    needs: [apply-infrastructure, apply-argocd-server]
+    if: always() 
+      && jobs.apply-infrastructure.result == 'success' 
+      && (jobs.apply-argocd-server.result == 'success' || jobs.apply-argocd-server.result == 'skipped')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -177,4 +168,6 @@ jobs:
         with:
           cluster_name: ${{ needs.apply-infrastructure.outputs.gke-cluster-name }}
           location: ${{ needs.apply-infrastructure.outputs.gke-cluster-location }}
-      - run: kubectl apply -f './argocd/applications/argocd-server.yaml' --timeout=30m
+      - run: |
+          kubectl apply -f './argocd/projects/*.yaml' --timeout=30m
+          #kubectl apply -f './argocd/applications/argocd-server.yaml' --timeout=30m

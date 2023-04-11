@@ -1,21 +1,20 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: config-connector
-  namespace: cnrm-system
+  name: platform
+  namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   source:
     repoURL: https://github.com/arikkfir/delivery.git
-    path: platform/config-connector
+    path: platform
     targetRevision: HEAD
   destination:
-    namespace: cnrm-system
     server: https://kubernetes.default.svc
   project: platform
   syncPolicy:
     automated:
       prune: true
-      allowEmpty: false
+      allowEmpty: true
       selfHeal: true

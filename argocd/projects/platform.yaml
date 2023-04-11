@@ -4,10 +4,10 @@ metadata:
   name: platform
   namespace: argocd
 spec:
-  description: Platform project, aggregating cluster platform components.
+  description: Platform applications.
   destinations:
     - server: https://kubernetes.default.svc
-      namespace: "*"
+      namespace: "!env-*,*"
   namespaceResourceWhitelist:
     - group: '*'
       kind: '*'
@@ -17,7 +17,7 @@ spec:
   orphanedResources:
     warn: true
   sourceRepos:
-    - https://github.com/arikkfir/infrastructure.git
     - https://github.com/arikkfir/delivery.git
   sourceNamespaces:
+    - '!env-*'
     - '*'
