@@ -1,13 +1,15 @@
-kind: AppProject
 apiVersion: argoproj.io/v1alpha1
+kind: AppProject
 metadata:
   name: delivery
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   description: Continuous Delivery project.
   destinations:
     - server: https://kubernetes.default.svc
-      namespace: "!kube-system,*"
+      namespace: "!kube-system,!argocd,*"
   namespaceResourceWhitelist:
     - group: '*'
       kind: '*'
@@ -17,7 +19,6 @@ spec:
   orphanedResources:
     warn: true
   sourceRepos:
-    - https://github.com/arikkfir/infrastructure.git
     - https://github.com/arikkfir/delivery.git
   sourceNamespaces:
-    - '!kube-system,*'
+    - '!kube-system,!argocd,*'

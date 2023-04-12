@@ -2,15 +2,16 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: delivery
-  namespace: argocd
+  namespace: default
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
-  source:
-    repoURL: https://github.com/arikkfir/delivery.git
-    path: platform
+  sources:
+    - repoURL: https://github.com/arikkfir/delivery.git
+      path: platform
   destination:
     server: https://kubernetes.default.svc
+    namespace: default
   project: delivery
   syncPolicy:
     automated:
