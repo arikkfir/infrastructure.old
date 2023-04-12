@@ -140,4 +140,4 @@ jobs:
             --timeout 30m
         env:
           GKE_CLUSTER_NAME: ${{ needs.apply-infrastructure.outputs.gke-cluster-name }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.DELIVERY_PAT }}
