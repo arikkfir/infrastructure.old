@@ -1,6 +1,6 @@
-resource "google_service_account" "delivery" {
+resource "google_service_account" "gha-arikkfir-delivery" {
   project      = data.google_project.arikkfir-primary.project_id
-  account_id   = "delivery"
+  account_id   = "gha-arikkfir-delivery"
   display_name = "Delivery pipeline"
 }
 
@@ -13,5 +13,5 @@ resource "google_project_iam_member" "arikkfir-primary-delivery" {
 
   project = data.google_project.arikkfir-primary.project_id
   role    = each.key
-  member  = "serviceAccount:${google_service_account.delivery.email}"
+  member  = "serviceAccount:${google_service_account.gha-arikkfir-delivery.email}"
 }
