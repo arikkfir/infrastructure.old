@@ -128,7 +128,7 @@ jobs:
           version: 2.0.0-rc.1
       - run: |
           flux bootstrap github \
-            --interval 1m \
+            --interval 5m \
             --owner arikkfir \
             --repository delivery \
             --branch main \
